@@ -1,0 +1,34 @@
+{
+  "name": "plug",
+  "version": "1.0.0",
+  "description": "An http proxy tool",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hansenleee/plug.git"
+  },
+  "keywords": [
+    "proxy"
+  ],
+  "author": "lee",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hansenleee/plug/issues"
+  },
+  "homepage": "https://github.com/Hansenleee/plug#readme",
+  "devDependencies": {
+    "eslint": "^9.3.0",
+    "eslint-config-ali": "^15.0.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "prettier": "^3.2.5",
+    "rollup": "^4.17.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "http-proxy": "^1.18.1"
+  }
+}
