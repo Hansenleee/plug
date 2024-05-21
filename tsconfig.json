@@ -2,24 +2,15 @@
   "compileOnSave": false,
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src",
-    "types": ["node"],
+    "baseUrl": "./src",
     "module": "ESNext",
-    "target": "ESNext",
-    "lib": [
-      "ESNext",
-      "DOM"
-    ],
-    "strict": true,
     "declaration": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "jsx": "preserve",
+    "target": "ES2015",
+    "esModuleInterop": true,
     "moduleResolution": "Node",
-    "skipLibCheck": true,
-    "noImplicitAny": false,
-    "noImplicitThis": true
+    "skipLibCheck": true
   },
   "include": ["src"]
 }
