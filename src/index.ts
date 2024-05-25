@@ -6,4 +6,4 @@ export const start = () => {
   const coreApp = Container.get<CoreApp>(CoreApp);
 
   coreApp.start();
-}
+};
