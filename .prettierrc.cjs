@@ -30,6 +30,6 @@ module.exports = {
   // vue script和style标签中是否缩进开启可能会破坏编辑器的代码折叠
   vueIndentScriptAndStyle: false,
   'editor.tabSize': 2,
-  // 行尾换行符：使用 Unix 风格的换行符，即 \n
-  endOfLine: 'lf',
+  // 行尾换行符
+  endOfLine: 'auto',
 };

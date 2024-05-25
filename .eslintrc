@@ -1,3 +1,0 @@
-{
-  "extends": ["eslint-config-ali/typescript/node", "plugin:prettier/recommended"]
-}

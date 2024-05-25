@@ -1,0 +1,6 @@
+**/dist/
+**/build/
+**/bin/
+.eslintrc.cjs
+rollup.config.js
+
