@@ -51,6 +51,7 @@
     "ora": "^8.0.1",
     "pem": "^1.14.8",
     "reflect-metadata": "^0.2.2",
-    "typedi": "^0.10.0"
+    "typedi": "^0.10.0",
+    "user-home": "^3.0.0"
   }
 }

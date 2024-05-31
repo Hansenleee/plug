@@ -1,10 +1,2 @@
-import { Service } from 'typedi';
-
-@Service()
-export class Storage {
-  init() {}
-
-  insert() {}
-
-  destory() {}
-}
+export * from './base';
+export * from './records';
