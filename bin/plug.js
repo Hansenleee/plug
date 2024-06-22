@@ -15,9 +15,10 @@ program
 program
   .command('start')
   .description('start plug proxy')
-  .option('-p, --port', 'listening port')
-  .action(() => {
-    start();
+  .option('-p, --port <port>', 'listening port')
+  .option('-d, --debug', 'listening port')
+  .action((option) => {
+    start(option);
   });
 
 program.parse(process.argv)

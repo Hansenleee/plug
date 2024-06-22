@@ -1,11 +1,13 @@
 {
-  "name": "plug",
-  "version": "1.0.0",
+  "name": "plug-cli",
+  "version": "0.0.1-beta.0",
   "description": "An http proxy tool",
   "type": "module",
   "main": "index.js",
   "files": [
-    "dist"
+    "bin",
+    "dist",
+    "ui/build"
   ],
   "scripts": {
     "dev": "npx rollup -c -w",
@@ -37,6 +39,7 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
+    "@types/http-proxy": "^1.17.14",
     "@types/koa__router": "^12.0.4",
     "@types/node": "^20.12.12",
     "eslint": "^8.3.0",

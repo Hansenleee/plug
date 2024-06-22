@@ -18,6 +18,10 @@ export class Http {
       logger.info(`http server closed`);
     });
 
+    this.httpServer.on('error', (error) => {
+      logger.info(`http server error occured: ${error.message}`);
+    });
+
     this.httpServer.listen(Configuration.PROXY_PORT, () => {
       logger.info(`http server start at ${Configuration.PROXY_PORT}`);
     });
@@ -25,9 +29,9 @@ export class Http {
 
   private requestHandler(request: http.IncomingMessage, response: http.ServerResponse) {
     const controller = Container.get<Controller>(Controller);
-    const proxyInstance = Container.get<Proxy>(Proxy);
+    const proxy = Container.get<Proxy>(Proxy);
 
     controller.record.saveRecords(request);
-    proxyInstance.httpHandler(request, response);
+    proxy.httpHandler(request, response);
   }
 }

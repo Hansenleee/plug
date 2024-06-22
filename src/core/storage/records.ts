@@ -5,7 +5,11 @@ import { BaseStorage } from './base';
 export class RecordsStorage extends BaseStorage {
   static readonly RECORD_MEMORY_KEY = 'RECORD_MEMORY_KEY';
 
-  storeRecord(record) {
-    this.memoryAppend(RecordsStorage.RECORD_MEMORY_KEY, record);
+  storeRecord(record: { url: string }) {
+    this.appendMemory(RecordsStorage.RECORD_MEMORY_KEY, record);
+  }
+
+  getRecords() {
+    return this.getMemory(RecordsStorage.RECORD_MEMORY_KEY);
   }
 }

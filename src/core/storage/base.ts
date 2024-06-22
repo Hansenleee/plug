@@ -7,7 +7,7 @@ export class BaseStorage {
 
   private memory: Record<string, any> = {};
 
-  protected memoryAppend<T = any>(key: string, ...values: T[]) {
+  protected appendMemory<T = any>(key: string, ...values: T[]) {
     if (!this.memory[key]) {
       this.memory[key] = [];
     }
@@ -15,7 +15,7 @@ export class BaseStorage {
     this.memory[key] = this.memory[key].concat(values || []);
   }
 
-  protected memoryFetch<T = any>(key: string) {
+  protected getMemory<T = any>(key: string) {
     return this.memory[key] as T;
   }
 }

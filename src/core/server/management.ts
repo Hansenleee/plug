@@ -50,6 +50,6 @@ export class ManagementServer {
   private registerRouter() {
     const controller = Container.get<Controller>(Controller);
 
-    this.router.get('/api/records', controller.record.getRecords);
+    this.router.get('/api/records', controller.record.getRecords.bind(controller.record));
   }
 }
