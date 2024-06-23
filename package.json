@@ -1,5 +1,5 @@
 {
-  "name": "plug-cli",
+  "name": "plug-core",
   "version": "0.0.1-beta.0",
   "description": "An http proxy tool",
   "type": "module",
@@ -10,10 +10,11 @@
     "ui/build"
   ],
   "scripts": {
-    "dev": "npx rollup -c -w",
+    "dev": "cross-env NODE_ENV=dev rollup -c -w",
+    "build": "cross-env NODE_ENV=prod rollup -c",
+    "build:analyze": "cross-env NODE_ENV=prod BUILD_ANALYZE=true rollup -c",
     "start:ui": "cd src/ui && yarn start",
     "build:ui": "cd src/ui && yarn build",
-    "build": "npx rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
@@ -42,6 +43,7 @@
     "@types/http-proxy": "^1.17.14",
     "@types/koa__router": "^12.0.4",
     "@types/node": "^20.12.12",
+    "cross-env": "6.0.3",
     "eslint": "^8.3.0",
     "eslint-config-ali": "^15.0.1",
     "eslint-config-prettier": "^8.5.0",
@@ -49,6 +51,7 @@
     "prettier": "~2.8.7",
     "rollup": "^4.17.2",
     "rollup-plugin-typescript2": "^0.36.0",
+    "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.4.5"
   },
   "dependencies": {
