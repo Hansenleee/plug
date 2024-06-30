@@ -1,6 +1,7 @@
 import Container, { Service } from 'typedi';
 import http from 'http';
-import { Proxy } from '../proxy';
+import net from 'net';
+import { ProxyRequest } from '../proxy';
 import { Controller } from '../controller';
 import { Logger } from '../shared/log';
 import { Configuration } from '../../configuration';
@@ -12,7 +13,7 @@ export class Http {
   httpServer: http.Server = new http.Server(this.requestHandler);
 
   start() {
-    this.httpServer.on('connect', () => {});
+    this.httpServer.on('connect', () => this.connectHanlder);
 
     this.httpServer.on('close', () => {
       logger.info(`http server closed`);
@@ -29,9 +30,11 @@ export class Http {
 
   private requestHandler(request: http.IncomingMessage, response: http.ServerResponse) {
     const controller = Container.get<Controller>(Controller);
-    const proxy = Container.get<Proxy>(Proxy);
+    const proxyRequest = Container.get<ProxyRequest>(ProxyRequest);
 
     controller.record.saveRecords(request);
-    proxy.httpHandler(request, response);
+    proxyRequest.handle(request, response);
   }
+
+  private connectHanlder() {}
 }
