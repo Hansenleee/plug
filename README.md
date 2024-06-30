@@ -1,2 +1,2 @@
 # plug
-An http proxy Tools
+An http/https proxy Tools
