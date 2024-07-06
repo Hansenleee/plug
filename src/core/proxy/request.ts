@@ -1,32 +1,54 @@
 import { Service } from 'typedi';
 import http from 'http';
 import https from 'https';
-import url from 'url';
+import { URL } from 'url';
 import { Logger } from '../shared/log';
 
 const log = new Logger('proxy-request');
 
 @Service()
 export class ProxyRequest {
-  handle(request: http.IncomingMessage, response: http.ServerResponse) {
-    const { hostname, port, path, protocol } = url.parse(request.url);
-    const requestClient = protocol.startsWith('https') ? https : http;
+  httpHandler(request: http.IncomingMessage, response: http.ServerResponse) {
+    const { hostname, port, pathname, protocol } = new URL(request.url);
+
+    return this.handle(request, response, {
+      hostname,
+      port,
+      path: pathname,
+      method: request.method,
+      protocol,
+      headers: request.headers,
+    });
+  }
+
+  httpsHandler(request: http.IncomingMessage, response: http.ServerResponse) {
+    // const { pathname } = new URL(request.url);
+    const { host } = request.headers;
+    const [hostname, port = 443] = host.split(':');
+
+    return this.handle(request, response, {
+      hostname,
+      port,
+      path: request.url,
+      method: request.method,
+      protocol: 'https:',
+      headers: request.headers,
+    });
+  }
+
+  private handle(
+    request: http.IncomingMessage,
+    response: http.ServerResponse,
+    options: http.RequestOptions
+  ) {
+    const requestClient = options.protocol.startsWith('https') ? https : http;
 
     log.info(`代理到源请求地址: ${request.url}`);
 
-    const proxyToOriginRequest = requestClient.request(
-      {
-        hostname,
-        port,
-        path,
-        method: request.method,
-        headers: request.headers,
-      },
-      (proxyRes) => {
-        response.writeHead(proxyRes.statusCode, proxyRes.headers);
-        proxyRes.pipe(response);
-      }
-    );
+    const proxyToOriginRequest = requestClient.request(options, (proxyRes) => {
+      response.writeHead(proxyRes.statusCode, proxyRes.headers);
+      proxyRes.pipe(response);
+    });
 
     request.pipe(proxyToOriginRequest);
 

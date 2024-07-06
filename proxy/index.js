@@ -5,7 +5,7 @@ import createFakeHttpsWebSite from './createFakeHttpsWebSite.js';
 
 let httpTunnel = new http.Server();
 // 启动端口
-let port = 6789;
+let port = 8001;
 httpTunnel.listen(port, () => {
     console.log(`简易HTTPS中间人代理启动成功，端口：${port}`);
 });

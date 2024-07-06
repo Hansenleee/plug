@@ -24,7 +24,8 @@ interface CertOption {
 
 @Service()
 export class Certificat {
-  static readonly BASE_DIR = path.join(process.cwd(), 'resource', 'certificat');
+  static readonly BASE_HTTPS_DOMAIN = 'BASE_HTTPS_DOMAIN';
+  static readonly BASE_DIR = path.join(process.cwd(), 'resources', 'certificat');
 
   private get crtPath() {
     return path.join(Certificat.BASE_DIR, 'my.crt');
@@ -50,7 +51,21 @@ export class Certificat {
       notBeforeYear: 5,
       notAfterYear: 20,
       domain: 'plug-proxy',
-      extensions: [],
+      extensions: [
+        {
+          name: 'basicConstraints',
+          critical: true,
+          cA: true,
+        },
+        {
+          name: 'keyUsage',
+          critical: true,
+          keyCertSign: true,
+        },
+        {
+          name: 'subjectKeyIdentifier',
+        },
+      ],
     });
 
     fs.writeFileSync(this.crtPath, cert);
@@ -58,15 +73,80 @@ export class Certificat {
     log.info('根证书创建完成');
   }
 
-  createCertificatByDomain() {}
+  createCertificatByDomain(domain: string) {
+    const rootCert = this.getRootCert();
+
+    return this.createCert({
+      notBeforeYear: 1,
+      notAfterYear: 1,
+      domain,
+      extensions: [
+        {
+          name: 'basicConstraints',
+          critical: true,
+          cA: false,
+        },
+        {
+          name: 'keyUsage',
+          critical: true,
+          digitalSignature: true,
+          contentCommitment: true,
+          keyEncipherment: true,
+          dataEncipherment: true,
+          keyAgreement: true,
+          keyCertSign: true,
+          cRLSign: true,
+          encipherOnly: true,
+          decipherOnly: true,
+        },
+        {
+          name: 'subjectAltName',
+          altNames: [
+            {
+              type: 2,
+              value: domain,
+            },
+          ],
+        },
+        {
+          name: 'subjectKeyIdentifier',
+        },
+        {
+          name: 'extKeyUsage',
+          serverAuth: true,
+          clientAuth: true,
+          codeSigning: true,
+          emailProtection: true,
+          timeStamping: true,
+        },
+        {
+          name: 'authorityKeyIdentifier',
+        },
+      ],
+      rootKey: rootCert.key,
+      rootCert: rootCert.cert,
+    });
+  }
 
   private getRootCert() {
     if (this.cache.get(ROOT_CERT_KEY)) {
       return this.cache.get(ROOT_CERT_KEY);
     }
 
-    const rootCert = fs.readFileSync(this.crtPath);
-    const rootKey = fs.readFileSync(this.keyPath);
+    const rootCertFile = fs.readFileSync(this.crtPath);
+    const rootKeyFile = fs.readFileSync(this.keyPath);
+
+    const rootCert = forge.pki.certificateFromPem(rootCertFile as unknown as string);
+    const rootKey = forge.pki.privateKeyFromPem(rootKeyFile as unknown as string);
+
+    const rootCertInfo: CertInfo = {
+      cert: rootCert,
+      key: rootKey,
+    };
+
+    this.cache.set(ROOT_CERT_KEY, rootCertInfo);
+
+    return rootCertInfo;
   }
 
   private createCert(option: CertOption) {
