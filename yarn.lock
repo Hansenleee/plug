@@ -3658,6 +3658,10 @@ util-deprecate@^1.0.2:
   version "1.0.2"
   resolved "https://registry.npmmirror.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
 
+v1@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmmirror.com/v1/-/v1-1.0.0.tgz#8b594fd16796b633b62f95e8c75f826c18315d98"
+
 vary@^1.1.2:
   version "1.1.2"
   resolved "https://registry.npmmirror.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
