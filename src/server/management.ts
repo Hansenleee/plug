@@ -5,7 +5,7 @@ import staticServer from 'koa-static';
 import views from '@ladjs/koa-views';
 import path from 'path';
 import { Logger } from '../shared/log';
-import { Configuration } from '../../configuration';
+import { Configuration } from '../configuration';
 import { Controller } from '../controller';
 
 const logger = new Logger('management');

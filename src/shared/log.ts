@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { Configuration } from '../../configuration';
+import { Configuration } from '../configuration';
 
 interface BaseOption {
   force?: boolean;

@@ -4,6 +4,7 @@ import { Https } from './server/https';
 import { BaseStorage } from './storage';
 import { ManagementServer } from './server/management';
 import { Certificat } from './shared/certificat';
+import { Guardian } from './guardian';
 
 @Service()
 export class CoreApp {
@@ -16,7 +17,11 @@ export class CoreApp {
   @Inject()
   managementServer: ManagementServer;
 
+  @Inject()
+  guards: Guardian;
+
   start() {
+    this.guards.start();
     this.http.start();
     this.https.start();
     this.managementServer.start();

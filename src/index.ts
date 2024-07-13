@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Container } from 'typedi';
-import { CoreApp } from './core';
+import { CoreApp } from './app';
 import { Configuration } from './configuration';
 
 export const start = (option) => {

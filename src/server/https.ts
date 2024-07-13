@@ -6,7 +6,7 @@ import { ProxyRequest } from '../proxy';
 import { Logger } from '../shared/log';
 import { Controller } from '../controller';
 import { Certificat } from '../shared/certificat';
-import { Configuration } from '../../configuration';
+import { Configuration } from '../configuration';
 
 const logger = new Logger('https');
 

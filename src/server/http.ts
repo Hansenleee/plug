@@ -4,7 +4,7 @@ import net from 'net';
 import { ProxyRequest } from '../proxy';
 import { Controller } from '../controller';
 import { Logger } from '../shared/log';
-import { Configuration } from '../../configuration';
+import { Configuration } from '../configuration';
 
 const logger = new Logger('http');
 

@@ -22,7 +22,6 @@ export class ProxyRequest {
   }
 
   httpsHandler(request: http.IncomingMessage, response: http.ServerResponse) {
-    // const { pathname } = new URL(request.url);
     const { host } = request.headers;
     const [hostname, port = 443] = host.split(':');
 
@@ -43,7 +42,7 @@ export class ProxyRequest {
   ) {
     const requestClient = options.protocol.startsWith('https') ? https : http;
 
-    log.info(`代理到源请求地址: ${request.url}`);
+    log.info(`请求[${options.protocol}] ${request.url} 准备代理到原地址`);
 
     const proxyToOriginRequest = requestClient.request(options, (proxyRes) => {
       response.writeHead(proxyRes.statusCode, proxyRes.headers);
