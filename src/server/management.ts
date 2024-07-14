@@ -4,7 +4,9 @@ import Router from '@koa/router';
 import staticServer from 'koa-static';
 import views from '@ladjs/koa-views';
 import path from 'path';
+import { createServer } from 'http';
 import { Logger } from '../shared/log';
+import { SocketIO } from '../shared/socket';
 import { Configuration } from '../configuration';
 import { Controller } from '../controller';
 
@@ -21,7 +23,13 @@ export class ManagementServer {
     this.registerRouter();
 
     this.app.use(this.router.routes()).use(this.router.allowedMethods());
-    this.app.listen(Configuration.MANAGEMENT_PORT, () => {
+
+    const server = createServer(this.app.callback());
+    const socketIO = Container.get(SocketIO);
+
+    socketIO.start(server);
+
+    server.listen(Configuration.MANAGEMENT_PORT, () => {
       logger.info(`management server start at ${Configuration.MANAGEMENT_PORT}`);
     });
   }

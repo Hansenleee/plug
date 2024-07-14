@@ -6,7 +6,9 @@ interface InintOption {
 export class Configuration {
   static PROXY_PORT = 8001;
   static HTTPS_PROXY_PORT = 8090;
+
   static MANAGEMENT_PORT = 9001;
+  static MANAGEMENT_WEBPACK_DEV_PORT = 3000;
 
   static PROXY_HOST = '127.0.0.1';
 

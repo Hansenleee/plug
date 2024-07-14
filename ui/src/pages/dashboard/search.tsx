@@ -15,12 +15,7 @@ export const Search: React.FC = () => {
 
   return (
     <Space style={{ marginBottom: 20 }}>
-      <Input.Search
-        placeholder=""
-        onSearch={() => {}}
-        size="large"
-        style={{ width: 30011111111111111111111111111111111111111111111111111111111111111 }}
-      />
+      <Input.Search placeholder="" onSearch={() => {}} size="large" style={{ width: 300 }} />
       {isStart ? (
         <Button type="primary" danger icon={<PauseOutlined />} size="large" onClick={handlePause}>
           暂停

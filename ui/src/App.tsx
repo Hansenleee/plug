@@ -21,10 +21,17 @@ export const App: React.FC = () => {
     <Layout className="app-container">
       <Header style={{ display: 'flex', alignItems: 'center', background: '#fff' }}>
         <div className="header-logo">
-          <Image height={32} src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" />
+          <Image
+            height={32}
+            src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
+          />
           <Typography.Text className="header-title">Plug Proxy</Typography.Text>
         </div>
-        <Menu mode="horizontal" items={ITEMS} style={{ flex: 1, minWidth: 0, flexDirection: 'row-reverse', border: 0 }} />
+        <Menu
+          mode="horizontal"
+          items={ITEMS}
+          style={{ flex: 1, minWidth: 0, flexDirection: 'row-reverse', border: 0 }}
+        />
       </Header>
       <Content>
         <div className="content-body">
@@ -33,4 +40,4 @@ export const App: React.FC = () => {
       </Content>
     </Layout>
   );
-}
+};

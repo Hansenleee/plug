@@ -1,15 +1,14 @@
-import Container, { Service } from 'typedi';
+import { Service } from 'typedi';
 import http from 'http';
 import net from 'net';
-import { ProxyRequest } from '../proxy';
-import { Controller } from '../controller';
+import { BaseServer } from './base';
 import { Logger } from '../shared/log';
 import { Configuration } from '../configuration';
 
 const logger = new Logger('http');
 
 @Service()
-export class Http {
+export class Http extends BaseServer {
   server: http.Server = new http.Server();
 
   start() {
@@ -21,14 +20,6 @@ export class Http {
     this.server.listen(Configuration.PROXY_PORT, () => {
       logger.info(`http server start at ${Configuration.PROXY_PORT}`);
     });
-  }
-
-  private requestHandler(request: http.IncomingMessage, response: http.ServerResponse) {
-    const controller = Container.get<Controller>(Controller);
-    const proxyRequest = Container.get<ProxyRequest>(ProxyRequest);
-
-    controller.record.saveRecords(request);
-    proxyRequest.httpHandler(request, response);
   }
 
   private connectHanlder(request: http.IncomingMessage, socket: net.Socket, head: Buffer) {

@@ -44,15 +44,21 @@ export class ProxyRequest {
 
     log.info(`请求[${options.protocol}] ${request.url} 准备代理到原地址`);
 
-    const proxyToOriginRequest = requestClient.request(options, (proxyRes) => {
-      response.writeHead(proxyRes.statusCode, proxyRes.headers);
-      proxyRes.pipe(response);
-    });
+    return new Promise<http.IncomingMessage>((resolve) => {
+      const proxyToOriginRequest = requestClient.request(options, (proxyResult) => {
+        response.writeHead(proxyResult.statusCode, proxyResult.headers);
+        proxyResult.pipe(response);
 
-    request.pipe(proxyToOriginRequest);
+        proxyResult.on('end', () => {
+          resolve(proxyResult);
+        });
+      });
 
-    proxyToOriginRequest.on('error', (error) => {
-      log.info(`代理请求转发异常: ${error.message}`);
+      request.pipe(proxyToOriginRequest);
+
+      proxyToOriginRequest.on('error', (error) => {
+        log.info(`代理请求转发异常: ${error.message}`);
+      });
     });
   }
 }

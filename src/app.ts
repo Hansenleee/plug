@@ -30,7 +30,5 @@ export class CoreApp {
 
     BaseStorage.init();
     certificat.initBaseCertificat();
-
-    return { var: '11111111111111111111111111111111111111111111111111111111111111111111111111111111111'}
   }
 }
