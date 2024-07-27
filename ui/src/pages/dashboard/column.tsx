@@ -9,8 +9,8 @@ export const columns: TableProps['columns'] = [
     width: 80,
     fixed: 'left',
     render: (status) => {
-      if (!status) {
-        <Badge className="column-badge" status="processing" size="default" />;
+      if (status === 'pending') {
+        return <Badge className="column-badge" status="processing" size="default" text="pending" />;
       }
 
       if (status === 200) {
@@ -23,7 +23,7 @@ export const columns: TableProps['columns'] = [
   {
     title: 'URL',
     dataIndex: 'url',
-    width: 200,
+    width: 350,
     render: (url) => {
       return url;
     },
@@ -31,7 +31,7 @@ export const columns: TableProps['columns'] = [
   {
     title: 'Type',
     dataIndex: 'type',
-    width: 80,
+    width: 100,
   },
   {
     title: 'Method',
@@ -57,7 +57,7 @@ export const columns: TableProps['columns'] = [
         return null;
       }
 
-      return `${moment(startTime).diff(moment(endTime), 'ms')} ms`;
+      return `${moment(endTime).diff(moment(startTime), 'ms')} ms`;
     },
   },
   {

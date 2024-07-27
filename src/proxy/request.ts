@@ -58,6 +58,14 @@ export class ProxyRequest {
 
       proxyToOriginRequest.on('error', (error) => {
         log.info(`代理请求转发异常: ${error.message}`);
+        resolve({
+          statusCode: 408,
+          headers: {
+            date: '',
+            'content-length': '',
+            'content-type': '',
+          },
+        } as unknown as http.IncomingMessage);
       });
     });
   }

@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { Input, Space, Button } from 'antd';
 import { PauseOutlined, ClearOutlined, CaretRightOutlined } from '@ant-design/icons';
 
-export const Search: React.FC = () => {
+interface Props {
+  onClear: () => void;
+}
+
+export const Search: React.FC<Props> = (props) => {
   const [isStart, setIsStart] = useState(true);
 
   const handlePause = () => {
@@ -25,7 +29,7 @@ export const Search: React.FC = () => {
           开始
         </Button>
       )}
-      <Button icon={<ClearOutlined />} size="large">
+      <Button icon={<ClearOutlined />} size="large" onClick={props.onClear}>
         清空
       </Button>
     </Space>

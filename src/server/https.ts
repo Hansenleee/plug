@@ -2,15 +2,16 @@ import https from 'https';
 import tls from 'tls';
 import { Service, Container } from 'typedi';
 import { BaseServer } from './base';
-import { Logger } from '../shared/log';
 import { Certificat } from '../shared/certificat';
 import { Configuration } from '../configuration';
-
-const logger = new Logger('https');
 
 @Service()
 export class Https extends BaseServer {
   server: https.Server;
+
+  constructor() {
+    super('https');
+  }
 
   start() {
     this.createSecureServer();
@@ -42,15 +43,7 @@ export class Https extends BaseServer {
     this.server.on('error', this.errorHandler.bind(this));
 
     this.server.listen(Configuration.HTTPS_PROXY_PORT, () => {
-      logger.info(`https server start at ${Configuration.HTTPS_PROXY_PORT}`);
+      this.logger.info(`https server start at ${Configuration.HTTPS_PROXY_PORT}`);
     });
-  }
-
-  private closeHandler() {
-    logger.info(`https server closed`);
-  }
-
-  private errorHandler(error) {
-    logger.info(`https server error occured: ${error.message}`);
   }
 }

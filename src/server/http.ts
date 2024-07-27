@@ -2,14 +2,15 @@ import { Service } from 'typedi';
 import http from 'http';
 import net from 'net';
 import { BaseServer } from './base';
-import { Logger } from '../shared/log';
 import { Configuration } from '../configuration';
-
-const logger = new Logger('http');
 
 @Service()
 export class Http extends BaseServer {
   server: http.Server = new http.Server();
+
+  constructor() {
+    super('http');
+  }
 
   start() {
     this.server.on('request', this.requestHandler.bind(this));
@@ -18,7 +19,7 @@ export class Http extends BaseServer {
     this.server.on('error', this.errorHandler.bind(this));
 
     this.server.listen(Configuration.PROXY_PORT, () => {
-      logger.info(`http server start at ${Configuration.PROXY_PORT}`);
+      this.logger.info(`http server start at ${Configuration.PROXY_PORT}`);
     });
   }
 
@@ -26,7 +27,7 @@ export class Http extends BaseServer {
     const port = request.url.split(':')?.[1];
 
     if (+port !== 443) {
-      logger.warn(`请求 ${request.url} 对应的端口 ${port} 非 443，异常！`);
+      this.logger.warn(`请求 ${request.url} 对应的端口 ${port} 非 443，异常！`);
 
       return;
     }
@@ -37,7 +38,7 @@ export class Http extends BaseServer {
       () => {
         socket.write(`HTTP/${request.httpVersion} 200 OK\r\n\r\n`, 'utf-8', (err) => {
           if (err) {
-            logger.warn(`connect error ${err.message}`);
+            this.logger.warn(`connect error ${err.message}`);
 
             return;
           }
@@ -48,13 +49,5 @@ export class Http extends BaseServer {
         });
       }
     );
-  }
-
-  private closeHandler() {
-    logger.info(`http server closed`);
-  }
-
-  private errorHandler(error) {
-    logger.info(`http server error occured: ${error.message}`);
   }
 }

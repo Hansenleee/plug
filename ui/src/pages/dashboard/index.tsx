@@ -4,25 +4,12 @@ import { useMount, useUnmount } from 'ahooks';
 import { io, Socket } from 'socket.io-client';
 import { columns } from './column';
 import { Search } from './search';
+import { Detail } from './detail';
 import './style.scss';
-
-// const DEMO = [
-//   {
-//     id: '1',
-//     url: 'https://minyi.zjzwfw.gov.cn/dczjnewls/dczj/survey/form_3022.html',
-//     method: 'POST',
-//     status: '200',
-//     type: 'XHR',
-//     start: '12:10:11.888',
-//     duration: '0.8s',
-//     size: '0.5kb',
-//   },
-// ];
-
-// export const aa = { result: '11111111111111111111111111111111111111111111111111111111111111111111111111' };
 
 const Dashbord: React.FC = () => {
   const [records, setRecords] = useState<Array<Record<string, string>>>([]);
+  const [activeRecord, setActiveRecord] = useState<Record<string, string> | undefined>();
   const socketRef = useRef<Socket>();
 
   useMount(() => {
@@ -34,7 +21,7 @@ const Dashbord: React.FC = () => {
         const payloadList = Array.isArray(payload) ? payload : [payload];
 
         if (args.name === 'PROXY_REQUEST_RECORD') {
-          setRecords((pre) => [...pre, ...payloadList]);
+          setRecords((pre) => [...payloadList, ...pre]);
         }
 
         if (args.name === 'PROXY_RESPONSE_RECORD') {
@@ -67,8 +54,25 @@ const Dashbord: React.FC = () => {
 
   return (
     <div>
-      <Search />
-      <Table pagination={false} rowKey="id" columns={columns} dataSource={records} />
+      <Search onClear={() => setRecords([])} />
+      <Table
+        pagination={false}
+        bordered
+        rowKey="id"
+        columns={columns}
+        dataSource={records}
+        scroll={{ x: '100%' }}
+        onRow={(record) => {
+          return {
+            onClick: () => setActiveRecord(record),
+          };
+        }}
+      />
+      <Detail
+        visible={!!activeRecord}
+        record={activeRecord}
+        onClose={() => setActiveRecord(undefined)}
+      />
     </div>
   );
 };
