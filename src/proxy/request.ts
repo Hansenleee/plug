@@ -3,6 +3,7 @@ import http from 'http';
 import https from 'https';
 import { URL } from 'url';
 import { Logger } from '../shared/log';
+import { getResponseData } from '../shared/request-meta';
 
 const log = new Logger('proxy-request');
 
@@ -39,18 +40,26 @@ export class ProxyRequest {
     request: http.IncomingMessage,
     response: http.ServerResponse,
     options: http.RequestOptions
-  ) {
+  ): Promise<{
+    response: http.IncomingMessage;
+    data: string;
+  }> {
     const requestClient = options.protocol.startsWith('https') ? https : http;
 
     log.info(`请求[${options.protocol}] ${request.url} 准备代理到原地址`);
 
-    return new Promise<http.IncomingMessage>((resolve) => {
-      const proxyToOriginRequest = requestClient.request(options, (proxyResult) => {
+    return new Promise((resolve) => {
+      const proxyToOriginRequest = requestClient.request(options, async (proxyResult) => {
         response.writeHead(proxyResult.statusCode, proxyResult.headers);
         proxyResult.pipe(response);
 
-        proxyResult.on('end', () => {
-          resolve(proxyResult);
+        const responseMessage = getResponseData(proxyResult);
+
+        responseMessage.response.on('end', () => {
+          resolve({
+            response: proxyResult,
+            data: responseMessage.getData(),
+          });
         });
       });
 
@@ -59,13 +68,16 @@ export class ProxyRequest {
       proxyToOriginRequest.on('error', (error) => {
         log.info(`代理请求转发异常: ${error.message}`);
         resolve({
-          statusCode: 408,
-          headers: {
-            date: '',
-            'content-length': '',
-            'content-type': '',
-          },
-        } as unknown as http.IncomingMessage);
+          response: {
+            statusCode: 408,
+            headers: {
+              date: '',
+              'content-length': '',
+              'content-type': '',
+            },
+          } as unknown as http.IncomingMessage,
+          data: '',
+        });
       });
     });
   }

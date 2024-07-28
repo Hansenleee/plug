@@ -13,18 +13,21 @@ export class BaseServer {
     this.logger = new Logger(this.protocol);
   }
 
-  protected requestHandler(request: http.IncomingMessage, response: http.ServerResponse) {
+  protected async requestHandler(request: http.IncomingMessage, response: http.ServerResponse) {
     const controller = Container.get<Controller>(Controller);
     const proxyRequest = Container.get<ProxyRequest>(ProxyRequest);
-    const requestId = controller.record.saveRequestRecords(request, this.protocol);
+    const requestId = await controller.record.saveRequestRecords(request, this.protocol);
 
     const proxyHandler =
       this.protocol === 'http'
         ? proxyRequest.httpHandler.bind(proxyRequest)
         : proxyRequest.httpsHandler.bind(proxyRequest);
 
-    return proxyHandler(request, response).then((proxyResult) => {
-      controller.record.saveResponseRecords(proxyResult, requestId);
+    const { response: proxyResult, data: responseData } = await proxyHandler(request, response);
+
+    return controller.record.saveResponseRecords(proxyResult, {
+      requestId,
+      responseData,
     });
   }
 

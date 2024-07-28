@@ -53,7 +53,7 @@ const Dashbord: React.FC = () => {
   });
 
   return (
-    <div>
+    <div className="dashboard-container">
       <Search onClear={() => setRecords([])} />
       <Table
         pagination={false}
@@ -62,6 +62,7 @@ const Dashbord: React.FC = () => {
         columns={columns}
         dataSource={records}
         scroll={{ x: '100%' }}
+        sticky
         onRow={(record) => {
           return {
             onClick: () => setActiveRecord(record),

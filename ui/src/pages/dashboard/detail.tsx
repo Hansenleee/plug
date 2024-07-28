@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { Drawer, Tabs, Descriptions } from 'antd';
+import { Drawer, Tabs, Descriptions, Divider } from 'antd';
+import { StatusComponent } from './status';
 
 interface Props {
   visible: boolean;
@@ -8,8 +9,25 @@ interface Props {
 }
 
 export const Detail: React.FC<Props> = (props) => {
+  const formatJsonResponse = useMemo(() => {
+    const { responseData = '' } = props.record || {};
+
+    try {
+      return JSON.stringify(JSON.parse(responseData), null, '  ');
+    } catch (err) {
+      return responseData;
+    }
+  }, [props.record]);
+
   const items = useMemo(() => {
-    const { requestHeaders = {}, responseHeader = {} } = props.record || {};
+    const {
+      requestHeaders = {},
+      responseHeader = {},
+      url,
+      method,
+      status,
+      params = {},
+    } = props.record || {};
     const requestHeaderItems = Object.entries(requestHeaders).map(([key, value]) => ({
       label: key,
       children: value as any,
@@ -24,18 +42,47 @@ export const Detail: React.FC<Props> = (props) => {
         label: 'Request',
         key: 'Request',
         children: (
-          <Descriptions column={1} labelStyle={{ width: 250 }} items={requestHeaderItems} />
+          <>
+            <Descriptions
+              column={1}
+              labelStyle={{ width: 250 }}
+              items={[
+                {
+                  label: 'request-url',
+                  children: url,
+                },
+                {
+                  label: 'method',
+                  children: method,
+                },
+                {
+                  label: 'status',
+                  children: <StatusComponent status={status} />,
+                },
+                {
+                  label: 'params',
+                  children: JSON.stringify(params),
+                },
+              ]}
+            />
+            <Divider />
+            <Descriptions column={1} labelStyle={{ width: 250 }} items={requestHeaderItems} />
+          </>
         ),
       },
       {
         label: 'Response',
         key: 'Response',
         children: (
-          <Descriptions column={1} labelStyle={{ width: 250 }} items={responseHeaderItems} />
+          <>
+            <Descriptions column={1} labelStyle={{ width: 250 }} items={responseHeaderItems} />
+            <Divider>Body</Divider>
+            <pre style={{ overflow: 'auto' }}>{formatJsonResponse}</pre>
+          </>
         ),
       },
     ];
-  }, [props.record]);
+  }, [formatJsonResponse, props.record]);
 
   return (
     <Drawer

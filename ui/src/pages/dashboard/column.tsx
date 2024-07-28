@@ -1,23 +1,15 @@
-import { Badge } from 'antd';
 import type { TableProps } from 'antd';
 import moment from 'moment';
+import { StatusComponent } from './status';
 
 export const columns: TableProps['columns'] = [
   {
     title: 'Status',
     dataIndex: 'status',
-    width: 80,
+    width: 120,
     fixed: 'left',
     render: (status) => {
-      if (status === 'pending') {
-        return <Badge className="column-badge" status="processing" size="default" text="pending" />;
-      }
-
-      if (status === 200) {
-        return <Badge className="column-badge" status="success" size="default" text="200" />;
-      }
-
-      return <Badge className="column-badge" status="error" size="default" text={status} />;
+      return <StatusComponent status={status} />;
     },
   },
   {
@@ -31,12 +23,12 @@ export const columns: TableProps['columns'] = [
   {
     title: 'Type',
     dataIndex: 'type',
-    width: 100,
+    width: 140,
   },
   {
     title: 'Method',
     dataIndex: 'method',
-    width: 80,
+    width: 90,
   },
   {
     title: 'Start',
@@ -49,7 +41,7 @@ export const columns: TableProps['columns'] = [
   {
     title: 'Duration',
     dataIndex: 'duration',
-    width: 80,
+    width: 120,
     render: (_, record) => {
       const { startTime, endTime } = record;
 

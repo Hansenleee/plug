@@ -7,5 +7,16 @@
 
 .ant-tabs-content-holder {
   flex: 1;
-  overflow: hidden;
+  overflow: auto;
+}
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  & > .ant-table-wrapper {
+    flex: 1;
+    overflow: auto;
+  }
 }
