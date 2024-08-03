@@ -9,16 +9,16 @@ import { Guardian } from './guardian';
 @Service()
 export class CoreApp {
   @Inject()
-  http: Http;
+  private http: Http;
 
   @Inject()
-  https: Https;
+  private https: Https;
 
   @Inject()
-  managementServer: ManagementServer;
+  private managementServer: ManagementServer;
 
   @Inject()
-  guards: Guardian;
+  private guards: Guardian;
 
   start() {
     this.guards.start();

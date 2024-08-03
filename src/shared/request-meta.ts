@@ -2,6 +2,7 @@ import http from 'http';
 import { URL } from 'url';
 import qs from 'querystring';
 import zlib from 'zlib';
+import { ResponseDataInfo } from '../types';
 
 export const getContentType = (contentType: string) => {
   return contentType?.split(';')?.[0];
@@ -45,5 +46,17 @@ export const getResponseData = (response: http.IncomingMessage) => {
   return {
     getData: () => responseData,
     response: totalResponse,
+  };
+};
+
+export const getErrorResponseDataInfo = (): ResponseDataInfo => {
+  return {
+    statusCode: 408,
+    headers: {
+      date: '',
+      'content-length': '',
+      'content-type': '',
+    },
+    data: '',
   };
 };

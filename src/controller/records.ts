@@ -5,7 +5,7 @@ import type { Context } from 'koa';
 import { URL } from 'url';
 import { BaseController } from './base';
 import { RecordsStorage } from '../storage';
-import { Protocol } from '../types';
+import { Protocol, ResponseDataInfo } from '../types';
 import { SocketIO } from '../shared/socket';
 import { getContentType, getRequestParams } from '../shared/request-meta';
 
@@ -31,7 +31,7 @@ export class RecordController extends BaseController {
     return id;
   }
 
-  saveResponseRecords(response: http.IncomingMessage, { requestId, responseData }) {
+  saveResponseRecords(response: ResponseDataInfo, { requestId }) {
     if (!requestId) {
       return;
     }
@@ -43,9 +43,9 @@ export class RecordController extends BaseController {
       status: response.statusCode,
       endTime: Date.now(),
       size: response.headers['content-length'],
-      type: getContentType(response.headers['content-type']),
+      type: getContentType(response.headers['content-type'] as string),
       responseHeader: response.headers,
-      responseData,
+      responseData: response.data,
     });
   }
 

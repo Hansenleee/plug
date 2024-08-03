@@ -1,7 +1,7 @@
 import { Container, Service } from 'typedi';
 import http from 'http';
 import { Controller } from '../controller';
-import { ProxyRequest } from '../proxy';
+import { Proxy } from '../proxy';
 import { Logger } from '../shared/log';
 import { Protocol } from '../types';
 
@@ -15,19 +15,13 @@ export class BaseServer {
 
   protected async requestHandler(request: http.IncomingMessage, response: http.ServerResponse) {
     const controller = Container.get<Controller>(Controller);
-    const proxyRequest = Container.get<ProxyRequest>(ProxyRequest);
+    const proxy = Container.get<Proxy>(Proxy);
     const requestId = await controller.record.saveRequestRecords(request, this.protocol);
 
-    const proxyHandler =
-      this.protocol === 'http'
-        ? proxyRequest.httpHandler.bind(proxyRequest)
-        : proxyRequest.httpsHandler.bind(proxyRequest);
+    const proxyResponseData = await proxy.proxy(request, response, this.protocol);
 
-    const { response: proxyResult, data: responseData } = await proxyHandler(request, response);
-
-    return controller.record.saveResponseRecords(proxyResult, {
+    return controller.record.saveResponseRecords(proxyResponseData, {
       requestId,
-      responseData,
     });
   }
 

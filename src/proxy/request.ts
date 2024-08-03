@@ -3,16 +3,25 @@ import http from 'http';
 import https from 'https';
 import { URL } from 'url';
 import { Logger } from '../shared/log';
-import { getResponseData } from '../shared/request-meta';
+import { ResponseDataInfo, Protocol } from '../types';
+import { getResponseData, getErrorResponseDataInfo } from '../shared/request-meta';
 
 const log = new Logger('proxy-request');
 
 @Service()
-export class ProxyRequest {
-  httpHandler(request: http.IncomingMessage, response: http.ServerResponse) {
+export class Request {
+  request(request: http.IncomingMessage, response: http.ServerResponse, protocol: Protocol) {
+    if (protocol === 'http') {
+      return this.http(request, response);
+    }
+
+    return this.https(request, response);
+  }
+
+  private http(request: http.IncomingMessage, response: http.ServerResponse) {
     const { hostname, port, pathname, protocol } = new URL(request.url);
 
-    return this.handle(request, response, {
+    return this.baseHandler(request, response, {
       hostname,
       port,
       path: pathname,
@@ -22,11 +31,11 @@ export class ProxyRequest {
     });
   }
 
-  httpsHandler(request: http.IncomingMessage, response: http.ServerResponse) {
+  private https(request: http.IncomingMessage, response: http.ServerResponse) {
     const { host } = request.headers;
     const [hostname, port = 443] = host.split(':');
 
-    return this.handle(request, response, {
+    return this.baseHandler(request, response, {
       hostname,
       port,
       path: request.url,
@@ -36,14 +45,11 @@ export class ProxyRequest {
     });
   }
 
-  private handle(
+  private baseHandler(
     request: http.IncomingMessage,
     response: http.ServerResponse,
     options: http.RequestOptions
-  ): Promise<{
-    response: http.IncomingMessage;
-    data: string;
-  }> {
+  ): Promise<ResponseDataInfo> {
     const requestClient = options.protocol.startsWith('https') ? https : http;
 
     log.info(`请求[${options.protocol}] ${request.url} 准备代理到原地址`);
@@ -57,7 +63,8 @@ export class ProxyRequest {
 
         responseMessage.response.on('end', () => {
           resolve({
-            response: proxyResult,
+            statusCode: proxyResult.statusCode,
+            headers: proxyResult.headers,
             data: responseMessage.getData(),
           });
         });
@@ -67,17 +74,7 @@ export class ProxyRequest {
 
       proxyToOriginRequest.on('error', (error) => {
         log.info(`代理请求转发异常: ${error.message}`);
-        resolve({
-          response: {
-            statusCode: 408,
-            headers: {
-              date: '',
-              'content-length': '',
-              'content-type': '',
-            },
-          } as unknown as http.IncomingMessage,
-          data: '',
-        });
+        resolve(getErrorResponseDataInfo());
       });
     });
   }
