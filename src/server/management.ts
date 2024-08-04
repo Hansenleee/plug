@@ -1,6 +1,8 @@
 import Container, { Service } from 'typedi';
 import Koa from 'koa';
 import Router from '@koa/router';
+import { bodyParser } from '@koa/bodyparser';
+import cors from '@koa/cors';
 import staticServer from 'koa-static';
 import views from '@ladjs/koa-views';
 import path from 'path';
@@ -20,6 +22,7 @@ export class ManagementServer {
   start() {
     this.renderStatic();
     this.renderView();
+    this.useMiddleware();
     this.registerRouter();
 
     this.app.use(this.router.routes()).use(this.router.allowedMethods());
@@ -59,5 +62,16 @@ export class ManagementServer {
     const controller = Container.get<Controller>(Controller);
 
     this.router.get('/api/records', controller.record.getRecords.bind(controller.record));
+    this.router.post('/api/mock/yapi/addById', controller.yapi.addById.bind(controller.record));
+  }
+
+  private useMiddleware() {
+    this.app.use(bodyParser());
+    this.app.use(
+      cors({
+        origin: `http://localhost:${Configuration.MANAGEMENT_WEBPACK_DEV_PORT}`,
+        credentials: true,
+      })
+    );
   }
 }

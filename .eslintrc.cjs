@@ -4,4 +4,7 @@ module.exports = {
     node: true,
     browser: false
   },
+  rules: {
+    "require-atomic-updates": "off"
+  }
 }

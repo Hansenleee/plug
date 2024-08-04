@@ -5,6 +5,7 @@ import { io, Socket } from 'socket.io-client';
 import { columns } from './column';
 import { Search } from './search';
 import { Detail } from './detail';
+import { BASE_API_PORT } from '../../constants';
 import './style.scss';
 
 const Dashbord: React.FC = () => {
@@ -13,7 +14,7 @@ const Dashbord: React.FC = () => {
   const socketRef = useRef<Socket>();
 
   useMount(() => {
-    const socket = io('ws://127.0.0.1:9001', { retries: 3, transports: ['websocket'] });
+    const socket = io(`ws://127.0.0.1:${BASE_API_PORT}`, { retries: 3, transports: ['websocket'] });
 
     socket.on('connect', () => {
       socket.on('PLUG_SOCKET', (args) => {
