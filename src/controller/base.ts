@@ -1,5 +1,6 @@
 import { Service, Inject } from 'typedi';
 import { Services } from '../service';
+import { Storage } from '../storage';
 
 @Service()
 export class BaseController {
@@ -7,6 +8,9 @@ export class BaseController {
 
   @Inject()
   service: Services;
+
+  @Inject()
+  storage: Storage;
 
   protected success<T = any>(data: T) {
     return {

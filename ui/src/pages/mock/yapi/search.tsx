@@ -9,7 +9,12 @@ interface Props {
 export const Search: React.FC<Props> = (props) => {
   return (
     <Space style={{ marginBottom: 20 }}>
-      <Input.Search placeholder="" onSearch={() => {}} size="large" style={{ width: 300 }} />
+      <Input.Search
+        placeholder="请输入接口地址或名称"
+        onSearch={() => {}}
+        size="large"
+        style={{ width: 300 }}
+      />
       <Button type="primary" icon={<PlusOutlined />} size="large" onClick={props.onAdd}>
         添加接口
       </Button>

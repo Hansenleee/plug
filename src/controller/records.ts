@@ -1,10 +1,8 @@
 import Container, { Service } from 'typedi';
 import http from 'http';
 import { nanoid } from 'nanoid';
-import type { Context } from 'koa';
 import { URL } from 'url';
 import { BaseController } from './base';
-import { RecordsStorage } from '../storage';
 import { Protocol, ResponseDataInfo } from '../types';
 import { SocketIO } from '../shared/socket';
 import { getContentType, getRequestParams } from '../shared/request-meta';
@@ -47,12 +45,5 @@ export class RecordController extends BaseController {
       responseHeader: response.headers,
       responseData: response.data,
     });
-  }
-
-  getRecords(ctx: Context) {
-    const recordsStorage = Container.get<RecordsStorage>(RecordsStorage);
-    const records = recordsStorage.getRecords();
-
-    ctx.body = this.success(records);
   }
 }
