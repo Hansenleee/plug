@@ -23,16 +23,16 @@ interface CertOption {
 }
 
 @Service()
-export class Certificat {
+export class Certificate {
   static readonly BASE_HTTPS_DOMAIN = 'BASE_HTTPS_DOMAIN';
-  static readonly BASE_DIR = path.join(process.cwd(), 'resources', 'certificat');
+  static readonly BASE_DIR = path.join(process.cwd(), 'resources', 'certificate');
 
   private get crtPath() {
-    return path.join(Certificat.BASE_DIR, 'my.crt');
+    return path.join(Certificate.BASE_DIR, 'my.crt');
   }
 
   private get keyPath() {
-    return path.join(Certificat.BASE_DIR, 'my.key.pem');
+    return path.join(Certificate.BASE_DIR, 'my.key.pem');
   }
 
   private cache = new LRUCache<string, CertInfo>({
@@ -40,7 +40,7 @@ export class Certificat {
     ttl: 1000 * 60 * 60 * 24,
   });
 
-  initBaseCertificat() {
+  initBaseCertificate() {
     const hasCert = fs.existsSync(this.crtPath);
 
     if (hasCert) {
@@ -73,7 +73,7 @@ export class Certificat {
     log.info('根证书创建完成');
   }
 
-  createCertificatByDomain(domain: string) {
+  createCertificateByDomain(domain: string) {
     const rootCert = this.getRootCert();
 
     return this.createCert({

@@ -11,11 +11,16 @@ interface SetItemOptions {
 
 @Service()
 export class MockStorage extends BaseStorage {
+  private static readonly PREFIX = 'mock-';
   private static readonly DEFAULT_NS = 'DEFAULT';
 
-  setItem(item: MockItem, options: SetItemOptions = {}) {
-    const nameSpace = `mock-${options.namespace || MockStorage.DEFAULT_NS}`;
+  init() {
+    return this.persistence.keys().filter((key) => key.startsWith(MockStorage.PREFIX));
+  }
 
-    this.setMapItem(item, nameSpace);
+  setItem(item: MockItem, options: SetItemOptions = {}) {
+    const nameSpace = `${MockStorage.PREFIX}${options.namespace || MockStorage.DEFAULT_NS}`;
+
+    this.persistence.set(item, nameSpace);
   }
 }

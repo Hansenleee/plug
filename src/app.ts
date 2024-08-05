@@ -3,7 +3,7 @@ import { Http } from './server/http';
 import { Https } from './server/https';
 import { Storage } from './storage';
 import { ManagementServer } from './server/management';
-import { Certificat } from './shared/certificat';
+import { Certificate } from './shared/certificate';
 import { Guardian } from './guardian';
 
 @Service()
@@ -27,9 +27,9 @@ export class CoreApp {
     this.managementServer.start();
 
     const storage = Container.get<Storage>(Storage);
-    const certificat = Container.get<Certificat>(Certificat);
+    const certificate = Container.get<Certificate>(Certificate);
 
     storage.init();
-    certificat.initBaseCertificat();
+    certificate.initBaseCertificate();
   }
 }

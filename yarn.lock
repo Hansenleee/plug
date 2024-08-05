@@ -1790,9 +1790,10 @@ eslint-plugin-react-hooks@^4.6.0:
   version "4.6.2"
   resolved "https://registry.npmmirror.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.6.2.tgz#c829eb06c0e6f484b3fbb85a97e57784f328c596"
 
-eslint-plugin-react@^7.33.2:
+eslint-plugin-react@7.34.3, eslint-plugin-react@^7.33.2:
   version "7.34.3"
   resolved "https://registry.npmmirror.com/eslint-plugin-react/-/eslint-plugin-react-7.34.3.tgz#9965f27bd1250a787b5d4cfcc765e5a5d58dcb7b"
+  integrity sha512-aoW4MV891jkUulwDApQbPYTVZmeuSyFrudpbTAQuj5Fv8VL+o6df2xIGpw8B0hPjAaih1/Fb0om9grCdyFYemA==
   dependencies:
     array-includes "^3.1.8"
     array.prototype.findlast "^1.2.5"
@@ -3032,10 +3033,6 @@ ora@^8.0.1:
     string-width "^7.0.0"
     strip-ansi "^7.1.0"
 
-os-homedir@^1.0.0:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/os-homedir/-/os-homedir-1.0.2.tgz#ffbc4988336e0e833de0c168c7ef152121aa7fb3"
-
 os-tmpdir@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/os-tmpdir/-/os-tmpdir-1.0.2.tgz#bbe67406c79aa85c5cfec766fe5734555dfa1274"
@@ -3805,12 +3802,6 @@ uri-js@^4.2.2:
   resolved "https://registry.npmmirror.com/uri-js/-/uri-js-4.4.1.tgz#9b1a52595225859e55f669d928f88c6c57f2a77e"
   dependencies:
     punycode "^2.1.0"
-
-user-home@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/user-home/-/user-home-3.0.0.tgz#25db577b1e4d51c42b1d0a7c9f4c23ee51347f05"
-  dependencies:
-    os-homedir "^1.0.0"
 
 util-deprecate@^1.0.2:
   version "1.0.2"

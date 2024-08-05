@@ -1,56 +1,17 @@
-import { Service } from 'typedi';
-import os from 'os';
-import path from 'path';
-import fs from 'fs';
-import { LocalStorage } from 'node-localstorage';
+import { Inject, Service } from 'typedi';
+import { PersistenceStorage } from './base-persistence';
+import { MemoryStorage } from './base-memory';
 
 @Service()
 export class BaseStorage {
-  static BASE_DIR_ROOT = os.homedir();
-  static BASE_STORAGE_ROOR = path.join(BaseStorage.BASE_DIR_ROOT, '.plug-cache', 'storage');
+  @Inject()
+  protected persistence: PersistenceStorage;
 
-  private storage!: LocalStorage;
-  private memory: Record<string, any> = {};
+  @Inject()
+  protected memory: MemoryStorage;
 
   init() {
-    if (!fs.existsSync(BaseStorage.BASE_STORAGE_ROOR)) {
-      fs.mkdirSync(BaseStorage.BASE_STORAGE_ROOR, { recursive: true });
-    }
-
-    this.storage = new LocalStorage(BaseStorage.BASE_STORAGE_ROOR);
-  }
-
-  protected getMapItem(namespace: string) {
-    const originValue = this.storage.getItem(namespace);
-
-    if (!originValue) {
-      return {};
-    }
-
-    return JSON.parse(originValue);
-  }
-
-  protected setMapItem(value: object, namespace: string) {
-    const origin = this.getMapItem(namespace);
-    const mergedValue = {
-      ...origin,
-      ...value,
-    };
-
-    this.storage.setItem(namespace, JSON.stringify(mergedValue));
-
-    return mergedValue;
-  }
-
-  protected appendMemory<T = any>(key: string, ...values: T[]) {
-    if (!this.memory[key]) {
-      this.memory[key] = [];
-    }
-
-    this.memory[key] = this.memory[key].concat(values || []);
-  }
-
-  protected getMemory<T = any>(key: string) {
-    return this.memory[key] as T;
+    this.persistence.init();
+    this.memory.init();
   }
 }

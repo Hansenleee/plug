@@ -9,5 +9,6 @@ export class Storage extends BaseStorage {
 
   init() {
     super.init();
+    this.mock.init();
   }
 }

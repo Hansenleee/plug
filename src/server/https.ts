@@ -2,7 +2,7 @@ import https from 'https';
 import tls from 'tls';
 import { Service, Container } from 'typedi';
 import { BaseServer } from './base';
-import { Certificat } from '../shared/certificat';
+import { Certificate } from '../shared/certificate';
 import { Configuration } from '../configuration';
 
 @Service()
@@ -19,14 +19,14 @@ export class Https extends BaseServer {
   }
 
   private createSecureServer() {
-    const certificat = Container.get<Certificat>(Certificat);
-    const serverCert = certificat.createCertificatByDomain(Certificat.BASE_HTTPS_DOMAIN);
+    const certificate = Container.get<Certificate>(Certificate);
+    const serverCert = certificate.createCertificateByDomain(Certificate.BASE_HTTPS_DOMAIN);
 
     this.server = new https.Server({
       key: serverCert.key,
       cert: serverCert.cert,
       SNICallback: (hostname, done) => {
-        const currentCert = certificat.createCertificatByDomain(hostname);
+        const currentCert = certificate.createCertificateByDomain(hostname);
         const secureContext = tls.createSecureContext({
           key: currentCert.key,
           cert: currentCert.cert,
