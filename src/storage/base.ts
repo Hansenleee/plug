@@ -10,8 +10,5 @@ export class BaseStorage {
   @Inject()
   protected memory: MemoryStorage;
 
-  init() {
-    this.persistence.init();
-    this.memory.init();
-  }
+  init() {}
 }
