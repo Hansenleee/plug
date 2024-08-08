@@ -61,7 +61,8 @@ export class ManagementServer {
   private registerRouter() {
     const controller = Container.get<Controller>(Controller);
 
-    this.router.get('/api/records', controller.record.getRecords.bind(controller.record));
+    this.router.get('/api/mock/yapi/config', controller.yapi.getConfig.bind(controller.record));
+    this.router.post('/api/mock/yapi/config', controller.yapi.setConfig.bind(controller.record));
     this.router.post('/api/mock/yapi/addById', controller.yapi.addById.bind(controller.record));
   }
 

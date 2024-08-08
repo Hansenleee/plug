@@ -8,26 +8,36 @@ export class PersistenceStorage {
   static BASE_DIR_ROOT = os.homedir();
   static BASE_STORAGE_ROOT = path.join(PersistenceStorage.BASE_DIR_ROOT, '.plug-cache', 'storage');
 
-  private storage = new LocalStorage(PersistenceStorage.BASE_STORAGE_ROOT);
+  private storage: LocalStorage;
 
-  get(namespace: string) {
-    const originValue = this.storage.getItem(namespace);
-
-    if (!originValue) {
-      return {};
-    }
-
-    return JSON.parse(originValue) || {};
+  constructor(namespace: string) {
+    this.storage = new LocalStorage(path.join(PersistenceStorage.BASE_STORAGE_ROOT, namespace));
   }
 
-  set(value: object, namespace: string) {
-    const origin = this.get(namespace);
-    const mergedValue = {
-      ...origin,
-      ...value,
-    };
+  get(key: string, defaultValue = {}) {
+    const originValue = this.storage.getItem(key);
 
-    this.storage.setItem(namespace, JSON.stringify(mergedValue));
+    if (!originValue) {
+      return defaultValue;
+    }
+
+    return JSON.parse(originValue) || defaultValue;
+  }
+
+  append(key: string, value: Record<string, any>) {
+    const origin = this.get(key, []);
+    const mergedValue = [...origin, value];
+
+    this.storage.setItem(key, JSON.stringify(mergedValue));
+
+    return mergedValue;
+  }
+
+  setMap(key: string, value: Record<string, any>) {
+    const origin = this.get(key, {});
+    const mergedValue = { ...origin, value };
+
+    this.storage.setItem(key, JSON.stringify(mergedValue));
 
     return mergedValue;
   }

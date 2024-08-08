@@ -4,11 +4,12 @@ import { MemoryStorage } from './base-memory';
 
 @Service()
 export class BaseStorage {
-  @Inject()
   protected persistence: PersistenceStorage;
 
   @Inject()
   protected memory: MemoryStorage;
 
-  init() {}
+  constructor(namespace: string) {
+    this.persistence = new PersistenceStorage(namespace);
+  }
 }

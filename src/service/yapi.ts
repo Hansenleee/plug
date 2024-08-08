@@ -27,7 +27,7 @@ export class YapiService {
       body: options.method === 'get' ? null : JSON.stringify(data),
     });
 
-    const jsonResult = (await yapiResult.json()) as { errcode: number; data: unknown };
+    const jsonResult = (await yapiResult.json()) as { errcode: number; data: any };
 
     if (jsonResult.errcode !== 0) {
       return Promise.reject(jsonResult);
