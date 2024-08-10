@@ -1,9 +1,10 @@
 import React from 'react';
 import { Space, Input, Button } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, SettingOutlined } from '@ant-design/icons';
 
 interface Props {
   onAdd: () => void;
+  onSetting: () => void;
 }
 
 export const Search: React.FC<Props> = (props) => {
@@ -20,6 +21,9 @@ export const Search: React.FC<Props> = (props) => {
       </Button>
       <Button type="primary" icon={<PlusOutlined />} size="large">
         添加项目
+      </Button>
+      <Button icon={<SettingOutlined />} size="large" onClick={props.onSetting}>
+        yapi 配置
       </Button>
     </Space>
   );

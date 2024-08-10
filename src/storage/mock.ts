@@ -1,12 +1,14 @@
 import { Service } from 'typedi';
 import { BaseStorage } from './base';
 
-interface MockApiItem {
+export interface MockApiItem {
   id: string;
   path: string;
   method: string;
   title: string;
-  resBody: string;
+  dataType: 'url' | 'define';
+  apiType: 'default' | 'yapi' | (string & {});
+  mockUrl?: string;
   enable: boolean;
 }
 
@@ -14,41 +16,40 @@ interface MockApiItem {
 export class MockStorage extends BaseStorage {
   private static readonly NS = 'mock';
 
-  // 单独用来存储 api 接口的
-  private static readonly API_PREFIX = 'api-';
+  // 用来存储 mock-api meta 信息的 key
+  private static readonly API_META_KEY = 'api-meta';
 
   constructor() {
     super(MockStorage.NS);
   }
 
-  init() {
-    const totalPath = this.persistence
-      .keys()
-      .filter((key) => key.startsWith(MockStorage.API_PREFIX))
-      .reduce((total, key) => {
-        const value = this.persistence.get(key) || [];
-        const valuePathList = value
-          .filter((valueItem) => valueItem.enable)
-          .map((valueItem) => valueItem.path);
-
-        return [...total, ...valuePathList];
-      }, []);
-
-    this.memory.set('allPath', totalPath);
-  }
+  init() {}
 
   setMap(key: string, item: Record<string, unknown>) {
     return this.persistence.setMap(key, item);
   }
 
-  appendApi(key: string, item: MockApiItem) {
+  appendApi(item: MockApiItem) {
     return this.persistence.append(
-      `${MockStorage.API_PREFIX}${key}`,
+      MockStorage.API_META_KEY,
       item as unknown as Record<string, unknown>
     );
   }
 
-  getItem(key: string) {
+  deleteApi(id: string) {
+    const apiList = this.persistence.get(MockStorage.API_META_KEY, []) as MockApiItem[];
+
+    this.persistence.set(
+      MockStorage.API_META_KEY,
+      apiList.filter((item) => item.id !== id)
+    );
+  }
+
+  getApiList() {
+    return this.persistence.get(MockStorage.API_META_KEY, []) as MockApiItem[];
+  }
+
+  get(key: string) {
     return this.persistence.get(key);
   }
 }

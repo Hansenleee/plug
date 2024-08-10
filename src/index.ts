@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import './shared/polyfill';
 import { Container } from 'typedi';
 import { CoreApp } from './app';
 import { Configuration } from './configuration';

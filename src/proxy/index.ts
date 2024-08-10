@@ -13,10 +13,12 @@ export class Proxy {
   private mock: Mock;
 
   // 请求代理转发的核心入口
-  proxy(request: http.IncomingMessage, response: http.ServerResponse, protocol: Protocol) {
-    // if (1) {
-    //   return this.mock.mock(response);
-    // }
+  async proxy(request: http.IncomingMessage, response: http.ServerResponse, protocol: Protocol) {
+    const mockCheckResult = this.mock.check(request);
+
+    if (mockCheckResult) {
+      return this.mock.mock(mockCheckResult, request, response);
+    }
 
     return this.request.request(request, response, protocol);
   }

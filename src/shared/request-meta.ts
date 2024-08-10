@@ -4,6 +4,16 @@ import qs from 'querystring';
 import zlib from 'zlib';
 import { ResponseDataInfo } from '../types';
 
+export const getPath = (request: http.IncomingMessage) => {
+  const { url } = request;
+
+  if (url.startsWith('/')) {
+    return url;
+  }
+
+  return new URL(request.url).pathname;
+};
+
 export const getContentType = (contentType: string) => {
   return contentType?.split(';')?.[0];
 };

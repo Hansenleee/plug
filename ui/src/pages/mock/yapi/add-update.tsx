@@ -1,11 +1,13 @@
 import React from 'react';
 import { Form } from 'antd';
 import axios from 'axios';
-import { ModalForm, ProFormText } from '@ant-design/pro-components';
+import { ModalForm, ProFormText, ProFormRadio } from '@ant-design/pro-components';
+import { message } from 'antd/lib';
 
 interface Props {
   open: boolean;
   record?: any;
+  onOk: () => void;
   onClose: () => void;
 }
 
@@ -19,8 +21,9 @@ export const AddUpdate: React.FC<Props> = (props) => {
   };
 
   const handleFinish = (values: any) => {
-    return axios.post('/api/mock/yapi/addById', values).then((res) => {
-      console.log(11111, res);
+    return axios.post('/api/mock/yapi/addById', values).then(() => {
+      message.success('添加成功');
+      props.onOk();
     });
   };
 
@@ -43,6 +46,23 @@ export const AddUpdate: React.FC<Props> = (props) => {
         label="yapi项目 token"
         placeholder="请输入"
         rules={[{ required: true }]}
+      />
+      <ProFormRadio.Group
+        name="dataType"
+        label="mock 数据来源"
+        rules={[{ required: true }]}
+        options={[
+          {
+            label: 'yapi',
+            value: 'url',
+          },
+          {
+            label: '自定义',
+            value: 'define',
+            disabled: true,
+          },
+        ]}
+        initialValue="url"
       />
     </ModalForm>
   );

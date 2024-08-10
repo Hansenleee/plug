@@ -2,6 +2,7 @@ import { Service } from 'typedi';
 import os from 'os';
 import path from 'path';
 import { LocalStorage } from 'node-localstorage';
+import { Logger } from '../shared/log';
 
 @Service()
 export class PersistenceStorage {
@@ -9,19 +10,28 @@ export class PersistenceStorage {
   static BASE_STORAGE_ROOT = path.join(PersistenceStorage.BASE_DIR_ROOT, '.plug-cache', 'storage');
 
   private storage: LocalStorage;
+  private log = new Logger('persistence');
 
   constructor(namespace: string) {
     this.storage = new LocalStorage(path.join(PersistenceStorage.BASE_STORAGE_ROOT, namespace));
   }
 
   get(key: string, defaultValue = {}) {
-    const originValue = this.storage.getItem(key);
+    try {
+      const originValue = this.storage.getItem(key);
 
-    if (!originValue) {
+      if (!originValue) {
+        return defaultValue;
+      }
+
+      return JSON.parse(originValue) || defaultValue;
+    } catch (err) {
       return defaultValue;
     }
+  }
 
-    return JSON.parse(originValue) || defaultValue;
+  set(key: string, value: unknown) {
+    this.storage.setItem(key, JSON.stringify(value));
   }
 
   append(key: string, value: Record<string, any>) {
@@ -35,9 +45,13 @@ export class PersistenceStorage {
 
   setMap(key: string, value: Record<string, any>) {
     const origin = this.get(key, {});
-    const mergedValue = { ...origin, value };
+    const mergedValue = { ...origin, ...value };
 
-    this.storage.setItem(key, JSON.stringify(mergedValue));
+    try {
+      this.storage.setItem(key, JSON.stringify(mergedValue));
+    } catch (err) {
+      this.log.warn(`持久化存储 setMap 出错: ${err}`, { force: true });
+    }
 
     return mergedValue;
   }

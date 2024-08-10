@@ -46,7 +46,7 @@ export const App: React.FC = () => {
             height={58}
             preview={false}
             style={{ display: 'block' }}
-            src="https://leebucket01.oss-cn-shanghai.aliyuncs.com/Statics/images/20240804121510.jpg"
+            src="https://leebucket01.oss-cn-shanghai.aliyuncs.com/Statics/images/plug-logo-opacity.png"
           />
           <Typography.Text className="header-title">Plug Proxy</Typography.Text>
         </Space.Compact>

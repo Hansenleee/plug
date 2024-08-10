@@ -7,6 +7,7 @@ import staticServer from 'koa-static';
 import views from '@ladjs/koa-views';
 import path from 'path';
 import { createServer } from 'http';
+import { errorMiddleware } from '../middleware/error';
 import { Logger } from '../shared/log';
 import { SocketIO } from '../shared/socket';
 import { Configuration } from '../configuration';
@@ -64,9 +65,15 @@ export class ManagementServer {
     this.router.get('/api/mock/yapi/config', controller.yapi.getConfig.bind(controller.record));
     this.router.post('/api/mock/yapi/config', controller.yapi.setConfig.bind(controller.record));
     this.router.post('/api/mock/yapi/addById', controller.yapi.addById.bind(controller.record));
+    this.router.post('/api/mock/yapi/delete', controller.yapi.delete.bind(controller.record));
+    this.router.post(
+      '/api/mock/yapi/list/page',
+      controller.yapi.getYapiListByPage.bind(controller.record)
+    );
   }
 
   private useMiddleware() {
+    this.app.use(errorMiddleware());
     this.app.use(bodyParser());
     this.app.use(
       cors({
