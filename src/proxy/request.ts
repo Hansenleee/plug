@@ -2,6 +2,7 @@ import { Service } from 'typedi';
 import http from 'http';
 import https from 'https';
 import { URL } from 'url';
+import ProxyAgent from 'proxy-agent';
 import { Logger } from '../shared/log';
 import { ResponseDataInfo, Protocol } from '../types';
 import { getResponseData, getErrorResponseDataInfo } from '../shared/request-meta';
@@ -16,6 +17,10 @@ export class Request {
     }
 
     return this.https(request, response);
+  }
+
+  private getProxyAgent() {
+    return new ProxyAgent('http://127.0.0.1:7890');
   }
 
   private http(request: http.IncomingMessage, response: http.ServerResponse) {
@@ -55,20 +60,26 @@ export class Request {
     log.info(`请求[${options.protocol}] ${request.url} 准备代理到原地址`);
 
     return new Promise((resolve) => {
-      const proxyToOriginRequest = requestClient.request(options, async (proxyResult) => {
-        response.writeHead(proxyResult.statusCode, proxyResult.headers);
-        proxyResult.pipe(response);
+      const proxyToOriginRequest = requestClient.request(
+        {
+          ...options,
+          agent: this.getProxyAgent() as unknown as http.Agent,
+        },
+        async (proxyResult) => {
+          response.writeHead(proxyResult.statusCode, proxyResult.headers);
+          proxyResult.pipe(response);
 
-        const responseMessage = getResponseData(proxyResult);
+          const responseMessage = getResponseData(proxyResult);
 
-        responseMessage.response.on('end', () => {
-          resolve({
-            statusCode: proxyResult.statusCode,
-            headers: proxyResult.headers,
-            data: responseMessage.getData(),
+          responseMessage.response.on('end', () => {
+            resolve({
+              statusCode: proxyResult.statusCode,
+              headers: proxyResult.headers,
+              data: responseMessage.getData(),
+            });
           });
-        });
-      });
+        }
+      );
 
       if (request.body) {
         proxyToOriginRequest.write(request.body);
