@@ -40,6 +40,9 @@ export class Mock {
       });
       const jsonMockData = await mockFetchResult.json();
 
+      // 临时先将返回 code 为成 0
+      (jsonMockData as any).code = 0;
+
       responseData = JSON.stringify(jsonMockData);
 
       response.end(responseData);

@@ -1,4 +1,4 @@
-import { Badge, TableProps, Space, Typography, Popconfirm } from 'antd';
+import { Badge, TableProps, Space, Typography, Popconfirm, Tooltip } from 'antd';
 import { message } from 'antd/lib';
 import axios from 'axios';
 
@@ -26,8 +26,16 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh })
     title: '数据来源',
     dataIndex: 'dataType',
     width: 140,
-    render: (value) => {
-      return value === 'define' ? '自定义 Mock' : 'yapi Mock';
+    render: (value, record) => {
+      if (value === 'url') {
+        return (
+          <Tooltip placement="top" title={record.mockUrl}>
+            yapi Mock
+          </Tooltip>
+        );
+      }
+
+      return '自定义 Mock';
     },
   },
   {
@@ -45,7 +53,7 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh })
   {
     title: '操作',
     dataIndex: 'opt',
-    width: 160,
+    width: 200,
     render: (_: any, record: any) => {
       const handleDelete = () => {
         return axios
@@ -58,13 +66,20 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh })
           });
       };
 
+      const handleToggle = () => {
+        return axios.post('/api/mock/yapi/status/toggle', {}).then(() => {
+          message.success('操作成功');
+          onRefresh();
+        });
+      };
+
       return (
         <Space>
           <Typography.Link>自定义 Mock</Typography.Link>
           {record.enable ? (
-            <Typography.Link>禁用</Typography.Link>
+            <Typography.Link onClick={handleToggle}>禁用</Typography.Link>
           ) : (
-            <Typography.Link>启用</Typography.Link>
+            <Typography.Link onClick={handleToggle}>启用</Typography.Link>
           )}
           <Popconfirm title="确定删除当前记录" onConfirm={handleDelete}>
             <Typography.Text type="danger" style={{ cursor: 'pointer' }}>

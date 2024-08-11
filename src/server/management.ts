@@ -65,10 +65,22 @@ export class ManagementServer {
     this.router.get('/api/mock/yapi/config', controller.yapi.getConfig.bind(controller.record));
     this.router.post('/api/mock/yapi/config', controller.yapi.setConfig.bind(controller.record));
     this.router.post('/api/mock/yapi/addById', controller.yapi.addById.bind(controller.record));
+    this.router.post(
+      '/api/mock/yapi/status/toggle',
+      controller.yapi.statusToggle.bind(controller.record)
+    );
+    this.router.post(
+      '/api/mock/yapi/addByProject',
+      controller.yapi.addByProject.bind(controller.record)
+    );
     this.router.post('/api/mock/yapi/delete', controller.yapi.delete.bind(controller.record));
     this.router.post(
       '/api/mock/yapi/list/page',
       controller.yapi.getYapiListByPage.bind(controller.record)
+    );
+    this.router.get(
+      '/api/mock/yapi/project/list',
+      controller.yapi.getProjectList.bind(controller.record)
     );
   }
 

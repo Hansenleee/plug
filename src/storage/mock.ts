@@ -10,6 +10,13 @@ export interface MockApiItem {
   apiType: 'default' | 'yapi' | (string & {});
   mockUrl?: string;
   enable: boolean;
+  projectId?: string;
+}
+
+export interface ProjectItem {
+  id: string;
+  projectName: string;
+  projectId: string;
 }
 
 @Service()
@@ -19,21 +26,33 @@ export class MockStorage extends BaseStorage {
   // 用来存储 mock-api meta 信息的 key
   private static readonly API_META_KEY = 'api-meta';
 
+  // 用来存储 mock 相关的基础配置
+  private static readonly CONFIG_KEY = 'config';
+
+  // 用来存储 project 相关的信息的 key
+  private static readonly PROJECT_KEY = 'project';
+
   constructor() {
     super(MockStorage.NS);
   }
 
   init() {}
 
-  setMap(key: string, item: Record<string, unknown>) {
-    return this.persistence.setMap(key, item);
+  appendApi(item: MockApiItem | MockApiItem[]) {
+    const items = Array.isArray(item) ? item : [item];
+
+    return this.persistence.batchAppend(MockStorage.API_META_KEY, items);
   }
 
-  appendApi(item: MockApiItem) {
-    return this.persistence.append(
-      MockStorage.API_META_KEY,
-      item as unknown as Record<string, unknown>
-    );
+  updateApi(item: Partial<MockApiItem> & { id: string }) {
+    const apiList = this.persistence.get(MockStorage.API_META_KEY, []) as MockApiItem[];
+    const apiItemIndex = apiList.findIndex((api) => api.id === item.id);
+
+    if (apiItemIndex >= 0) {
+      apiList[apiItemIndex] = { ...apiList[apiItemIndex], ...item };
+    }
+
+    this.persistence.set(MockStorage.API_META_KEY, apiList);
   }
 
   deleteApi(id: string) {
@@ -45,11 +64,40 @@ export class MockStorage extends BaseStorage {
     );
   }
 
+  getApi(id: string) {
+    const apiList = this.persistence.get(MockStorage.API_META_KEY, []) as MockApiItem[];
+
+    return apiList.find((api) => api.id === id);
+  }
+
   getApiList() {
     return this.persistence.get(MockStorage.API_META_KEY, []) as MockApiItem[];
   }
 
-  get(key: string) {
-    return this.persistence.get(key);
+  setConfig(key: string, item: Record<string, unknown>) {
+    return this.persistence.setMap(MockStorage.CONFIG_KEY, { [key]: item });
+  }
+
+  getConfig(key: string) {
+    const config = this.persistence.get(MockStorage.CONFIG_KEY, {});
+
+    return config[key];
+  }
+
+  appendProject(item: ProjectItem) {
+    return this.persistence.append(MockStorage.PROJECT_KEY, item);
+  }
+
+  deleteProject(id: string) {
+    const apiList = this.persistence.get(MockStorage.PROJECT_KEY, []) as ProjectItem[];
+
+    this.persistence.set(
+      MockStorage.PROJECT_KEY,
+      apiList.filter((item) => item.id !== id)
+    );
+  }
+
+  getProjectList() {
+    return this.persistence.get(MockStorage.PROJECT_KEY, []) as MockApiItem[];
   }
 }

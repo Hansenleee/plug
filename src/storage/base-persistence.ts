@@ -35,8 +35,12 @@ export class PersistenceStorage {
   }
 
   append(key: string, value: Record<string, any>) {
+    this.batchAppend(key, [value]);
+  }
+
+  batchAppend(key: string, valueList: Array<Record<string, any>>) {
     const origin = this.get(key, []);
-    const mergedValue = [...origin, value];
+    const mergedValue = [...origin, ...valueList];
 
     this.storage.setItem(key, JSON.stringify(mergedValue));
 

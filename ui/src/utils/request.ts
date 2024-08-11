@@ -24,6 +24,5 @@ axios.interceptors.response.use((response) => {
   }
 
   message.error(`${responseData.message}_${responseData.code}`);
-
-  return responseData;
+  throw Error(responseData);
 });
