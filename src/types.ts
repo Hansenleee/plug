@@ -7,3 +7,7 @@ export interface ResponseDataInfo {
   headers: http.OutgoingHttpHeaders;
   data: string;
 }
+
+export interface HttpIncomingMessage extends http.IncomingMessage {
+  bodyParse: any;
+}

@@ -71,6 +71,7 @@
     "node-localstorage": "3.0.5",
     "ora": "^8.0.1",
     "pem": "^1.14.8",
+    "raw-body": "^3.0.0",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.7.5",
     "typedi": "^0.10.0",

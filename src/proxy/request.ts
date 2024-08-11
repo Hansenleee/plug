@@ -70,6 +70,10 @@ export class Request {
         });
       });
 
+      if (request.body) {
+        proxyToOriginRequest.write(request.body);
+      }
+
       request.pipe(proxyToOriginRequest);
 
       proxyToOriginRequest.on('error', (error) => {
