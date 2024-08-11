@@ -67,7 +67,9 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh })
       };
 
       const handleToggle = () => {
-        return axios.post('/api/mock/yapi/status/toggle', {}).then(() => {
+        return axios.post('/api/mock/yapi/status/toggle', {
+          id: record.id,
+        }).then(() => {
           message.success('操作成功');
           onRefresh();
         });
