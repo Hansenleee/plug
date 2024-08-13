@@ -58,7 +58,7 @@ export class YapiService {
 
       return jsonResult.data;
     } catch (err) {
-      this.log.warn(`三方接口 ${formattedPath} 请求出错: err`, { force: true });
+      this.log.warn(`三方接口 ${formattedPath} 请求出错: ${err}`, { force: true });
 
       throw err;
     }
