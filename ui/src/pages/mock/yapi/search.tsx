@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import { Space, Input, Button, Select } from 'antd';
-import { PlusOutlined, SettingOutlined, SearchOutlined } from '@ant-design/icons';
+import { Space, Input, Button, Select, Dropdown } from 'antd';
+import { PlusOutlined, SettingOutlined, SearchOutlined, DownOutlined, ProjectOutlined } from '@ant-design/icons';
 
 interface Props {
   searchValue: Record<string, any>;
@@ -8,9 +8,21 @@ interface Props {
   onAdd: () => void;
   onSearchValueChange: (value: object) => void;
   onAddProject: () => void;
+  onProjectManage: () => void;
   onSetting: () => void;
   onSearch: () => void;
 }
+
+const DropdownMenu = [
+  {
+    label: '接口',
+    key: 'interface',
+  },
+  {
+    label: '项目',
+    key: 'project',
+  }
+];
 
 export const Search: React.FC<Props> = (props) => {
   const projectOptions = useMemo(() => {
@@ -20,6 +32,14 @@ export const Search: React.FC<Props> = (props) => {
     }));
   }, [props.projectList]);
 
+  const handleAdd = (value: any) => {
+    if (value.key === 'project') {
+      return props.onAddProject();
+    }
+
+    return props.onAdd();
+  };
+
   return (
     <Space style={{ marginBottom: 20 }}>
       <Input
@@ -27,7 +47,6 @@ export const Search: React.FC<Props> = (props) => {
         value={props.searchValue.name}
         allowClear
         onChange={(event) => props.onSearchValueChange({ name: event.target.value })}
-        size="large"
         style={{ width: 300 }}
       />
       <Select
@@ -35,25 +54,25 @@ export const Search: React.FC<Props> = (props) => {
         options={projectOptions}
         value={props.searchValue.project}
         onChange={(value) => props.onSearchValueChange({ project: value })}
-        size="large"
         allowClear
         style={{ width: 300 }}
       />
       <Button
         type="primary"
         icon={<SearchOutlined />}
-        size="large"
         onClick={() => props.onSearch()}
       >
         搜索
       </Button>
-      <Button icon={<PlusOutlined />} size="large" onClick={props.onAdd}>
-        添加接口
+      <Dropdown menu={{ items: DropdownMenu, onClick: handleAdd}}>
+        <Button type="primary" icon={<PlusOutlined />}>
+          添加 <DownOutlined />
+        </Button>
+      </Dropdown>
+      <Button icon={<ProjectOutlined />} size="middle" onClick={props.onProjectManage}>
+        项目管理
       </Button>
-      <Button icon={<PlusOutlined />} size="large" onClick={props.onAddProject}>
-        添加项目
-      </Button>
-      <Button icon={<SettingOutlined />} size="large" onClick={props.onSetting}>
+      <Button icon={<SettingOutlined />} size="middle" onClick={props.onSetting}>
         yapi 配置
       </Button>
     </Space>

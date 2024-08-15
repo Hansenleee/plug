@@ -15,8 +15,10 @@ export interface MockApiItem {
 
 export interface ProjectItem {
   id: string;
+  token: string;
   projectName: string;
   projectId: string;
+  enable: boolean;
 }
 
 @Service()
@@ -86,6 +88,17 @@ export class MockStorage extends BaseStorage {
 
   appendProject(item: ProjectItem) {
     return this.persistence.append(MockStorage.PROJECT_KEY, item);
+  }
+
+  updateProject(item: Partial<ProjectItem> & { id: string }) {
+    const projectList = this.persistence.get(MockStorage.PROJECT_KEY, []) as MockApiItem[];
+    const projectItemIndex = projectList.findIndex((project) => project.id === item.id);
+
+    if (projectItemIndex >= 0) {
+      projectList[projectItemIndex] = { ...projectList[projectItemIndex], ...item };
+    }
+
+    this.persistence.set(MockStorage.PROJECT_KEY, projectList);
   }
 
   deleteProject(id: string) {

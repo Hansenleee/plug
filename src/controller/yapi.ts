@@ -54,7 +54,7 @@ export class YapiController extends BaseController {
   }
 
   async addByProject(ctx: Context) {
-    const { token, dataType } = ctx.request.body;
+    const { token, projectName, dataType } = ctx.request.body;
     const projectInfo = await this.service.yapi.fetchProjectInfo(token);
 
     const interfaceListResult = await this.service.yapi.fetchInterfaceList({
@@ -85,12 +85,23 @@ export class YapiController extends BaseController {
 
     this.storage.mock.appendProject({
       id: innerProjectId,
+      token,
       projectId: projectInfo._id,
-      projectName: projectInfo.name,
+      projectName: projectName || projectInfo.name,
+      enable: true,
     });
     this.storage.mock.appendApi(storageInterfaceList);
 
     ctx.body = this.success(interfaceList);
+  }
+
+  async updateProject(ctx: Context) {
+    const { id, projectName, enable } = ctx.request.body;
+
+    this.required(ctx.request.body, ['id']);
+    this.storage.mock.updateProject({ id, projectName, enable });
+
+    ctx.body = this.success(true);
   }
 
   async statusToggle(ctx: Context) {

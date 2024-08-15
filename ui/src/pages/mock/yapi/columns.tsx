@@ -15,7 +15,7 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh })
   {
     title: 'title',
     dataIndex: 'title',
-    width: 160,
+    width: 300,
   },
   {
     title: 'method',

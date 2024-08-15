@@ -7,11 +7,14 @@ import { AddUpdate } from './add-update';
 import { AddProject } from './add-project';
 import { Setting } from './setting';
 import { getColumns } from './columns';
+import { ProjectList } from './project-list';
 
 export default function YapiMock() {
   const [addVisible, setAddVisible] = useState(false);
+  const [activeProject, setActiveProject] = useState<Record<string, string> | undefined>(undefined);
   const [projectVisible, setProjectVisible] = useState(false);
   const [settingVisible, setSettingVisible] = useState(false);
+  const [projectListVisible, setProjectListVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [apiList, setApiList] = useState([]);
   const [projectList, setProjectList] = useState([]);
@@ -61,6 +64,12 @@ export default function YapiMock() {
     searchByPage();
     setAddVisible(false);
     setProjectVisible(false);
+    fetchProjectList();
+  };
+
+  const handleEditProject = (project: Record<string, string>) => {
+    setActiveProject(project);
+    setProjectVisible(true);
   };
 
   useMount(() => {
@@ -84,6 +93,7 @@ export default function YapiMock() {
         onSearchValueChange={(map) => setSearchValue((pre) => ({ ...pre, ...map }))}
         onAdd={() => setAddVisible(true)}
         onSetting={() => setSettingVisible(true)}
+        onProjectManage={() => setProjectListVisible(true)}
         onAddProject={() => setProjectVisible(true)}
       />
       <Table
@@ -94,6 +104,7 @@ export default function YapiMock() {
         dataSource={apiList}
         pagination={{
           ...page,
+          showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: false,
           onChange: searchByPage,
         }}
@@ -103,10 +114,17 @@ export default function YapiMock() {
       <AddUpdate open={addVisible} onClose={() => setAddVisible(false)} onOk={handleAdded} />
       <AddProject
         open={projectVisible}
+        project={activeProject}
         onClose={() => setProjectVisible(false)}
         onOk={handleAdded}
       />
       <Setting open={settingVisible} onClose={() => setSettingVisible(false)} />
+      <ProjectList
+        visible={projectListVisible}
+        projectList={projectList}
+        onClose={() => setProjectListVisible(false)}
+        onEdit={handleEditProject}
+      />
     </Space>
   );
 }

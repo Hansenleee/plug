@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Form } from 'antd';
 import axios from 'axios';
-import { ModalForm, ProFormText, ProFormRadio } from '@ant-design/pro-components';
+import { ModalForm, ProFormText, ProFormRadio, ProFormSwitch } from '@ant-design/pro-components';
 import { message } from 'antd/lib';
 
 interface Props {
   open: boolean;
-  record?: any;
+  project?: any;
   onOk: () => void;
   onClose: () => void;
 }
@@ -21,16 +21,27 @@ export const AddProject: React.FC<Props> = (props) => {
   };
 
   const handleFinish = (values: any) => {
-    return axios.post('/api/mock/yapi/addByProject', values).then(() => {
-      message.success('添加成功');
+    const request = !!props.project ? axios.post('/api/mock/yapi/project/update', {
+      ...values,
+      id: props.project.id,
+    }) : axios.post('/api/mock/yapi/addByProject', values);
+
+    return request.then(() => {
+      message.success('保存成功');
       props.onOk();
     });
   };
 
+  useEffect(() => {
+    if (props.open && props.project) {
+      form.setFieldsValue(props.project);
+    }
+  }, [form, props.open, props.project])
+
   return (
     <ModalForm
       open={props.open}
-      title={props.record ? '修改项目' : '新增项目'}
+      title={props.project ? '修改项目' : '新增项目'}
       form={form}
       onFinish={handleFinish}
       onOpenChange={handleOpenChange}
@@ -39,7 +50,18 @@ export const AddProject: React.FC<Props> = (props) => {
         name="token"
         label="yapi 项目 token"
         placeholder="请输入"
+        disabled={!!props.project}
         rules={[{ required: true }]}
+      />
+      <ProFormText
+        name="projectName"
+        label="yapi 项目名称"
+        placeholder="请输入"
+      />
+      <ProFormSwitch
+        name="enable"
+        label="启用状态"
+        initialValue={true}
       />
       <ProFormRadio.Group
         name="dataType"
