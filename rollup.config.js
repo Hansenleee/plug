@@ -18,7 +18,7 @@ export default {
     format: 'es',
   },
   plugins: [
-    // 这里额外说明：根目录下的 tsconfig 需要配置 ui 路径（因为需要配合 esilnt 做格式校验），但是打包时需要过滤掉，ui 侧的打包和 node 分离
+    // 这里额外说明：根目录下的 tsconfig 需要配置 ui 路径（因为需要配合 eslint 做格式校验），但是打包时需要过滤掉，ui 侧的打包和 node 分离
 		typescript({
       tsconfigOverride: { exclude: ['ui']}
     }),

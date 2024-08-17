@@ -8,6 +8,7 @@ import { AddProject } from './add-project';
 import { Setting } from './setting';
 import { getColumns } from './columns';
 import { ProjectList } from './project-list';
+import { DataEditor } from './data-editor';
 
 export default function YapiMock() {
   const [addVisible, setAddVisible] = useState(false);
@@ -20,6 +21,7 @@ export default function YapiMock() {
   const [projectList, setProjectList] = useState([]);
   const [page, setPage] = useState({ current: 1, pageSize: 15, total: 0 });
   const [searchValue, setSearchValue] = useState({ name: '', project: undefined });
+  const [editDataItem, setEditDataItem] = useState<Record<string, string> | undefined>(undefined);
 
   const searchByPage = useCallback(
     (pageNo = 1) => {
@@ -41,11 +43,15 @@ export default function YapiMock() {
     [page.pageSize, searchValue]
   );
 
+  const handleEditMock = (record: Record<string, string>) => {
+    setEditDataItem(record);
+  };
+
   const fetchProjectList = () => {
     return axios.get('/api/mock/yapi/project/list').then((list: any) => setProjectList(list));
   };
 
-  const columns = useMemo(() => getColumns({ onRefresh: searchByPage }), [searchByPage]);
+  const columns = useMemo(() => getColumns({ onRefresh: searchByPage, onEdit: handleEditMock }), [searchByPage]);
 
   const checkInitConfig = () => {
     return axios.get('/api/mock/yapi/config').then((initSetting: any) => {
@@ -72,11 +78,15 @@ export default function YapiMock() {
     setProjectVisible(true);
   };
 
+  const handleRefresh = () => {
+    searchByPage();
+    fetchProjectList();
+  };
+
   useMount(() => {
     return checkInitConfig().then((inited) => {
       if (inited) {
-        searchByPage();
-        fetchProjectList();
+        handleRefresh();
       }
     });
   });
@@ -94,7 +104,6 @@ export default function YapiMock() {
         onAdd={() => setAddVisible(true)}
         onSetting={() => setSettingVisible(true)}
         onProjectManage={() => setProjectListVisible(true)}
-        onAddProject={() => setProjectVisible(true)}
       />
       <Table
         bordered
@@ -124,7 +133,10 @@ export default function YapiMock() {
         projectList={projectList}
         onClose={() => setProjectListVisible(false)}
         onEdit={handleEditProject}
+        onRefresh={handleRefresh}
+        onAddProject={() => setProjectVisible(true)}
       />
+      <DataEditor visible={!!editDataItem} record={editDataItem} onClose={() => setEditDataItem(undefined)} />
     </Space>
   );
 }

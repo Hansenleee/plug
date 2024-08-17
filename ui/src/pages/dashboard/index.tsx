@@ -1,5 +1,5 @@
 import { Table } from 'antd';
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useMount, useUnmount } from 'ahooks';
 import { io, Socket } from 'socket.io-client';
 import { columns } from './column';
@@ -8,12 +8,24 @@ import { Detail } from './detail';
 import { BASE_API_PORT } from '../../constants';
 import './style.scss';
 
-const Dashbord: React.FC = () => {
+const Dashboard: React.FC = () => {
   const [records, setRecords] = useState<Array<Record<string, string>>>([]);
   const [activeRecord, setActiveRecord] = useState<Record<string, string> | undefined>();
   const socketRef = useRef<Socket>();
 
+  const handleSearch = (searchValue: string | number) => {
+    if (!searchValue && searchValue !== 0) {
+      return;
+    }
+
+    setRecords((pre) => pre.filter((_) => _.url.includes(searchValue as string)));
+  };
+
   useMount(() => {
+    if (socketRef.current) {
+      return;
+    }
+
     const socket = io(`ws://127.0.0.1:${BASE_API_PORT}`, { retries: 3, transports: ['websocket'] });
 
     socket.on('connect', () => {
@@ -55,7 +67,7 @@ const Dashbord: React.FC = () => {
 
   return (
     <div className="dashboard-container">
-      <Search onClear={() => setRecords([])} />
+      <Search onSearch={handleSearch} onClear={() => setRecords([])} />
       <Table
         pagination={false}
         bordered
@@ -79,4 +91,4 @@ const Dashbord: React.FC = () => {
   );
 };
 
-export default Dashbord;
+export default Dashboard;

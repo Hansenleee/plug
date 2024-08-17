@@ -66,6 +66,15 @@ export class MockStorage extends BaseStorage {
     );
   }
 
+  deleteApiByProject(projectId: string) {
+    const apiList = this.persistence.get(MockStorage.API_META_KEY, []) as MockApiItem[];
+
+    this.persistence.set(
+      MockStorage.API_META_KEY,
+      apiList.filter((item) => item.projectId !== projectId)
+    );
+  }
+
   getApi(id: string) {
     const apiList = this.persistence.get(MockStorage.API_META_KEY, []) as MockApiItem[];
 
@@ -102,12 +111,13 @@ export class MockStorage extends BaseStorage {
   }
 
   deleteProject(id: string) {
-    const apiList = this.persistence.get(MockStorage.PROJECT_KEY, []) as ProjectItem[];
+    const projectList = this.persistence.get(MockStorage.PROJECT_KEY, []) as ProjectItem[];
 
     this.persistence.set(
       MockStorage.PROJECT_KEY,
-      apiList.filter((item) => item.id !== id)
+      projectList.filter((item) => item.id !== id)
     );
+    this.deleteApiByProject(id);
   }
 
   getProjectList() {

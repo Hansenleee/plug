@@ -3,6 +3,7 @@ import http from 'http';
 import https from 'https';
 import { URL } from 'url';
 import ProxyAgent from 'proxy-agent';
+import { Configuration } from '../configuration';
 import { Logger } from '../shared/log';
 import { ResponseDataInfo, Protocol } from '../types';
 import { getResponseData, getErrorResponseDataInfo } from '../shared/request-meta';
@@ -19,8 +20,16 @@ export class Request {
     return this.https(request, response);
   }
 
-  private getProxyAgent() {
-    return new ProxyAgent('http://127.0.0.1:7890');
+  private getProxyAgent(): { agent?: http.Agent } {
+    if (Configuration.ORIGIN_PROXY_PORT) {
+      return {
+        agent: new ProxyAgent(
+          `http://127.0.0.1:${Configuration.ORIGIN_PROXY_PORT}`
+        ) as unknown as http.Agent,
+      };
+    }
+
+    return {};
   }
 
   private http(request: http.IncomingMessage, response: http.ServerResponse) {
@@ -63,7 +72,7 @@ export class Request {
       const proxyToOriginRequest = requestClient.request(
         {
           ...options,
-          agent: this.getProxyAgent() as unknown as http.Agent,
+          ...this.getProxyAgent(),
         },
         async (proxyResult) => {
           response.writeHead(proxyResult.statusCode, proxyResult.headers);

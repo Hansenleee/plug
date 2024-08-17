@@ -71,17 +71,14 @@ export class YapiController extends BaseController {
 
     const config = this.storage.mock.getConfig(YapiController.NS);
     const innerProjectId = nanoid();
-    const storageInterfaceList = interfaceList.map((item) => ({
-      id: nanoid(),
-      title: item.title,
-      path: item.path,
-      method: item.method,
-      dataType,
-      apiType: 'yapi',
-      enable: true,
-      mockUrl: `${config.host}/mock/${projectInfo._id}${item.path}`,
-      projectId: innerProjectId,
-    }));
+    const storageInterfaceList = interfaceList.map((item) => {
+      return this.assembleInterfaceItem(item, {
+        host: config.host,
+        yapiProjectId: projectInfo._id,
+        projectId: innerProjectId,
+        dataType,
+      });
+    });
 
     this.storage.mock.appendProject({
       id: innerProjectId,
@@ -100,6 +97,41 @@ export class YapiController extends BaseController {
 
     this.required(ctx.request.body, ['id']);
     this.storage.mock.updateProject({ id, projectName, enable });
+
+    ctx.body = this.success(true);
+  }
+
+  async deleteProject(ctx: Context) {
+    const { id } = ctx.request.body;
+
+    this.required(ctx.request.body, ['id']);
+    this.storage.mock.deleteProject(id);
+
+    ctx.body = this.success(true);
+  }
+
+  async upgradeProject(ctx: Context) {
+    const { id, projectId, token } = ctx.request.body;
+
+    this.required(ctx.request.body, ['id', 'projectId', 'token']);
+    this.storage.mock.deleteApiByProject(id);
+
+    const interfaceListResult = await this.service.yapi.fetchInterfaceList({
+      token,
+      project_id: projectId,
+    });
+    const interfaceList = interfaceListResult?.list || [];
+    const config = this.storage.mock.getConfig(YapiController.NS);
+
+    const storageInterfaceList = interfaceList.map((item) => {
+      return this.assembleInterfaceItem(item, {
+        host: config.host,
+        yapiProjectId: projectId,
+        projectId: id,
+        dataType: 'url',
+      });
+    });
+    this.storage.mock.appendApi(storageInterfaceList);
 
     ctx.body = this.success(true);
   }
@@ -141,7 +173,21 @@ export class YapiController extends BaseController {
     ctx.body = this.page(yapiList, page);
   }
 
-  getProjectList(ctx: Context) {
+  async getProjectList(ctx: Context) {
     ctx.body = this.success(this.storage.mock.getProjectList());
+  }
+
+  private assembleInterfaceItem(originInterfaceItem, { host, yapiProjectId, projectId, dataType }) {
+    return {
+      id: nanoid(),
+      title: originInterfaceItem.title,
+      path: originInterfaceItem.path,
+      method: originInterfaceItem.method,
+      dataType: dataType || 'url',
+      apiType: 'yapi',
+      enable: true,
+      mockUrl: `${host}/mock/${yapiProjectId}${originInterfaceItem.path}`,
+      projectId,
+    };
   }
 }

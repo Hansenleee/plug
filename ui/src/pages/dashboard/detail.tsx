@@ -49,7 +49,7 @@ export const Detail: React.FC<Props> = (props) => {
               items={[
                 {
                   label: 'request-url',
-                  children: url,
+                  children: url?.indexOf('?') > -1 ? url.split('?')[0] : url,
                 },
                 {
                   label: 'method',

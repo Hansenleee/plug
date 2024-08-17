@@ -16,8 +16,8 @@ export const columns: TableProps['columns'] = [
     title: 'URL',
     dataIndex: 'url',
     width: 350,
-    render: (url) => {
-      return url;
+    render: (url: string) => {
+      return url?.indexOf('?') > -1 ? url.split('?')[0] : url;
     },
   },
   {

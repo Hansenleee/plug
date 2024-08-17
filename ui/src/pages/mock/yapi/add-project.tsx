@@ -24,7 +24,7 @@ export const AddProject: React.FC<Props> = (props) => {
     const request = !!props.project ? axios.post('/api/mock/yapi/project/update', {
       ...values,
       id: props.project.id,
-    }) : axios.post('/api/mock/yapi/addByProject', values);
+    }) : axios.post('/api/mock/yapi/project/add', values);
 
     return request.then(() => {
       message.success('保存成功');

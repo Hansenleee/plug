@@ -1,28 +1,16 @@
 import React, { useMemo } from 'react';
-import { Space, Input, Button, Select, Dropdown } from 'antd';
-import { PlusOutlined, SettingOutlined, SearchOutlined, DownOutlined, ProjectOutlined } from '@ant-design/icons';
+import { Space, Input, Button, Select } from 'antd';
+import { PlusOutlined, SettingOutlined, SearchOutlined, ProjectOutlined } from '@ant-design/icons';
 
 interface Props {
   searchValue: Record<string, any>;
   projectList: Array<Record<string, string>>;
   onAdd: () => void;
   onSearchValueChange: (value: object) => void;
-  onAddProject: () => void;
   onProjectManage: () => void;
   onSetting: () => void;
   onSearch: () => void;
 }
-
-const DropdownMenu = [
-  {
-    label: '接口',
-    key: 'interface',
-  },
-  {
-    label: '项目',
-    key: 'project',
-  }
-];
 
 export const Search: React.FC<Props> = (props) => {
   const projectOptions = useMemo(() => {
@@ -31,14 +19,6 @@ export const Search: React.FC<Props> = (props) => {
       value: item.id,
     }));
   }, [props.projectList]);
-
-  const handleAdd = (value: any) => {
-    if (value.key === 'project') {
-      return props.onAddProject();
-    }
-
-    return props.onAdd();
-  };
 
   return (
     <Space style={{ marginBottom: 20 }}>
@@ -64,11 +44,9 @@ export const Search: React.FC<Props> = (props) => {
       >
         搜索
       </Button>
-      <Dropdown menu={{ items: DropdownMenu, onClick: handleAdd}}>
-        <Button type="primary" icon={<PlusOutlined />}>
-          添加 <DownOutlined />
-        </Button>
-      </Dropdown>
+      <Button icon={<PlusOutlined />} onClick={props.onAdd}>
+        添加接口
+      </Button>
       <Button icon={<ProjectOutlined />} size="middle" onClick={props.onProjectManage}>
         项目管理
       </Button>

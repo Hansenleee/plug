@@ -2,7 +2,7 @@ import { Badge, TableProps, Space, Typography, Popconfirm, Tooltip } from 'antd'
 import { message } from 'antd/lib';
 import axios from 'axios';
 
-export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh }) => [
+export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, onEdit }) => [
   {
     title: 'path',
     dataIndex: 'path',
@@ -77,7 +77,7 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh })
 
       return (
         <Space>
-          <Typography.Link>自定义 Mock</Typography.Link>
+          <Typography.Link onClick={() => onEdit(record)}>自定义 Mock</Typography.Link>
           {record.enable ? (
             <Typography.Link onClick={handleToggle}>禁用</Typography.Link>
           ) : (

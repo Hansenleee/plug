@@ -1,6 +1,7 @@
-interface InintOption {
+interface InitOption {
   port?: number;
   debug?: boolean;
+  originProxyPort?: number;
 }
 
 export class Configuration {
@@ -13,9 +14,12 @@ export class Configuration {
   static PROXY_HOST = '127.0.0.1';
 
   static IS_DEBUG = false;
+  // 全局代理端口
+  static ORIGIN_PROXY_PORT?: number;
 
-  static init(option: InintOption) {
+  static init(option: InitOption) {
     Configuration.PROXY_PORT = option.port || Configuration.PROXY_PORT;
     Configuration.IS_DEBUG = option.debug !== undefined ? !!option.debug : Configuration.IS_DEBUG;
+    Configuration.ORIGIN_PROXY_PORT = option.originProxyPort;
   }
 }
