@@ -145,5 +145,8 @@
   },
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "devDependencies": {
+    "monaco-editor-webpack-plugin": "^7.1.0"
   }
 }
