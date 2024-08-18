@@ -1,6 +1,6 @@
 {
   "name": "plug-proxy",
-  "version": "0.0.1-beta.6",
+  "version": "0.0.1-beta.7",
   "description": "An http proxy tool",
   "type": "module",
   "main": "index.js",
