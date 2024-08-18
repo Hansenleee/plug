@@ -3,10 +3,10 @@ import fs from 'fs';
 import path from 'path';
 import { start } from './index';
 
-const pkg = fs.readFileSync(path.join(process.cwd(), 'package.json'), { encoding: 'utf-8' });
+const pkg = fs.readFileSync(path.join(__dirname, '..', 'package.json'), { encoding: 'utf-8' });
 const pkgJson = JSON.parse(pkg);
 
-program.version(pkgJson.version, '-v, --version').usage('<command> [options]');
+program.version(pkgJson.version, '-v, --version');
 
 program
   .command('start')
