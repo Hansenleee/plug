@@ -1,4 +1,4 @@
-import { Badge, TableProps, Space, Typography, Popconfirm, Tooltip } from 'antd';
+import { Badge, TableProps, Space, Typography, Popconfirm, Tooltip, Tag } from 'antd';
 import { message } from 'antd/lib';
 import axios from 'axios';
 
@@ -30,12 +30,12 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, o
       if (value === 'url') {
         return (
           <Tooltip placement="top" title={record.mockUrl}>
-            yapi Mock
+            <Tag color="lime">yapi</Tag>
           </Tooltip>
         );
       }
 
-      return '自定义 Mock';
+      return <Tag color="red">自定义</Tag>;
     },
   },
   {

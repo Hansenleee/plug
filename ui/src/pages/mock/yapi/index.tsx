@@ -9,6 +9,7 @@ import { Setting } from './setting';
 import { getColumns } from './columns';
 import { ProjectList } from './project-list';
 import { DataEditor } from './data-editor';
+import './style.less';
 
 export default function YapiMock() {
   const [addVisible, setAddVisible] = useState(false);
@@ -73,6 +74,11 @@ export default function YapiMock() {
     fetchProjectList();
   };
 
+  const handleCloseProject = () => {
+    setProjectVisible(false);
+    setActiveProject(undefined);  
+  };
+
   const handleEditProject = (project: Record<string, string>) => {
     setActiveProject(project);
     setProjectVisible(true);
@@ -124,7 +130,7 @@ export default function YapiMock() {
       <AddProject
         open={projectVisible}
         project={activeProject}
-        onClose={() => setProjectVisible(false)}
+        onClose={handleCloseProject}
         onOk={handleAdded}
       />
       <Setting open={settingVisible} onClose={() => setSettingVisible(false)} />

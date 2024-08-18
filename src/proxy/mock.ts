@@ -22,6 +22,26 @@ export class Mock {
     return false;
   }
 
+  async fetchMockData(mockItem: MockApiItem, { method }) {
+    const mockFetchResult = await fetch(mockItem.mockUrl, {
+      method,
+      // TODO: 完善下请求头信息
+      // headers: request.headers as HeadersInit,
+      headers: { 'Content-Type': 'application/json' },
+      body: null,
+    });
+    const jsonMockData = await mockFetchResult.json();
+
+    return jsonMockData;
+  }
+
+  fetchDefineMockData(mockItem: MockApiItem): string {
+    const storage = Container.get(Storage);
+    const defineMockData = storage.mock.getMockData(mockItem.id);
+
+    return defineMockData.mockString;
+  }
+
   async mock(mockItem: MockApiItem, request: http.IncomingMessage, response: http.ServerResponse) {
     let responseData = '';
 
@@ -32,21 +52,20 @@ export class Mock {
     });
 
     if (mockItem.dataType === 'url') {
-      const mockFetchResult = await fetch(mockItem.mockUrl, {
-        method: request.method,
-        // headers: request.headers as HeadersInit,
-        headers: { 'Content-Type': 'application/json' },
-        body: null,
-      });
-      const jsonMockData = await mockFetchResult.json();
+      const jsonMockData = await this.fetchMockData(mockItem, { method: request.method });
 
-      // 临时先将返回 code 为成 0
+      // TODO: 临时先将返回 code 为成 0
       (jsonMockData as any).code = 0;
 
       responseData = JSON.stringify(jsonMockData);
-
       response.end(responseData);
+    } else if (mockItem.dataType === 'define') {
+      const defineMockData = this.fetchDefineMockData(mockItem);
+
+      responseData = defineMockData;
+      response.end(defineMockData);
     } else {
+      // TODO: 待完善
       responseData = JSON.stringify({
         data: 'Hello World!',
       });

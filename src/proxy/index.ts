@@ -7,10 +7,10 @@ import { Protocol } from '../types';
 @Service()
 export class Proxy {
   @Inject()
-  private request: Request;
+  mock: Mock;
 
   @Inject()
-  private mock: Mock;
+  private request: Request;
 
   // 请求代理转发的核心入口
   async proxy(request: http.IncomingMessage, response: http.ServerResponse, protocol: Protocol) {

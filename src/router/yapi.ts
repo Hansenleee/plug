@@ -11,6 +11,8 @@ export class YapiRouter implements BaseRouter {
     ['/config', 'get', this.controller.getConfig],
     ['/config', 'post', this.controller.getConfig],
     ['/addById', 'post', this.controller.addById],
+    ['/mock/data', 'get', this.controller.getMockData],
+    ['/mock/update', 'post', this.controller.insertOrUpdateMockData],
     ['/yapi/delete', 'post', this.controller.delete],
     ['/list/page', 'post', this.controller.getYapiListByPage],
     ['/status/toggle', 'post', this.controller.statusToggle],

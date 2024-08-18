@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Drawer, message, Modal, Space, Typography, Button } from 'antd';
+import { Card, Drawer, message, Modal, Space, Typography, Button, Empty } from 'antd';
 import { DeleteOutlined, SyncOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -58,13 +58,28 @@ export const ProjectList: React.FC<Props> = (props) => {
           <DeleteOutlined key="delete" style={{ color: 'red' }} onClick={() => handleDelete(project)} />,
         ];
 
-        return <Card actions={actions}>
-          <Space direction="vertical">
-            <Typography.Text>项目id: {project.projectId}</Typography.Text>
-            <Typography.Text>项目名称: {project.projectName}</Typography.Text>
-          </Space>
-        </Card>
+        return (
+          <Card actions={actions} key={project.id} style={{ marginBottom: 24 }}>
+            <Space direction="vertical">
+              <Typography.Text>项目id: {project.projectId}</Typography.Text>
+              <Typography.Text>项目名称: {project.projectName}</Typography.Text>
+            </Space>
+          </Card>
+        )
       })}
+      {
+        !props.projectList?.length ? (
+          <Empty
+            className="project-empty"
+            style={{ transform: 'translateY(100%)'}}
+            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+            imageStyle={{ height: 150 }}
+            description="暂无数据"
+          >
+            <Button type="primary" icon={<PlusOutlined />} onClick={props.onAddProject}>添加项目</Button>
+          </Empty>
+        ) : null
+      }
     </Drawer>
   )
 };

@@ -1,7 +1,8 @@
-import { Service } from 'typedi';
+import Container, { Service } from 'typedi';
 import type { Context } from 'koa';
 import { nanoid } from 'nanoid';
 import { BaseController } from './base';
+import { Proxy } from '../proxy';
 
 @Service()
 export class YapiController extends BaseController {
@@ -49,6 +50,40 @@ export class YapiController extends BaseController {
       ...commonData,
       mockUrl: `${config.host}/mock/${projectInfo._id}${interfaceInfo.path}`,
     });
+
+    ctx.body = this.success(true);
+  }
+
+  async getMockData(ctx: Context) {
+    const { apiId } = ctx.query;
+
+    this.required(ctx.query, ['apiId']);
+
+    const mockData = this.storage.mock.getMockData(apiId as string);
+
+    if (mockData?.apiId) {
+      ctx.body = this.success(JSON.parse(mockData.mockString));
+
+      return;
+    }
+
+    const mockApi = this.storage.mock.getApi(apiId as string);
+    const proxy = Container.get(Proxy);
+
+    const jsonMockData = await proxy.mock.fetchMockData(mockApi, {
+      method: mockApi.method,
+    });
+
+    ctx.body = this.success(jsonMockData);
+  }
+
+  async insertOrUpdateMockData(ctx: Context) {
+    const { apiId, mockString } = ctx.request.body;
+
+    this.required(ctx.request.body, ['mockString']);
+
+    this.storage.mock.insertOrUpdateMockData({ apiId, mockString });
+    this.storage.mock.updateApi({ id: apiId, dataType: 'define' });
 
     ctx.body = this.success(true);
   }
