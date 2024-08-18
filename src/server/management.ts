@@ -6,6 +6,7 @@ import cors from '@koa/cors';
 import staticServer from 'koa-static';
 import views from '@ladjs/koa-views';
 import { createServer } from 'http';
+import path from 'path';
 import { execSync } from 'child_process';
 import { errorMiddleware } from '../middleware/error';
 import { Logger } from '../shared/log';
@@ -37,7 +38,7 @@ export class ManagementServer {
       logger.info(`management server start at ${Configuration.MANAGEMENT_PORT}`);
 
       execSync(`osascript open "http://localhost:${Configuration.MANAGEMENT_PORT}/management"`, {
-        cwd: process.cwd(),
+        cwd: path.join(__dirname, '..'),
         stdio: 'ignore',
       });
     });

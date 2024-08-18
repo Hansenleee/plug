@@ -25,7 +25,7 @@ interface CertOption {
 @Service()
 export class Certificate {
   static readonly BASE_HTTPS_DOMAIN = 'BASE_HTTPS_DOMAIN';
-  static readonly BASE_DIR = path.join(process.cwd(), 'resources', 'certificate');
+  static readonly BASE_DIR = path.join(__dirname, '..', 'resources', 'certificate');
 
   private get crtPath() {
     return path.join(Certificate.BASE_DIR, 'my.crt');
