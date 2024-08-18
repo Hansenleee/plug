@@ -7,11 +7,11 @@ import staticServer from 'koa-static';
 import views from '@ladjs/koa-views';
 import path from 'path';
 import { createServer } from 'http';
+import { execSync } from 'child_process';
 import { errorMiddleware } from '../middleware/error';
 import { Logger } from '../shared/log';
 import { SocketIO } from '../shared/socket';
 import { Configuration } from '../configuration';
-// import { Controller } from '../controller';
 import { Routers } from '../router';
 
 const logger = new Logger('management');
@@ -36,6 +36,11 @@ export class ManagementServer {
 
     server.listen(Configuration.MANAGEMENT_PORT, () => {
       logger.info(`management server start at ${Configuration.MANAGEMENT_PORT}`);
+
+      execSync(`osascript open "http://localhost:${Configuration.MANAGEMENT_PORT}/management"`, {
+        cwd: process.cwd(),
+        stdio: 'ignore',
+      });
     });
   }
 

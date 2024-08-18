@@ -7,7 +7,8 @@
   "files": [
     "bin",
     "dist",
-    "ui/build"
+    "ui/build",
+    "open"
   ],
   "scripts": {
     "dev": "cross-env NODE_ENV=dev rollup -c -w",
