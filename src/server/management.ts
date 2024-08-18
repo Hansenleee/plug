@@ -5,7 +5,6 @@ import { bodyParser } from '@koa/bodyparser';
 import cors from '@koa/cors';
 import staticServer from 'koa-static';
 import views from '@ladjs/koa-views';
-import path from 'path';
 import { createServer } from 'http';
 import { execSync } from 'child_process';
 import { errorMiddleware } from '../middleware/error';
@@ -45,8 +44,7 @@ export class ManagementServer {
   }
 
   private renderView() {
-    const viewPath = path.join(process.cwd(), 'ui/build');
-    const render = views(viewPath, {
+    const render = views(Configuration.UI_BUILD_DIR, {
       extension: 'html',
     });
 
@@ -60,9 +58,7 @@ export class ManagementServer {
   }
 
   private renderStatic() {
-    const staticPath = path.join(process.cwd(), 'ui/build');
-
-    this.app.use(staticServer(staticPath));
+    this.app.use(staticServer(Configuration.UI_BUILD_DIR));
   }
 
   private registerRouter() {

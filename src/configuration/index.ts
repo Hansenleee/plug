@@ -1,3 +1,5 @@
+import path from 'path';
+
 interface InitOption {
   port?: number;
   debug?: boolean;
@@ -16,6 +18,9 @@ export class Configuration {
   static IS_DEBUG = false;
   // 全局代理端口
   static ORIGIN_PROXY_PORT?: number;
+
+  // ui 产物地址
+  static UI_BUILD_DIR = path.join(process.cwd(), 'ui-dist');
 
   static init(option: InitOption) {
     Configuration.PROXY_PORT = option.port || Configuration.PROXY_PORT;
