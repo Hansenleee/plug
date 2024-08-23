@@ -1,5 +1,5 @@
 import { Table } from 'antd';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useMount, useUnmount } from 'ahooks';
 import { io, Socket } from 'socket.io-client';
 import { columns } from './column';
@@ -8,10 +8,14 @@ import { Detail } from './detail';
 import { BASE_API_PORT } from '../../constants';
 import './style.scss';
 
+export const MAX_RECORDS = 500;
+
 const Dashboard: React.FC = () => {
   const [records, setRecords] = useState<Array<Record<string, string>>>([]);
   const [activeRecord, setActiveRecord] = useState<Record<string, string> | undefined>();
+  const [tableScroll, setTableScroll] = useState({ x: 1000, y: 600 })
   const socketRef = useRef<Socket>();
+  const tableRef = useRef<any>(null);
 
   const handleSearch = (searchValue: string | number) => {
     if (!searchValue && searchValue !== 0) {
@@ -20,6 +24,13 @@ const Dashboard: React.FC = () => {
 
     setRecords((pre) => pre.filter((_) => _.url.includes(searchValue as string)));
   };
+
+  useMount(() => {
+    setTableScroll({
+      x: tableRef.current?.offsetWidth - 10,
+      y: tableRef.current?.offsetHeight - 50,
+    })
+  });
 
   useMount(() => {
     if (socketRef.current) {
@@ -34,7 +45,15 @@ const Dashboard: React.FC = () => {
         const payloadList = Array.isArray(payload) ? payload : [payload];
 
         if (args.name === 'PROXY_REQUEST_RECORD') {
-          setRecords((pre) => [...payloadList, ...pre]);
+          setRecords((pre) => {
+            const finalRecords = [...payloadList, ...pre];
+
+            if (finalRecords.length > MAX_RECORDS) {
+              return finalRecords.slice(0, MAX_RECORDS);
+            }
+
+            return finalRecords;
+          });
         }
 
         if (args.name === 'PROXY_RESPONSE_RECORD') {
@@ -69,13 +88,15 @@ const Dashboard: React.FC = () => {
     <div className="dashboard-container">
       <Search onSearch={handleSearch} onClear={() => setRecords([])} />
       <Table
+        ref={tableRef}
         pagination={false}
         bordered
         rowKey="id"
         columns={columns}
         dataSource={records}
-        scroll={{ x: '100%' }}
+        scroll={tableScroll}
         sticky
+        virtual
         onRow={(record) => {
           return {
             onClick: () => setActiveRecord(record),
