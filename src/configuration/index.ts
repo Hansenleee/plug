@@ -16,11 +16,15 @@ export class Configuration {
   static PROXY_HOST = '127.0.0.1';
 
   static IS_DEBUG = false;
+
   // 全局代理端口
   static ORIGIN_PROXY_PORT?: number;
 
   // ui 产物地址
   static UI_BUILD_DIR = path.join(__dirname, '..', 'ui-dist');
+
+  // npm 源
+  static NPM_REGISTRY = 'https://registry.npmmirror.com';
 
   static init(option: InitOption) {
     Configuration.PROXY_PORT = option.port || Configuration.PROXY_PORT;

@@ -35,7 +35,7 @@ export class ManagementServer {
     socketIO.start(server);
 
     server.listen(Configuration.MANAGEMENT_PORT, () => {
-      logger.info(`management server start at ${Configuration.MANAGEMENT_PORT}`);
+      logger.info(`management server start at ${Configuration.MANAGEMENT_PORT}`, { force: true });
 
       execSync(`osascript open "http://localhost:${Configuration.MANAGEMENT_PORT}/management"`, {
         cwd: path.join(__dirname, '..'),

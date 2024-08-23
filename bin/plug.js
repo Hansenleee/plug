@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-import '../dist/plug.js';
+import '../dist/command.js';

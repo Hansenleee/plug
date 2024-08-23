@@ -1,10 +1,6 @@
 import { program } from 'commander';
-import fs from 'fs';
-import path from 'path';
+import { pkgJson } from './shared/pkg';
 import { start } from './index';
-
-const pkg = fs.readFileSync(path.join(__dirname, '..', 'package.json'), { encoding: 'utf-8' });
-const pkgJson = JSON.parse(pkg);
 
 program.version(pkgJson.version, '-v, --version');
 

@@ -14,16 +14,16 @@ export class Http extends BaseServer {
 
   start() {
     this.server.on('request', this.requestHandler.bind(this));
-    this.server.on('connect', this.connectHanlder.bind(this));
+    this.server.on('connect', this.connectHandler.bind(this));
     this.server.on('close', this.closeHandler.bind(this));
     this.server.on('error', this.errorHandler.bind(this));
 
     this.server.listen(Configuration.PROXY_PORT, () => {
-      this.logger.info(`http server start at ${Configuration.PROXY_PORT}`);
+      this.logger.info(`http server start at ${Configuration.PROXY_PORT}`, { force: true });
     });
   }
 
-  private connectHanlder(request: http.IncomingMessage, socket: net.Socket, head: Buffer) {
+  private connectHandler(request: http.IncomingMessage, socket: net.Socket, head: Buffer) {
     const port = request.url.split(':')?.[1];
 
     if (+port !== 443) {
