@@ -9,9 +9,9 @@ export class Guardian {
   @Inject()
   ota: OTA;
 
-  start() {
+  async start() {
     this.exceptionGuardian();
-    this.ota.checkAndUpgrade();
+    await this.ota.checkAndUpgrade();
   }
 
   private exceptionGuardian() {

@@ -11,7 +11,7 @@ const IS_ANALYZE = !!process.env.BUILD_ANALYZE;
 
 export default {
   external: ['chalk'],
-  input: ['src/index.ts', 'src/plug.ts'],
+  input: ['src/index.ts', 'src/command.ts'],
   output: {
     // file: 'dist/index.js',
     dir: 'dist',

@@ -10,22 +10,24 @@ const logger = new Logger('OTA');
 
 @Service()
 export class OTA {
+  private spinner = ora();
+
   async checkAndUpgrade() {
-    const spinner = ora('检查更新中...');
+    this.spinner.start('检查更新中...');
 
     try {
-      const latestVersion = this.getLatestOfficialVersion();
-      const { needUpgrade, auto } = this.checkIfNeedUpgrade(latestVersion);
+      const latestVersion = await this.getLatestOfficialVersion();
+      const { needUpgrade, auto } = await this.checkIfNeedUpgrade(latestVersion);
 
       if (!needUpgrade) {
-        spinner.stop();
+        this.spinner.stop();
         return;
       }
 
       const callUpgrade = () => {
-        spinner.start('自动更新中...');
+        this.spinner.start('自动更新中...');
         this.upgrade();
-        spinner.succeed('更新成功，正在重新启动程序');
+        this.spinner.succeed('更新成功，正在重新启动程序');
         this.restart();
       };
 
@@ -40,11 +42,11 @@ export class OTA {
       }
     } catch (err) {
       logger.warn(`更新失败: ${err.message}`);
-      spinner.fail('检查更新失败, 已自动跳过');
+      this.spinner.fail('检查更新失败, 已自动跳过');
     }
   }
 
-  private getLatestOfficialVersion() {
+  private async getLatestOfficialVersion() {
     const versions = execSync(
       `npm view ${pkgJson.name} versions --registry=${Configuration.NPM_REGISTRY}`
     )
@@ -55,7 +57,7 @@ export class OTA {
     return versions[versions.length - 1];
   }
 
-  private checkIfNeedUpgrade(latestVersion: string) {
+  private async checkIfNeedUpgrade(latestVersion: string) {
     const currentVersion = pkgJson.version;
     const currentVersionList = this.getVersionList(currentVersion);
     const latestVersionList = this.getVersionList(latestVersion);
@@ -77,6 +79,11 @@ export class OTA {
         auto: true,
       };
     }
+
+    return {
+      needUpgrade: false,
+      auto: false,
+    };
   }
 
   private getVersionList(version: string) {

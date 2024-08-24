@@ -2,10 +2,11 @@ import forge, { pki } from 'node-forge';
 import { Service } from 'typedi';
 import path from 'path';
 import fs from 'fs';
+import { execSync } from 'child_process';
 import { LRUCache } from 'lru-cache';
 import { Logger } from './log';
 
-const log = new Logger('cert');
+const logger = new Logger('cert');
 const ROOT_CERT_KEY = '__ROOT_CERT_KEY';
 
 interface CertInfo {
@@ -24,15 +25,16 @@ interface CertOption {
 
 @Service()
 export class Certificate {
+  static readonly NAME = 'plug-proxy';
   static readonly BASE_HTTPS_DOMAIN = 'BASE_HTTPS_DOMAIN';
   static readonly BASE_DIR = path.join(__dirname, '..', 'resources', 'certificate');
 
   private get crtPath() {
-    return path.join(Certificate.BASE_DIR, 'my.crt');
+    return path.join(Certificate.BASE_DIR, `${Certificate.NAME}.crt`);
   }
 
   private get keyPath() {
-    return path.join(Certificate.BASE_DIR, 'my.key.pem');
+    return path.join(Certificate.BASE_DIR, `${Certificate.NAME}.key.pem`);
   }
 
   private cache = new LRUCache<string, CertInfo>({
@@ -40,37 +42,9 @@ export class Certificate {
     ttl: 1000 * 60 * 60 * 24,
   });
 
-  initBaseCertificate() {
-    const hasCert = fs.existsSync(this.crtPath);
-
-    if (hasCert) {
-      return;
-    }
-
-    const { cert, key } = this.createCert({
-      notBeforeYear: 5,
-      notAfterYear: 20,
-      domain: 'plug-proxy',
-      extensions: [
-        {
-          name: 'basicConstraints',
-          critical: true,
-          cA: true,
-        },
-        {
-          name: 'keyUsage',
-          critical: true,
-          keyCertSign: true,
-        },
-        {
-          name: 'subjectKeyIdentifier',
-        },
-      ],
-    });
-
-    fs.writeFileSync(this.crtPath, cert);
-    fs.writeFileSync(this.keyPath, key);
-    log.info('根证书创建完成');
+  init() {
+    this.initBaseCert();
+    this.checkAndInsertBaseCert();
   }
 
   createCertificateByDomain(domain: string) {
@@ -128,6 +102,69 @@ export class Certificate {
     });
   }
 
+  private initBaseCert() {
+    const hasCert = fs.existsSync(this.crtPath);
+
+    if (hasCert) {
+      return;
+    }
+
+    const { cert, key } = this.createCert({
+      notBeforeYear: 5,
+      notAfterYear: 20,
+      domain: Certificate.NAME,
+      extensions: [
+        {
+          name: 'basicConstraints',
+          critical: true,
+          cA: true,
+        },
+        {
+          name: 'keyUsage',
+          critical: true,
+          keyCertSign: true,
+        },
+        {
+          name: 'subjectKeyIdentifier',
+        },
+      ],
+    });
+
+    fs.writeFileSync(this.crtPath, cert);
+    fs.writeFileSync(this.keyPath, key);
+
+    logger.info(`根证书创建完成,证书地址：${Certificate.BASE_DIR}`, { force: true });
+  }
+
+  private checkAndInsertBaseCert() {
+    try {
+      execSync(`security find-certificate -c ${Certificate.NAME}`, {
+        encoding: 'utf-8',
+      });
+    } catch (err) {
+      if (err.message.includes('not be found')) {
+        return this.insertBaseCert();
+      }
+
+      logger.warn('根证书安装失败，请手动安装', { force: true });
+    }
+  }
+
+  private insertBaseCert() {
+    try {
+      execSync(
+        `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${this.crtPath}`,
+        {
+          encoding: 'utf-8',
+        }
+      );
+
+      logger.info('根证书自动安装成功', { force: true });
+    } catch (err) {
+      logger.warn('根证书安装失败，请手动安装', { force: true });
+    }
+  }
+
   private getRootCert() {
     if (this.cache.get(ROOT_CERT_KEY)) {
       return this.cache.get(ROOT_CERT_KEY);
@@ -182,7 +219,7 @@ export class Certificate {
       },
       {
         name: 'organizationName',
-        value: 'plug-proxy',
+        value: Certificate.NAME,
       },
       {
         shortName: 'OU',

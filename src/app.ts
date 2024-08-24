@@ -20,16 +20,17 @@ export class CoreApp {
   @Inject()
   private guards: Guardian;
 
-  start() {
-    this.guards.start();
-    this.http.start();
-    this.https.start();
-    this.managementServer.start();
+  async start() {
+    await this.guards.start();
 
     const storage = Container.get<Storage>(Storage);
     const certificate = Container.get<Certificate>(Certificate);
 
     storage.init();
-    certificate.initBaseCertificate();
+    certificate.init();
+
+    this.http.start();
+    this.https.start();
+    this.managementServer.start();
   }
 }
