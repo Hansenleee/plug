@@ -2,13 +2,20 @@ import http from 'http';
 import Container, { Service } from 'typedi';
 import fetch from 'node-fetch';
 import { Storage } from '../storage';
-import type { MockApiItem } from '../storage/mock';
-import { getPath } from '../shared/request-meta';
+import { MockApiItem } from '../types';
+import { getPath, getHost } from '../shared/request-meta';
 
 @Service()
 export class Mock {
   check(request: http.IncomingMessage) {
     const storage = Container.get(Storage);
+    const mockHostList = storage.mock.getMemoryMockHost();
+    const requestHost = getHost(request);
+
+    if (!mockHostList.includes(requestHost)) {
+      return false;
+    }
+
     const mockApiList = storage.mock.getApiList();
     const pathname = getPath(request);
     const availableMockApi = mockApiList.find(

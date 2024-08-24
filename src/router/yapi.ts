@@ -9,7 +9,7 @@ export class YapiRouter implements BaseRouter {
 
   routers = [
     ['/config', 'get', this.controller.getConfig],
-    ['/config', 'post', this.controller.getConfig],
+    ['/config', 'post', this.controller.setConfig],
     ['/addById', 'post', this.controller.addById],
     ['/mock/data', 'get', this.controller.getMockData],
     ['/mock/update', 'post', this.controller.insertOrUpdateMockData],

@@ -26,8 +26,8 @@ export class CoreApp {
     const storage = Container.get<Storage>(Storage);
     const certificate = Container.get<Certificate>(Certificate);
 
-    storage.init();
     certificate.init();
+    storage.init();
 
     this.http.start();
     this.https.start();

@@ -51,7 +51,7 @@ export const Search: React.FC<Props> = (props) => {
         项目管理
       </Button>
       <Button icon={<SettingOutlined />} size="middle" onClick={props.onSetting}>
-        yapi 配置
+        基础配置
       </Button>
     </Space>
   );

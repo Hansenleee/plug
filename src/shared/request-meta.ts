@@ -4,6 +4,10 @@ import qs from 'querystring';
 import zlib from 'zlib';
 import { ResponseDataInfo } from '../types';
 
+export const getHost = (request: http.IncomingMessage) => {
+  return request.headers.host;
+};
+
 export const getPath = (request: http.IncomingMessage) => {
   const { url } = request;
 

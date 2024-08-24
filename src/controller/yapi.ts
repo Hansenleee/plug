@@ -15,9 +15,9 @@ export class YapiController extends BaseController {
   }
 
   async setConfig(ctx: Context) {
-    const { host } = ctx.request.body;
+    const { host, mockHost } = ctx.request.body;
 
-    this.storage.mock.setConfig(YapiController.NS, { host });
+    this.storage.mock.setConfig(YapiController.NS, { host, mockHost });
 
     ctx.body = this.success(true);
   }

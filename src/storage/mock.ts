@@ -1,34 +1,11 @@
 import { Service } from 'typedi';
 import { BaseStorage } from './base';
-
-export interface MockApiItem {
-  id: string;
-  path: string;
-  method: string;
-  title: string;
-  dataType: 'url' | 'define';
-  apiType: 'default' | 'yapi' | (string & {});
-  mockUrl?: string;
-  enable: boolean;
-  projectId?: string;
-}
-
-export interface ProjectItem {
-  id: string;
-  token: string;
-  projectName: string;
-  projectId: string;
-  enable: boolean;
-}
-
-export interface MockDataItem {
-  apiId: string;
-  mockString: string;
-}
+import { MockApiItem, MockDataItem, ProjectItem, MockConfig } from '../types';
 
 @Service()
 export class MockStorage extends BaseStorage {
   private static readonly NS = 'mock';
+
   // 用来存储 mock 相关的基础配置
   private static readonly CONFIG_KEY = 'config';
 
@@ -41,20 +18,26 @@ export class MockStorage extends BaseStorage {
   // 用来存储 project 相关的信息的 key
   private static readonly PROJECT_KEY = 'project';
 
+  // 内存中储存 mockHost 的 key
+  private static readonly MEM_MOCK_HOST_KEY = 'mockHost';
+
   constructor() {
     super(MockStorage.NS);
   }
 
-  init() {}
-
-  setConfig(key: string, item: Record<string, unknown>) {
-    return this.persistence.setMap(MockStorage.CONFIG_KEY, { [key]: item });
+  init() {
+    this.memoryMockHost();
   }
 
-  getConfig(key: string) {
+  setConfig(key: string, item: Partial<MockConfig>) {
+    this.persistence.setMap(MockStorage.CONFIG_KEY, { [key]: item });
+    this.memoryMockHost();
+  }
+
+  getConfig(key?: string): Partial<MockConfig> {
     const config = this.persistence.get(MockStorage.CONFIG_KEY, {});
 
-    return config[key];
+    return key ? config[key] : config;
   }
 
   appendApi(item: MockApiItem | MockApiItem[]) {
@@ -150,5 +133,22 @@ export class MockStorage extends BaseStorage {
 
   getProjectList() {
     return this.persistence.get(MockStorage.PROJECT_KEY, []) as MockApiItem[];
+  }
+
+  getMemoryMockHost(): string[] {
+    return this.memory.get(MockStorage.MEM_MOCK_HOST_KEY);
+  }
+
+  private memoryMockHost() {
+    const allConfig = this.getConfig() as Record<string, Partial<MockConfig>>;
+    let mockHostList = [];
+
+    Object.values(allConfig).forEach((eachConfig) => {
+      if (eachConfig.mockHost?.length) {
+        mockHostList = [...mockHostList, ...eachConfig.mockHost];
+      }
+    });
+
+    this.memory.set(MockStorage.MEM_MOCK_HOST_KEY, mockHostList);
   }
 }
