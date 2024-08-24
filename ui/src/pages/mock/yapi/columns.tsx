@@ -1,4 +1,4 @@
-import { Badge, TableProps, Space, Typography, Popconfirm, Tooltip, Tag } from 'antd';
+import { Badge, TableProps, Space, Typography, Popconfirm, Tooltip, Tag, Modal } from 'antd';
 import { message } from 'antd/lib';
 import axios from 'axios';
 
@@ -75,9 +75,24 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, o
         });
       };
 
+      const handleSync = () => {
+        Modal.confirm({
+          title: '更新接口后会丢失之前改动的数据，是否确认更新？',
+          onOk: () => {
+            return axios.post('/api/mock/yapi/upgrade', {
+              id: record.id,
+            }).then(() => {
+              message.success('更新成功');
+              onRefresh();
+            })
+          }
+        });
+      };
+
       return (
         <Space>
-          <Typography.Link onClick={() => onEdit(record)}>自定义 Mock</Typography.Link>
+          <Typography.Link onClick={() => onEdit(record)}>Mock</Typography.Link>
+          <Typography.Link onClick={handleSync}>更新</Typography.Link>
           {record.enable ? (
             <Typography.Link onClick={handleToggle}>禁用</Typography.Link>
           ) : (

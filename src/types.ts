@@ -26,6 +26,8 @@ export interface MockApiItem {
   apiType: 'default' | 'yapi' | (string & {});
   mockUrl?: string;
   enable: boolean;
+  yapiId?: string;
+  token?: string;
   projectId?: string;
 }
 

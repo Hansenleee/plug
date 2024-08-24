@@ -106,6 +106,10 @@ export class MockStorage extends BaseStorage {
     return this.persistence.set(mockKey, mockItem);
   }
 
+  deleteMockData(apiId: string) {
+    return this.persistence.delete(`${MockStorage.CUSTOM_MOCK_KEY}_${apiId}`);
+  }
+
   appendProject(item: ProjectItem) {
     return this.persistence.append(MockStorage.PROJECT_KEY, item);
   }
@@ -129,6 +133,12 @@ export class MockStorage extends BaseStorage {
       projectList.filter((item) => item.id !== id)
     );
     this.deleteApiByProject(id);
+  }
+
+  getProject(id: string) {
+    const projectList = this.getProjectList();
+
+    return projectList.find((_) => _.id === id);
   }
 
   getProjectList() {

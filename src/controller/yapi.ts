@@ -48,8 +48,61 @@ export class YapiController extends BaseController {
 
     this.storage.mock.appendApi({
       ...commonData,
+      token,
       mockUrl: `${config.host}/mock/${projectInfo._id}${interfaceInfo.path}`,
     });
+
+    ctx.body = this.success(true);
+  }
+
+  async upgradeInterface(ctx: Context) {
+    const { id } = ctx.request.body;
+
+    this.required(ctx.request.body, ['id']);
+
+    const interfaceInfo = this.storage.mock.getApi(id);
+    let token;
+
+    if (!interfaceInfo) {
+      ctx.body = this.error(-10011, '接口不存在');
+
+      return;
+    }
+
+    if (interfaceInfo.projectId && !interfaceInfo.token) {
+      const projectInfo = this.storage.mock.getProject(interfaceInfo.projectId);
+
+      token = projectInfo.token;
+    } else {
+      token = interfaceInfo.token;
+    }
+
+    if (!token || !interfaceInfo.yapiId) {
+      ctx.body = this.error(-10012, '更新失败，请删除接口后重新添加');
+
+      return;
+    }
+
+    ctx.body = this.success(true);
+
+    const updatedInterfaceInfo = await this.service.yapi.fetchInterface({
+      id: interfaceInfo.yapiId,
+      token,
+    });
+
+    const config = this.storage.mock.getConfig(YapiController.NS);
+    const projectInfo = await this.service.yapi.fetchProjectInfo(token);
+
+    this.storage.mock.updateApi({
+      id,
+      title: updatedInterfaceInfo.title,
+      path: updatedInterfaceInfo.path,
+      method: updatedInterfaceInfo.method,
+      token,
+      dataType: 'url',
+      mockUrl: `${config.host}/mock/${projectInfo._id}${interfaceInfo.path}`,
+    });
+    this.storage.mock.deleteMockData(id);
 
     ctx.body = this.success(true);
   }
@@ -223,6 +276,7 @@ export class YapiController extends BaseController {
       enable: true,
       mockUrl: `${host}/mock/${yapiProjectId}${originInterfaceItem.path}`,
       projectId,
+      yapiId: originInterfaceItem._id,
     };
   }
 }

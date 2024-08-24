@@ -34,6 +34,10 @@ export class PersistenceStorage {
     this.storage.setItem(key, JSON.stringify(value));
   }
 
+  delete(key: string) {
+    this.storage.removeItem(key);
+  }
+
   append(key: string, value: Record<string, any>) {
     this.batchAppend(key, [value]);
   }
