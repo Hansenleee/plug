@@ -1,6 +1,6 @@
 {
   "name": "plug-proxy",
-  "version": "0.0.1-beta.7",
+  "version": "0.0.1-beta.8",
   "description": "An http proxy tool",
   "type": "module",
   "main": "index.js",
@@ -14,7 +14,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=dev rollup -c -w",
     "dev:plug": "node bin/plug.js start -d -op 7890",
-    "build": "cross-env NODE_ENV=prod rollup -c",
+    "build": "rm -rf ./dist && cross-env NODE_ENV=prod rollup -c",
     "build:analyze": "cross-env NODE_ENV=prod BUILD_ANALYZE=true rollup -c",
     "start:ui": "cd ui && yarn start",
     "build:ui": "cd ui && yarn build",
