@@ -1,4 +1,4 @@
-import type { TableProps } from 'antd';
+import { Space, TableProps, Tag } from 'antd';
 import moment from 'moment';
 import { StatusComponent } from './status';
 
@@ -6,10 +6,17 @@ export const columns: TableProps['columns'] = [
   {
     title: 'Status',
     dataIndex: 'status',
-    width: 120,
+    width: 150,
     fixed: 'left',
-    render: (status) => {
-      return <StatusComponent status={status} />;
+    render: (status, record) => {
+      const isMock = record.responseHeader?.['x-plug-mock-id'];
+
+      return (
+        <Space>
+          <StatusComponent status={status} />
+          {isMock ? <Tag color="blue">Mock</Tag> : null}
+        </Space>
+      );
     },
   },
   {

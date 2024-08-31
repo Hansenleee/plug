@@ -5,6 +5,7 @@ module.exports = {
     browser: false
   },
   rules: {
-    "require-atomic-updates": "off"
+    "require-atomic-updates": "off",
+    "no-param-reassign": "off"
   }
 }

@@ -41,7 +41,7 @@ export const App: React.FC = () => {
   return (
     <Layout className="app-container">
       <Header style={{ display: 'flex', alignItems: 'center', background: '#fff' }}>
-        <Space.Compact className="header-logo">
+        <Space.Compact className="header-logo" onClick={() => window.location.replace('/management')}>
           <Image
             height={58}
             preview={false}

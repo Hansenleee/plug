@@ -21,7 +21,7 @@ export const Setting: React.FC<Props> = (props) => {
   const handleFinish = (values: any) => {
     return axios.post('/api/mock/yapi/config', {
       ...values,
-      mockHost: values.mockHost.split(','),
+      mockHost: !values.mockHost ? [] : values.mockHost.split(','),
     }).then(() => {
       message.success('保存成功');
       props.onClose();
@@ -57,7 +57,6 @@ export const Setting: React.FC<Props> = (props) => {
         name="mockHost"
         label="需要 mock 的域名(多个域名可用,逗号隔开)"
         placeholder="请输入"
-        rules={[{ required: true }]}
       />
     </ModalForm>
   );

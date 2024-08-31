@@ -5,6 +5,7 @@ import { Storage } from './storage';
 import { ManagementServer } from './server/management';
 import { Certificate } from './shared/certificate';
 import { Guardian } from './guardian';
+import { RootPlugin } from './plugins';
 
 @Service()
 export class CoreApp {
@@ -25,6 +26,7 @@ export class CoreApp {
 
     const storage = Container.get<Storage>(Storage);
     const certificate = Container.get<Certificate>(Certificate);
+    const rootPlugin = Container.get<RootPlugin>(RootPlugin);
 
     certificate.init();
     storage.init();
@@ -32,5 +34,8 @@ export class CoreApp {
     this.http.start();
     this.https.start();
     this.managementServer.start();
+
+    // TODO: 后续优化
+    rootPlugin.init();
   }
 }

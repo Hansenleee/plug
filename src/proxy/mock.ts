@@ -3,6 +3,7 @@ import Container, { Service } from 'typedi';
 import fetch from 'node-fetch';
 import { Storage } from '../storage';
 import { MockApiItem } from '../types';
+import { RootPlugin } from '../plugins';
 import { getPath, getHost } from '../shared/request-meta';
 
 @Service()
@@ -46,45 +47,46 @@ export class Mock {
     const storage = Container.get(Storage);
     const defineMockData = storage.mock.getMockData(mockItem.id);
 
-    return defineMockData.mockString;
+    try {
+      return JSON.parse(defineMockData.mockString);
+    } catch (_) {
+      return defineMockData.mockString;
+    }
   }
 
   async mock(mockItem: MockApiItem, request: http.IncomingMessage, response: http.ServerResponse) {
-    let responseData = '';
+    let responseData;
+
+    if (mockItem.dataType === 'url') {
+      responseData = await this.fetchMockData(mockItem, { method: request.method });
+    } else if (mockItem.dataType === 'define') {
+      responseData = this.fetchDefineMockData(mockItem);
+    } else {
+      // TODO: 待完善
+      responseData = {
+        data: 'Hello World!',
+      };
+    }
+
+    const rootPlugin = Container.get(RootPlugin);
+
+    rootPlugin.mockData(responseData, { dataType: mockItem.dataType });
+
+    const stringfyResponseData = JSON.stringify(responseData);
 
     response.setHeader('Content-Type', 'application/json');
     response.writeHead(200, {
       'Content-Type': 'application/json',
+      'Content-length': stringfyResponseData?.length,
       'x-plug-mock-id': mockItem.id,
+      'x-plug-mock-type': mockItem.apiType,
     });
-
-    if (mockItem.dataType === 'url') {
-      const jsonMockData = await this.fetchMockData(mockItem, { method: request.method });
-
-      // TODO: 临时先将返回 code 为成 0
-      (jsonMockData as any).code = 0;
-
-      responseData = JSON.stringify(jsonMockData);
-      response.end(responseData);
-    } else if (mockItem.dataType === 'define') {
-      const defineMockData = this.fetchDefineMockData(mockItem);
-
-      responseData = defineMockData;
-      response.end(defineMockData);
-    } else {
-      // TODO: 待完善
-      responseData = JSON.stringify({
-        data: 'Hello World!',
-      });
-
-      // 待实现
-      response.end(responseData);
-    }
+    response.end(stringfyResponseData);
 
     return {
       statusCode: response.statusCode,
       headers: response.getHeaders(),
-      data: responseData,
+      data: stringfyResponseData,
     };
   }
 }
