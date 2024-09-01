@@ -5,6 +5,7 @@ import fs from 'fs';
 import { execSync } from 'child_process';
 import { LRUCache } from 'lru-cache';
 import { Logger } from './log';
+import parseDomain from 'parse-domain';
 
 const logger = new Logger('cert');
 const ROOT_CERT_KEY = '__ROOT_CERT_KEY';
@@ -37,7 +38,14 @@ export class Certificate {
     return path.join(Certificate.BASE_DIR, `${Certificate.NAME}.key.pem`);
   }
 
-  private cache = new LRUCache<string, CertInfo>({
+  private cache = new LRUCache<
+    string,
+    | CertInfo
+    | {
+        key: string;
+        cert: string;
+      }
+  >({
     max: 100,
     ttl: 1000 * 60 * 60 * 24,
   });
@@ -47,10 +55,29 @@ export class Certificate {
     this.checkAndInsertBaseCert();
   }
 
-  createCertificateByDomain(domain: string) {
+  createCertificateByDomain(host: string) {
     const rootCert = this.getRootCert();
 
-    return this.createCert({
+    let domain = host;
+    const parsed = parseDomain(host);
+
+    if (parsed && parsed.subdomain) {
+      const subdomainList = parsed.subdomain.split('.');
+      subdomainList.shift();
+
+      if (subdomainList.length > 0) {
+        domain = `*.${subdomainList.join('.')}.${parsed.domain}.${parsed.tld}`;
+      }
+    }
+
+    if (this.cache.has(domain)) {
+      return this.cache.get(domain) as {
+        key: string;
+        cert: string;
+      };
+    }
+
+    const certInfo = this.createCert({
       notBeforeYear: 1,
       notAfterYear: 1,
       domain,
@@ -100,6 +127,10 @@ export class Certificate {
       rootKey: rootCert.key,
       rootCert: rootCert.cert,
     });
+
+    this.cache.set(domain, certInfo);
+
+    return certInfo;
   }
 
   private initBaseCert() {
@@ -165,9 +196,9 @@ export class Certificate {
     }
   }
 
-  private getRootCert() {
-    if (this.cache.get(ROOT_CERT_KEY)) {
-      return this.cache.get(ROOT_CERT_KEY);
+  private getRootCert(): CertInfo {
+    if (this.cache.has(ROOT_CERT_KEY)) {
+      return this.cache.get(ROOT_CERT_KEY) as CertInfo;
     }
 
     const rootCertFile = fs.readFileSync(this.crtPath);

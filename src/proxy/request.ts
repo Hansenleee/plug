@@ -42,6 +42,7 @@ export class Request {
       method: request.method,
       protocol,
       headers: request.headers,
+      rejectUnauthorized: false,
     });
   }
 
@@ -56,13 +57,14 @@ export class Request {
       method: request.method,
       protocol: 'https:',
       headers: request.headers,
+      rejectUnauthorized: false,
     });
   }
 
   private baseHandler(
     request: http.IncomingMessage,
     response: http.ServerResponse,
-    options: http.RequestOptions
+    options: https.RequestOptions
   ): Promise<ResponseDataInfo> {
     const requestClient = options.protocol.startsWith('https') ? https : http;
 
@@ -74,7 +76,7 @@ export class Request {
           ...options,
           ...this.getProxyAgent(),
         },
-        async (proxyResult) => {
+        (proxyResult) => {
           response.writeHead(proxyResult.statusCode, proxyResult.headers);
           proxyResult.pipe(response);
 
@@ -97,7 +99,9 @@ export class Request {
       request.pipe(proxyToOriginRequest);
 
       proxyToOriginRequest.on('error', (error) => {
-        log.info(`代理请求转发异常: ${error.message}`);
+        log.warn(`代理请求[${options.protocol}] ${request.url} 转发异常: ${error.message}`, {
+          force: true,
+        });
         resolve(getErrorResponseDataInfo());
       });
     });

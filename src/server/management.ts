@@ -37,10 +37,12 @@ export class ManagementServer {
     server.listen(Configuration.MANAGEMENT_PORT, () => {
       logger.info(`management server start at ${Configuration.MANAGEMENT_PORT}`, { force: true });
 
-      execSync(`osascript open "http://localhost:${Configuration.MANAGEMENT_PORT}/management"`, {
-        cwd: path.join(__dirname, '..'),
-        stdio: 'ignore',
-      });
+      if (process.env.NODE_ENV !== 'dev') {
+        execSync(`osascript open "http://localhost:${Configuration.MANAGEMENT_PORT}/management"`, {
+          cwd: path.join(__dirname, '..'),
+          stdio: 'ignore',
+        });
+      }
     });
   }
 
