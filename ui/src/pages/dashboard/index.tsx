@@ -28,7 +28,7 @@ const Dashboard: React.FC = () => {
   useMount(() => {
     setTableScroll({
       x: tableRef.current?.offsetWidth - 10,
-      y: tableRef.current?.offsetHeight - 50,
+      y: tableRef.current?.offsetHeight - 60,
     })
   });
 

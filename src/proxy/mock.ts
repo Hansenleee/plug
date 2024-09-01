@@ -10,10 +10,23 @@ import { getPath, getHost } from '../shared/request-meta';
 export class Mock {
   check(request: http.IncomingMessage) {
     const storage = Container.get(Storage);
-    const mockHostList = storage.mock.getMemoryMockHost();
+    const mockHostList = storage.mock.getMemoryMockHost() || [];
     const requestHost = getHost(request);
 
-    if (!mockHostList.includes(requestHost)) {
+    const isMatchMock = mockHostList.some((mockHost) => {
+      if (mockHost === requestHost) {
+        return true;
+      }
+
+      if (mockHost === '127.0.0.1') {
+        // 如果 mock host 包含本地地址，则自动适配
+        return /^\d{0,4}\.\d{0,4}\.\d{0,4}\.\d{0,4}:\d{0,6}$/.test(requestHost);
+      }
+
+      return false;
+    });
+
+    if (!isMatchMock) {
       return false;
     }
 

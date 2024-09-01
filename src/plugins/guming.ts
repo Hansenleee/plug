@@ -12,7 +12,7 @@ export default (app: PluginApp) => {
     }
 
     if (!config.mockHost?.length) {
-      initConfig.mockHost = ['back.test1.iguming.net'];
+      initConfig.mockHost = ['back.dev1.iguming.net', 'back.test1.iguming.net', '127.0.0.1'];
     }
 
     app.storage.mock.setConfig(YAPI_NS, {
