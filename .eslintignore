@@ -1,6 +1,8 @@
 **/dist/
 **/build/
 **/bin/
+**/electron/
 .eslintrc.cjs
 rollup.config.js
+forge.config.cjs
 

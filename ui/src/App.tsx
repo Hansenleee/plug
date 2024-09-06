@@ -19,7 +19,7 @@ const ITEMS = [
     children: [
       {
         label: (
-          <a href="/management/mock/base" target="_blank" rel="noopener noreferrer">
+          <a href="/management/mock/base" rel="noopener noreferrer">
             基础配置
           </a>
         ),
@@ -27,7 +27,7 @@ const ITEMS = [
       },
       {
         label: (
-          <a href="/management/mock/yapi" target="_blank" rel="noopener noreferrer">
+          <a href="/management/mock/yapi" rel="noopener noreferrer">
             yapi
           </a>
         ),
