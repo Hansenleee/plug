@@ -98,7 +98,7 @@ export default function YapiMock() {
   });
 
   return (
-    <Space direction="vertical">
+    <Space direction="vertical" style={{ paddingBottom: 20 }}>
       <Typography.Title level={4} style={{ marginTop: 0 }}>
         Mock - Yapi 配置
       </Typography.Title>
@@ -124,7 +124,8 @@ export default function YapiMock() {
           onChange: searchByPage,
         }}
         scroll={{ x: '100%' }}
-        sticky
+        sticky={{ offsetHeader: -10 }}
+        size="middle"
       />
       <AddUpdate open={addVisible} onClose={() => setAddVisible(false)} onOk={handleAdded} />
       <AddProject

@@ -19,10 +19,16 @@
     "start:ui": "cd ui && yarn start",
     "build:ui": "cd ui && yarn build",
     "start:app": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron-forge start",
+    "start:forge": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "build": {
+    "icon": "resources/images/logo.icns",
+    "mac": {
+      "icon": "resources/images/logo.icns"
+    }
   },
   "bin": {
     "plug": "./bin/plug.js"

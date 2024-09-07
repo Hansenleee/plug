@@ -4,6 +4,12 @@ interface InitOption {
   port?: number;
   debug?: boolean;
   originProxyPort?: number;
+  source?: PlugSource;
+}
+
+export enum PlugSource {
+  APP = 'APP',
+  COMMAND = 'COMMAND',
 }
 
 export class Configuration {
@@ -30,5 +36,7 @@ export class Configuration {
     Configuration.PROXY_PORT = option.port || Configuration.PROXY_PORT;
     Configuration.IS_DEBUG = option.debug !== undefined ? !!option.debug : Configuration.IS_DEBUG;
     Configuration.ORIGIN_PROXY_PORT = option.originProxyPort;
+
+    process.env.PLUG_SOURCE = option.source || PlugSource.COMMAND;
   }
 }

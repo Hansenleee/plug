@@ -20,12 +20,12 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, o
   {
     title: 'method',
     dataIndex: 'method',
-    width: 140,
+    width: 90,
   },
   {
     title: '数据来源',
     dataIndex: 'dataType',
-    width: 140,
+    width: 90,
     render: (value, record) => {
       if (value === 'url') {
         return (
@@ -41,7 +41,7 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, o
   {
     title: '状态',
     dataIndex: 'enable',
-    width: 100,
+    width: 90,
     render: (value) => {
       return value ? (
         <Badge status="success" text="已启用" />
@@ -53,7 +53,7 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, o
   {
     title: '操作',
     dataIndex: 'opt',
-    width: 200,
+    width: 160,
     render: (_: any, record: any) => {
       const handleDelete = () => {
         return axios

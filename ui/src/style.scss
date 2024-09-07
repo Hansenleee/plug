@@ -29,6 +29,12 @@
     & .content-body {
       height: 100%;
       padding: 10px 50px;
+      overflow: auto;
+
+      &__main {
+        height: 100%;
+        overflow: auto;
+      }
     }
   }
 }

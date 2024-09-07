@@ -11,7 +11,7 @@ import { execSync } from 'child_process';
 import { errorMiddleware } from '../middleware/error';
 import { Logger } from '../shared/log';
 import { SocketIO } from '../shared/socket';
-import { Configuration } from '../configuration';
+import { Configuration, PlugSource } from '../configuration';
 import { Routers } from '../router';
 
 const logger = new Logger('management');
@@ -37,7 +37,7 @@ export class ManagementServer {
     server.listen(Configuration.MANAGEMENT_PORT, () => {
       logger.info(`management server start at ${Configuration.MANAGEMENT_PORT}`, { force: true });
 
-      if (process.env.NODE_ENV !== 'dev') {
+      if (process.env.NODE_ENV !== 'dev' && process.env.PLUG_SOURCE === PlugSource.COMMAND) {
         execSync(`osascript open "http://localhost:${Configuration.MANAGEMENT_PORT}/management"`, {
           cwd: path.join(__dirname, '..'),
           stdio: 'ignore',

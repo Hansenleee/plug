@@ -10,6 +10,7 @@ program
   .option('-p, --port <port>', 'listening port')
   .option('-d, --debug', 'listening port')
   .option('-op, --originProxyPort <originProxyPort>', 'origin proxy port')
+  .option('-s, --source <source>', 'origin proxy port')
   .action((option) => {
     start(option);
   });
