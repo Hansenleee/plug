@@ -1,4 +1,4 @@
-import { Space, TableProps, Tag } from 'antd';
+import { Space, TableProps, Tag, Typography } from 'antd';
 import moment from 'moment';
 import { StatusComponent } from './status';
 
@@ -23,8 +23,15 @@ export const columns: TableProps['columns'] = [
     title: 'URL',
     dataIndex: 'url',
     width: 350,
-    render: (url: string) => {
-      return url?.indexOf('?') > -1 ? url.split('?')[0] : url;
+    render: (url: string, record) => {
+      const shortUrl = record.path?.indexOf('?') > -1 ? record.path.split('?')[0] : record.path;
+
+      return (
+        <Space direction="vertical">
+          <Typography.Text>{shortUrl}</Typography.Text>
+          <Typography.Text type="secondary">{record.origin}</Typography.Text>
+        </Space>
+      )
     },
   },
   {

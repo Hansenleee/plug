@@ -32,9 +32,11 @@ export class Mock {
 
     const mockApiList = storage.mock.getApiList();
     const pathname = getPath(request);
-    const availableMockApi = mockApiList.find(
-      (item) => item.enable && item.path === pathname && item.method === request.method
-    );
+    const availableMockApi = mockApiList.find((item) => {
+      return (
+        item.enable && item.path === pathname && (!item.method || item.method === request.method)
+      );
+    });
 
     if (availableMockApi) {
       return availableMockApi;

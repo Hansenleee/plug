@@ -3,6 +3,7 @@ import type { Context } from 'koa';
 import { nanoid } from 'nanoid';
 import { BaseController } from './base';
 import { Proxy } from '../proxy';
+import { MockDataType } from '../types';
 
 @Service()
 export class YapiController extends BaseController {
@@ -23,34 +24,46 @@ export class YapiController extends BaseController {
   }
 
   async addById(ctx: Context) {
-    const { yapiId, token, dataType } = ctx.request.body;
-    const interfaceInfo = await this.service.yapi.fetchInterface({ id: yapiId, token });
-    const commonData = {
-      id: nanoid(),
-      title: interfaceInfo.title,
-      path: interfaceInfo.path,
-      method: interfaceInfo.method,
-      dataType,
-      apiType: 'yapi',
-      enable: true,
-    };
-    const yapiList = this.storage.mock.getApiList();
-    const exist = yapiList.find((yapi) => yapi.path === interfaceInfo.path);
+    const { dataType, yapiId, token, title, url } = ctx.request.body;
 
-    if (exist) {
-      ctx.body = this.error(10010, '当前 yapi 接口已存在，请不用重复添加');
+    if (dataType === MockDataType.DEFINE) {
+      this.storage.mock.appendApi({
+        id: nanoid(),
+        title: title || url,
+        path: url,
+        dataType,
+        apiType: 'default',
+        enable: true,
+      });
+    } else {
+      const interfaceInfo = await this.service.yapi.fetchInterface({ id: yapiId, token });
+      const commonData = {
+        id: nanoid(),
+        title: interfaceInfo.title,
+        path: interfaceInfo.path,
+        method: interfaceInfo.method,
+        dataType,
+        apiType: 'yapi',
+        enable: true,
+      };
+      const yapiList = this.storage.mock.getApiList();
+      const exist = yapiList.find((yapi) => yapi.path === interfaceInfo.path);
 
-      return;
+      if (exist) {
+        ctx.body = this.error(10010, '当前 yapi 接口已存在，请不用重复添加');
+
+        return;
+      }
+
+      const config = this.storage.mock.getConfig(YapiController.NS);
+      const projectInfo = await this.service.yapi.fetchProjectInfo(token);
+
+      this.storage.mock.appendApi({
+        ...commonData,
+        token,
+        mockUrl: `${config.host}/mock/${projectInfo._id}${interfaceInfo.path}`,
+      });
     }
-
-    const config = this.storage.mock.getConfig(YapiController.NS);
-    const projectInfo = await this.service.yapi.fetchProjectInfo(token);
-
-    this.storage.mock.appendApi({
-      ...commonData,
-      token,
-      mockUrl: `${config.host}/mock/${projectInfo._id}${interfaceInfo.path}`,
-    });
 
     ctx.body = this.success(true);
   }
@@ -121,6 +134,13 @@ export class YapiController extends BaseController {
     }
 
     const mockApi = this.storage.mock.getApi(apiId as string);
+
+    if (mockApi.apiType === 'default') {
+      ctx.body = this.success({ code: 0 });
+
+      return;
+    }
+
     const proxy = Container.get(Proxy);
 
     const jsonMockData = await proxy.mock.fetchMockData(mockApi, {
@@ -186,6 +206,13 @@ export class YapiController extends BaseController {
     this.required(ctx.request.body, ['id']);
     this.storage.mock.updateProject({ id, projectName, enable });
 
+    // 批量更新下面的所有接口状态
+    const yapiList = this.storage.mock.getApiList().filter((item) => {
+      return item.projectId === id;
+    });
+
+    this.storage.mock.batchUpdateApi(yapiList.map((api) => ({ id: api.id, enable })));
+
     ctx.body = this.success(true);
   }
 
@@ -246,17 +273,20 @@ export class YapiController extends BaseController {
   }
 
   async getYapiListByPage(ctx: Context) {
-    const { apiType, page, name, project } = ctx.request.body;
+    const { page, name, project } = ctx.request.body;
     const isValidName = !!name || name === 0;
 
     this.required(ctx.request.body, ['page']);
 
-    const yapiList = this.storage.mock.getApiList().filter((item) => {
-      const isMatchName = !isValidName || item.path.includes(name) || item.title.includes(name);
-      const isMatchProject = !project || item.projectId === project;
+    const yapiList = this.storage.mock
+      .getApiList()
+      .filter((item) => {
+        const isMatchName = !isValidName || item.path.includes(name) || item.title.includes(name);
+        const isMatchProject = !project || item.projectId === project;
 
-      return item.apiType === apiType && isMatchName && isMatchProject;
-    });
+        return isMatchName && isMatchProject;
+      })
+      .sort((pre, cur) => cur.updateTime - pre.updateTime);
 
     ctx.body = this.page(yapiList, page);
   }

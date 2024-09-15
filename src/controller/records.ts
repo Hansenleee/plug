@@ -19,6 +19,8 @@ export class RecordController extends BaseController {
     socket.emit('PROXY_REQUEST_RECORD', {
       id,
       url,
+      origin: `${protocol}://${request.headers.host}`,
+      path: pathname,
       method: request.method,
       requestHeaders: request.headers,
       startTime: Date.now(),

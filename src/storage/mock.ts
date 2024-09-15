@@ -43,18 +43,29 @@ export class MockStorage extends BaseStorage {
   appendApi(item: MockApiItem | MockApiItem[]) {
     const items = Array.isArray(item) ? item : [item];
 
-    return this.persistence.batchAppend(MockStorage.API_META_KEY, items);
+    return this.persistence.batchAppend(
+      MockStorage.API_META_KEY,
+      items.map((_) => ({ ..._, updateTime: Date.now() }))
+    );
+  }
+
+  batchUpdateApi(items: Array<Partial<MockApiItem> & { id: string }>) {
+    const itemIds = items.map((_) => _.id);
+    const apiList = this.persistence.get(MockStorage.API_META_KEY, []) as MockApiItem[];
+
+    apiList.forEach((api, index) => {
+      const targetIndex = itemIds.indexOf(api.id);
+
+      if (targetIndex >= 0) {
+        apiList[index] = { ...apiList[index], ...items[targetIndex], updateTime: Date.now() };
+      }
+    });
+
+    this.persistence.set(MockStorage.API_META_KEY, apiList);
   }
 
   updateApi(item: Partial<MockApiItem> & { id: string }) {
-    const apiList = this.persistence.get(MockStorage.API_META_KEY, []) as MockApiItem[];
-    const apiItemIndex = apiList.findIndex((api) => api.id === item.id);
-
-    if (apiItemIndex >= 0) {
-      apiList[apiItemIndex] = { ...apiList[apiItemIndex], ...item };
-    }
-
-    this.persistence.set(MockStorage.API_META_KEY, apiList);
+    this.batchUpdateApi([item]);
   }
 
   deleteApi(id: string) {
@@ -111,7 +122,7 @@ export class MockStorage extends BaseStorage {
   }
 
   appendProject(item: ProjectItem) {
-    return this.persistence.append(MockStorage.PROJECT_KEY, item);
+    return this.persistence.append(MockStorage.PROJECT_KEY, { ...item, updateTime: Date.now() });
   }
 
   updateProject(item: Partial<ProjectItem> & { id: string }) {
@@ -119,7 +130,11 @@ export class MockStorage extends BaseStorage {
     const projectItemIndex = projectList.findIndex((project) => project.id === item.id);
 
     if (projectItemIndex >= 0) {
-      projectList[projectItemIndex] = { ...projectList[projectItemIndex], ...item };
+      projectList[projectItemIndex] = {
+        ...projectList[projectItemIndex],
+        ...item,
+        updateTime: Date.now(),
+      };
     }
 
     this.persistence.set(MockStorage.PROJECT_KEY, projectList);

@@ -9,6 +9,7 @@ interface Props {
   visible: boolean;
   record?: Record<string, string>;
   onClose: () => void;
+  onSave: () => void;
 }
 
 export const DataEditor: React.FC<Props> = (props) => {
@@ -23,7 +24,7 @@ export const DataEditor: React.FC<Props> = (props) => {
       mockString: editorRef.current?.getValue().replaceAll('\n', '').replaceAll('  ', ''),
     }).then(() => {
       message.success('修改成功');
-      props.onClose();
+      props.onSave();
     }).finally(() => {
       setSaving(false);
     });

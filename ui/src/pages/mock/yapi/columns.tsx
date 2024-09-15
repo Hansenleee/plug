@@ -21,6 +21,17 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, o
     title: 'method',
     dataIndex: 'method',
     width: 90,
+    render: (text) => {
+      if (!text) {
+        return <Tag color="#2db7f5">ALL</Tag>;
+      }
+
+      if (text === 'POST') {
+        return <Tag color="#87d068">{text}</Tag>;
+      }
+
+      return <Tag color="#ecc853">{text}</Tag>;
+    }
   },
   {
     title: '数据来源',
@@ -92,7 +103,7 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, o
       return (
         <Space>
           <Typography.Link onClick={() => onEdit(record)}>Mock</Typography.Link>
-          <Typography.Link onClick={handleSync}>更新</Typography.Link>
+          {record.apiType === 'yapi' ? <Typography.Link onClick={handleSync}>更新</Typography.Link> : null}
           {record.enable ? (
             <Typography.Link onClick={handleToggle}>禁用</Typography.Link>
           ) : (

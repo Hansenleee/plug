@@ -1,5 +1,5 @@
 import { Table } from 'antd';
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useMount, useUnmount } from 'ahooks';
 import { io, Socket } from 'socket.io-client';
 import { columns } from './column';
@@ -12,17 +12,27 @@ export const MAX_RECORDS = 500;
 
 const Dashboard: React.FC = () => {
   const [records, setRecords] = useState<Array<Record<string, string>>>([]);
+  const [filterContent, setFilterContent] = useState('');
   const [activeRecord, setActiveRecord] = useState<Record<string, string> | undefined>();
   const [tableScroll, setTableScroll] = useState({ x: 1000, y: 600 })
   const socketRef = useRef<Socket>();
   const tableRef = useRef<any>(null);
 
-  const handleSearch = (searchValue: string | number) => {
-    if (!searchValue && searchValue !== 0) {
-      return;
+  const filterRecords = useMemo(() => {
+    if (!filterContent) {
+      return records;
     }
 
-    setRecords((pre) => pre.filter((_) => _.url.includes(searchValue as string)));
+    return records.filter((_) => _.url.includes(filterContent as string))
+  }, [filterContent, records]);
+
+  const handleSearch = (searchValue: string) => {
+    setFilterContent(searchValue);
+    // if (!searchValue && searchValue !== 0) {
+    //   return;
+    // }
+
+    // setRecords((pre) => pre.filter((_) => _.url.includes(searchValue as string)));
   };
 
   useMount(() => {
@@ -93,7 +103,7 @@ const Dashboard: React.FC = () => {
         bordered
         rowKey="id"
         columns={columns}
-        dataSource={records}
+        dataSource={filterRecords}
         scroll={tableScroll}
         sticky
         virtual

@@ -90,6 +90,7 @@ export const Detail: React.FC<Props> = (props) => {
       placement="right"
       closable={false}
       width="40%"
+      rootClassName="dashboard-detail"
       open={props.visible}
       onClose={props.onClose}
     >

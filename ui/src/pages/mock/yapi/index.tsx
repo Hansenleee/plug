@@ -29,7 +29,6 @@ export default function YapiMock() {
       setLoading(true);
       return axios
         .post('/api/mock/yapi/list/page', {
-          apiType: 'yapi',
           ...searchValue,
           page: { pageNo, pageSize: page.pageSize },
         })
@@ -89,6 +88,11 @@ export default function YapiMock() {
     fetchProjectList();
   };
 
+  const handleSaveDataEdit = () => {
+    setEditDataItem(undefined);
+    searchByPage();
+  };
+
   useMount(() => {
     return checkInitConfig().then((inited) => {
       if (inited) {
@@ -100,7 +104,7 @@ export default function YapiMock() {
   return (
     <Space direction="vertical" style={{ paddingBottom: 20 }}>
       <Typography.Title level={4} style={{ marginTop: 0 }}>
-        Mock - Yapi 配置
+        Mock 配置
       </Typography.Title>
       <Search
         projectList={projectList}
@@ -143,7 +147,12 @@ export default function YapiMock() {
         onRefresh={handleRefresh}
         onAddProject={() => setProjectVisible(true)}
       />
-      <DataEditor visible={!!editDataItem} record={editDataItem} onClose={() => setEditDataItem(undefined)} />
+      <DataEditor
+        visible={!!editDataItem}
+        record={editDataItem}
+        onClose={() => setEditDataItem(undefined)}
+        onSave={handleSaveDataEdit}
+      />
     </Space>
   );
 }

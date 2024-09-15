@@ -10,12 +10,15 @@ export const getHost = (request: http.IncomingMessage) => {
 
 export const getPath = (request: http.IncomingMessage) => {
   const { url } = request;
+  let pathname = '';
 
   if (url.startsWith('/')) {
-    return url;
+    pathname = url;
+  } else {
+    pathname = new URL(url).pathname;
   }
 
-  return new URL(request.url).pathname;
+  return pathname.split('?')?.[0];
 };
 
 export const getContentType = (contentType: string) => {

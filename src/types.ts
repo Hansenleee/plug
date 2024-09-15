@@ -2,6 +2,11 @@ import http from 'http';
 
 export type Protocol = 'http' | 'https';
 
+export enum MockDataType {
+  URL = 'url',
+  DEFINE = 'define',
+}
+
 export interface ResponseDataInfo {
   statusCode: number;
   headers: http.OutgoingHttpHeaders;
@@ -20,7 +25,7 @@ export interface MockConfig {
 export interface MockApiItem {
   id: string;
   path: string;
-  method: string;
+  method?: string;
   title: string;
   dataType: 'url' | 'define';
   apiType: 'default' | 'yapi' | (string & {});
@@ -29,6 +34,7 @@ export interface MockApiItem {
   yapiId?: string;
   token?: string;
   projectId?: string;
+  updateTime?: number;
 }
 
 export interface ProjectItem {
@@ -37,6 +43,7 @@ export interface ProjectItem {
   projectName: string;
   projectId: string;
   enable: boolean;
+  updateTime?: number;
 }
 
 export interface MockDataItem {
