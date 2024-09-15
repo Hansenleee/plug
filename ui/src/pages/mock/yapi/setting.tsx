@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Form } from 'antd';
 import axios from 'axios';
-import { ModalForm, ProFormText } from '@ant-design/pro-components';
+import { ModalForm, ProFormText, ProFormSelect } from '@ant-design/pro-components';
 import { message } from 'antd/lib';
 
 interface Props {
@@ -33,7 +33,6 @@ export const Setting: React.FC<Props> = (props) => {
       axios.get('/api/mock/yapi/config').then((initSetting: any) => {
         form.setFieldsValue({
           ...initSetting,
-          mockHost: initSetting.mockHost?.join(','),
         });
       });
     }
@@ -53,9 +52,10 @@ export const Setting: React.FC<Props> = (props) => {
         placeholder="请输入"
         rules={[{ required: true }]}
       />
-      <ProFormText
+      <ProFormSelect
         name="mockHost"
         label="需要 mock 的域名(多个域名可用,逗号隔开)"
+        mode="tags"
         placeholder="请输入"
       />
     </ModalForm>
