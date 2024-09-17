@@ -4,7 +4,7 @@ const YAPI_NS = 'yapi';
 
 export default (app: PluginApp) => {
   app.afterStart(async () => {
-    const config = app.storage.mock.getConfig(YAPI_NS);
+    const config = app.storage.mock.getConfig(YAPI_NS) || {};
     const initConfig: Record<string, any> = {};
 
     if (!config.host) {
