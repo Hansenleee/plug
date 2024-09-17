@@ -23,16 +23,11 @@ const Dashboard: React.FC = () => {
       return records;
     }
 
-    return records.filter((_) => _.url.includes(filterContent as string))
+    return records.filter((_) => _.url.split('?')[0].includes(filterContent as string))
   }, [filterContent, records]);
 
   const handleSearch = (searchValue: string) => {
     setFilterContent(searchValue);
-    // if (!searchValue && searchValue !== 0) {
-    //   return;
-    // }
-
-    // setRecords((pre) => pre.filter((_) => _.url.includes(searchValue as string)));
   };
 
   useMount(() => {
