@@ -1,7 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Dashboard from './pages/dashboard';
-import BaseMock from './pages/mock/base';
-import YapiMock from './pages/mock/yapi';
+import MockPage from './pages/mock';
 
 export const router = createBrowserRouter(
   [
@@ -10,12 +9,8 @@ export const router = createBrowserRouter(
       element: <Dashboard />,
     },
     {
-      path: '/mock/base',
-      element: <BaseMock />,
-    },
-    {
-      path: '/mock/yapi',
-      element: <YapiMock />,
+      path: '/mock',
+      element: <MockPage />,
     },
   ],
   {
