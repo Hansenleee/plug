@@ -23,11 +23,14 @@ export default {
       tsconfigOverride: { exclude: ['ui']}
     }),
     nodeResolve({
-      resolveOnly: module => {
-        return !module.includes('babel');
-      }
+      // resolveOnly: module => {
+      //   return !module.includes('babel');
+      // }
     }),
-    commonjs(),
+    commonjs({
+      extensions: ['.js', '.mjs'],
+      transformMixedEsModules: true,
+    }),
     json(),
     // babel({
     //   "presets": ["@babel/preset-typescript"]

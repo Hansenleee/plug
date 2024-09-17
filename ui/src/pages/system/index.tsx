@@ -1,4 +1,4 @@
-import { Form } from 'antd';
+import { Form, message } from 'antd';
 import { ModalForm, ProFormDigit } from '@ant-design/pro-components';
 import { useEffect } from 'react';
 import axios from 'axios';
@@ -11,8 +11,11 @@ interface Props {
 export const System: React.FC<Props> = (props) => {
   const [form] = Form.useForm<{ name: string; company: string }>();
 
-  const handleFinish = () => {
-    return Promise.resolve(true);
+  const handleFinish = (values: unknown) => {
+    return axios.post('/api/system/config', values).then(() => {
+      message.success('修改成功');
+      props.onClose();
+    })
   };
 
   const handleOpenChange = (open: boolean) => {
@@ -23,9 +26,13 @@ export const System: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (props.open) {
-      axios.get('/api/system/config')
+      axios.get('/api/system/config').then((initSetting: any) => {
+        form.setFieldsValue({
+          ...initSetting,
+        });
+      });
     }
-  }, [props.open]);
+  }, [form, props.open]);
 
   return (
     <ModalForm
@@ -36,7 +43,7 @@ export const System: React.FC<Props> = (props) => {
       onOpenChange={handleOpenChange}
     >
       <ProFormDigit
-        name="systemProxyPort"
+        name="originSystemProxyPort"
         label="系统代理端口"
         placeholder="请输入"
         extra="如果系统设置了科学翻墙，请输入对应的端口"

@@ -21,10 +21,10 @@ export const AddProject: React.FC<Props> = (props) => {
   };
 
   const handleFinish = (values: any) => {
-    const request = !!props.project ? axios.post('/api/mock/yapi/project/update', {
+    const request = !!props.project ? axios.post('/api/mock/project/update', {
       ...values,
       id: props.project.id,
-    }) : axios.post('/api/mock/yapi/project/add', values);
+    }) : axios.post('/api/mock/project/add', values);
 
     return request.then(() => {
       message.success('保存成功');
@@ -43,6 +43,7 @@ export const AddProject: React.FC<Props> = (props) => {
       open={props.open}
       title={props.project ? '修改项目' : '新增项目'}
       form={form}
+      clearOnDestroy
       onFinish={handleFinish}
       onOpenChange={handleOpenChange}
     >

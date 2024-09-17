@@ -19,7 +19,7 @@ export const DataEditor: React.FC<Props> = (props) => {
   const handleUpdateData = () => {
     setSaving(true);
 
-    return axios.post('/api/mock/yapi/mock/update', {
+    return axios.post('/api/mock/common/data', {
       apiId: props.record?.id,
       mockString: editorRef.current?.getValue().replaceAll('\n', '').replaceAll('  ', ''),
     }).then(() => {
@@ -31,7 +31,7 @@ export const DataEditor: React.FC<Props> = (props) => {
   };
 
   const fetchMockData = useCallback(() => {
-    return axios.get('/api/mock/yapi/mock/data', {
+    return axios.get('/api/mock/common/data', {
       params: { apiId: props.record?.id }
     }).then((mockData) => {
       editorRef.current?.setValue(JSON.stringify(mockData, null, '  '));

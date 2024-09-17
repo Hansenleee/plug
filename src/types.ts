@@ -7,14 +7,17 @@ export enum MockDataType {
   DEFINE = 'define',
 }
 
+declare module 'http' {
+  interface IncomingMessage {
+    body?: any;
+    rawBody: string;
+  }
+}
+
 export interface ResponseDataInfo {
   statusCode: number;
   headers: http.OutgoingHttpHeaders;
   data: string;
-}
-
-export interface HttpIncomingMessage extends http.IncomingMessage {
-  bodyParse: any;
 }
 
 export interface MockConfig {
@@ -49,4 +52,8 @@ export interface ProjectItem {
 export interface MockDataItem {
   apiId: string;
   mockString: string;
+}
+
+export interface SystemConfig {
+  originSystemProxyPort?: number;
 }

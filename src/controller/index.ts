@@ -1,6 +1,7 @@
 import { Inject, Service } from 'typedi';
 import { RecordController } from './records';
-import { YapiController } from './yapi';
+import { MockController } from './mock';
+import { SystemController } from './system';
 
 @Service()
 export class Controller {
@@ -8,5 +9,8 @@ export class Controller {
   record: RecordController;
 
   @Inject()
-  yapi: YapiController;
+  mock: MockController;
+
+  @Inject()
+  system: SystemController;
 }

@@ -19,9 +19,9 @@ export const Setting: React.FC<Props> = (props) => {
   };
 
   const handleFinish = (values: any) => {
-    return axios.post('/api/mock/yapi/config', {
+    return axios.post('/api/mock/common/config', {
       ...values,
-      mockHost: !values.mockHost ? [] : values.mockHost.split(','),
+      mockHost: !values.mockHost ? [] : values.mockHost,
     }).then(() => {
       message.success('保存成功');
       props.onClose();
@@ -30,7 +30,7 @@ export const Setting: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (props.open) {
-      axios.get('/api/mock/yapi/config').then((initSetting: any) => {
+      axios.get('/api/mock/common/config').then((initSetting: any) => {
         form.setFieldsValue({
           ...initSetting,
         });

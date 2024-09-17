@@ -17,7 +17,7 @@ export const ProjectList: React.FC<Props> = (props) => {
     Modal.confirm({
       title: '更新项目后会丢失之前改动的数据，是否确认更新？',
       onOk: () => {
-        return axios.post('/api/mock/yapi/project/upgrade', {
+        return axios.post('/api/mock/project/upgrade', {
           id: project.id,
           projectId: project.projectId,
           token: project.token,
@@ -33,7 +33,7 @@ export const ProjectList: React.FC<Props> = (props) => {
     Modal.confirm({
       title: '删除项目后会同步删除其下的所有接口，是否确认删除？',
       onOk: () => {
-        return axios.post('/api/mock/yapi/project/delete', {
+        return axios.post('/api/mock/project/delete', {
           id: project.id,
         }).then(() => {
           message.success('删除成功');

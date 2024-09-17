@@ -5,6 +5,9 @@ import { HttpException } from '../shared/exception';
 
 @Service()
 export class BaseController {
+  // 存储标识
+  protected static readonly YAPI_NS = 'yapi';
+  // 接口标识
   private static readonly SUCCESS_CODE = 0;
   private static readonly ERROR_CODE_REQUIRED = 9999;
 

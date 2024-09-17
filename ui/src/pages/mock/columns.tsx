@@ -68,7 +68,7 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, o
     render: (_: any, record: any) => {
       const handleDelete = () => {
         return axios
-          .post('/api/mock/yapi/delete', {
+          .post('/api/mock/interface/delete', {
             id: record.id,
           })
           .then(() => {
@@ -78,7 +78,7 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, o
       };
 
       const handleToggle = () => {
-        return axios.post('/api/mock/yapi/status/toggle', {
+        return axios.post('/api/mock/interface/toggle', {
           id: record.id,
         }).then(() => {
           message.success('操作成功');
@@ -90,7 +90,7 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, o
         Modal.confirm({
           title: '更新接口后会丢失之前改动的数据，是否确认更新？',
           onOk: () => {
-            return axios.post('/api/mock/yapi/upgrade', {
+            return axios.post('/api/mock/interface/upgrade', {
               id: record.id,
             }).then(() => {
               message.success('更新成功');

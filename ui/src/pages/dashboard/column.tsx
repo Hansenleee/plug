@@ -27,10 +27,16 @@ export const columns: TableProps['columns'] = [
       const shortUrl = record.path?.indexOf('?') > -1 ? record.path.split('?')[0] : record.path;
 
       return (
-        <Space direction="vertical">
-          <Typography.Text>{shortUrl}</Typography.Text>
+        <Space.Compact direction="vertical">
+          <Typography.Paragraph
+            ellipsis={{ rows: 2, expandable: true, onExpand: (event) => {
+              event.stopPropagation();
+            } }}
+          >
+            {shortUrl}
+          </Typography.Paragraph>
           <Typography.Text type="secondary">{record.origin}</Typography.Text>
-        </Space>
+        </Space.Compact>
       )
     },
   },

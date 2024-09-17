@@ -2,10 +2,10 @@ import Container, { Service } from 'typedi';
 import http from 'http';
 import { nanoid } from 'nanoid';
 import { URL } from 'url';
-import { BaseController } from './base';
-import { Protocol, ResponseDataInfo } from '../types';
-import { SocketIO } from '../shared/socket';
-import { getContentType, getRequestParams } from '../shared/request-meta';
+import { BaseController } from '../base';
+import { Protocol, ResponseDataInfo } from '../../types';
+import { SocketIO } from '../../shared/socket';
+import { getContentType, getRequestParams } from '../../shared/request-meta';
 
 @Service()
 export class RecordController extends BaseController {

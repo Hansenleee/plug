@@ -1,10 +1,10 @@
 import Container, { Service } from 'typedi';
 import Koa from 'koa';
 import Router from '@koa/router';
-import { bodyParser } from '@koa/bodyparser';
 import cors from '@koa/cors';
 import staticServer from 'koa-static';
 import views from '@ladjs/koa-views';
+import { useContainer as UC, useKoaServer as UKS } from 'routing-controllers/esm2015';
 import { createServer } from 'http';
 import path from 'path';
 import { execSync } from 'child_process';
@@ -12,7 +12,8 @@ import { errorMiddleware } from '../middleware/error';
 import { Logger } from '../shared/log';
 import { SocketIO } from '../shared/socket';
 import { Configuration, PlugSource } from '../configuration';
-import { Routers } from '../router';
+
+UC(Container);
 
 const logger = new Logger('management');
 
@@ -65,14 +66,14 @@ export class ManagementServer {
   }
 
   private registerRouter() {
-    const routers = Container.get(Routers);
-
-    routers.registry(this.router);
+    UKS(this.app, {
+      routePrefix: '/api',
+      validation: false,
+    });
   }
 
   private useMiddleware() {
     this.app.use(errorMiddleware());
-    this.app.use(bodyParser());
     this.app.use(
       cors({
         origin: `http://localhost:${Configuration.MANAGEMENT_WEBPACK_DEV_PORT}`,

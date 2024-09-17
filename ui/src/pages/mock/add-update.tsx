@@ -21,7 +21,7 @@ export const AddUpdate: React.FC<Props> = (props) => {
   };
 
   const handleFinish = (values: any) => {
-    return axios.post('/api/mock/yapi/addById', values).then(() => {
+    return axios.post('/api/mock/interface/add', values).then(() => {
       message.success('添加成功');
       props.onOk();
     });

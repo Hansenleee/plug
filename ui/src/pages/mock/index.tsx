@@ -28,7 +28,7 @@ export default function YapiMock() {
     (pageNo = 1) => {
       setLoading(true);
       return axios
-        .post('/api/mock/yapi/list/page', {
+        .post('/api/mock/interface/list/page', {
           ...searchValue,
           page: { pageNo, pageSize: page.pageSize },
         })
@@ -48,13 +48,13 @@ export default function YapiMock() {
   };
 
   const fetchProjectList = () => {
-    return axios.get('/api/mock/yapi/project/list').then((list: any) => setProjectList(list));
+    return axios.get('/api/mock/project/list').then((list: any) => setProjectList(list));
   };
 
   const columns = useMemo(() => getColumns({ onRefresh: searchByPage, onEdit: handleEditMock }), [searchByPage]);
 
   const checkInitConfig = () => {
-    return axios.get('/api/mock/yapi/config').then((initSetting: any) => {
+    return axios.get('/api/mock/common/config').then((initSetting: any) => {
       if (!initSetting?.host) {
         message.warning('请先配置 yapi 配置');
         setSettingVisible(true);
