@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form } from 'antd';
 import axios from 'axios';
-import { ModalForm, ProFormText, ProFormRadio, ProFormDependency } from '@ant-design/pro-components';
+import { ModalForm, ProFormText, ProFormRadio, ProFormDependency, ProFormSwitch } from '@ant-design/pro-components';
 import { message } from 'antd/lib';
 
 interface Props {
@@ -36,24 +36,24 @@ export const AddUpdate: React.FC<Props> = (props) => {
       onOpenChange={handleOpenChange}
     >
       <ProFormRadio.Group
-        name="dataType"
-        label="mock 数据来源"
+        name="apiType"
+        label="mock 类型"
         rules={[{ required: true }]}
         options={[
           {
             label: 'yapi',
-            value: 'url',
+            value: 'yapi',
           },
           {
             label: '自定义',
-            value: 'define',
+            value: 'default',
           },
         ]}
-        initialValue="url"
+        initialValue="yapi"
       />
-      <ProFormDependency name={['dataType']}>
-        {({ dataType }) => {
-          if (dataType === 'url') {
+      <ProFormDependency name={['apiType']}>
+        {({ apiType }) => {
+          if (apiType === 'yapi') {
             return (
               <>
                 <ProFormText
@@ -67,6 +67,11 @@ export const AddUpdate: React.FC<Props> = (props) => {
                   label="yapi项目 token"
                   placeholder="请输入"
                   rules={[{ required: true }]}
+                />
+                <ProFormSwitch
+                  name="intelligent"
+                  label="智能 Mock"
+                  initialValue={false}
                 />
               </>
             )
@@ -84,6 +89,11 @@ export const AddUpdate: React.FC<Props> = (props) => {
                 label="接口地址"
                 placeholder="请输入"
                 rules={[{ required: true }]}
+              />
+              <ProFormSwitch
+                name="intelligent"
+                label="智能 Mock"
+                initialValue={false}
               />
             </>
           )

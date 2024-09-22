@@ -34,6 +34,7 @@ export interface MockApiItem {
   apiType: 'default' | 'yapi' | (string & {});
   mockUrl?: string;
   enable: boolean;
+  intelligent?: boolean;
   yapiId?: string;
   token?: string;
   projectId?: string;
@@ -46,6 +47,7 @@ export interface ProjectItem {
   projectName: string;
   projectId: string;
   enable: boolean;
+  intelligent?: boolean;
   updateTime?: number;
 }
 

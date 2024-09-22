@@ -14,8 +14,8 @@ export class RootPlugin {
     this.invokeQueue('startQueue', []);
   }
 
-  mockData(originMockData, mockInfo) {
-    this.invokeQueue('mockQueue', [originMockData, mockInfo]);
+  mockData(originMockData, mockInfo, request) {
+    this.invokeQueue('mockQueue', [originMockData, mockInfo, request]);
   }
 
   private registPlugins() {

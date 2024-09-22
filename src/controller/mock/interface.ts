@@ -2,11 +2,13 @@ import { Service } from 'typedi';
 import { nanoid } from 'nanoid';
 import { JsonController, Post, Body } from 'routing-controllers';
 import { BaseController } from '../base';
-import { MockApiItem, MockDataType } from '../../types';
+import { MockApiItem } from '../../types';
 
-interface addInfo extends Pick<MockApiItem, 'dataType' | 'token' | 'title'> {
+interface addInfo extends Pick<MockApiItem, 'apiType' | 'token' | 'title'> {
   yapiId: string;
   url: string;
+  dataType?: MockApiItem['dataType'];
+  intelligent?: boolean;
 }
 
 interface ListSeachBody {
@@ -21,7 +23,7 @@ interface ListSeachBody {
 export class MockInterfaceController extends BaseController {
   @Post('/add')
   async add(@Body() info: addInfo) {
-    if (info.dataType === MockDataType.DEFINE) {
+    if (info.apiType === 'default') {
       return this.addByDefine(info);
     }
 
@@ -123,16 +125,17 @@ export class MockInterfaceController extends BaseController {
       id: nanoid(),
       title: info.title || info.url,
       path: info.url,
-      dataType: info.dataType,
+      dataType: 'define',
       apiType: 'default',
       enable: true,
+      intelligent: !!info.intelligent,
     });
 
     return this.success(true);
   }
 
   private async addByYapi(info: addInfo) {
-    const { dataType, yapiId, token } = info;
+    const { dataType, yapiId, token, intelligent = false } = info;
 
     const interfaceInfo = await this.service.yapi.fetchInterface({ id: yapiId, token });
     const commonData = {
@@ -143,12 +146,13 @@ export class MockInterfaceController extends BaseController {
       dataType,
       apiType: 'yapi',
       enable: true,
+      intelligent,
     };
     const yapiList = this.storage.mock.getApiList();
-    const exist = yapiList.find((yapi) => yapi.path === interfaceInfo.path);
+    const exist = yapiList.find((yapi) => yapi.path === interfaceInfo.path && yapi.token === token);
 
     if (exist) {
-      return this.error(10010, '当前 yapi 接口已存在，请不用重复添加');
+      return this.error(10010, '当前项目下的 yapi 接口已存在，请不用重复添加');
     }
 
     const config = this.storage.mock.getConfig(BaseController.YAPI_NS);

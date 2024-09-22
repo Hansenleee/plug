@@ -85,7 +85,7 @@ export class Mock {
 
     const rootPlugin = Container.get(RootPlugin);
 
-    rootPlugin.mockData(responseData, { dataType: mockItem.dataType });
+    rootPlugin.mockData(responseData, mockItem, request);
 
     const stringfyResponseData = JSON.stringify(responseData);
 
