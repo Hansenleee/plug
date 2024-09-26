@@ -5,8 +5,8 @@ const path = require('node:path');
 module.exports = {
   packagerConfig: {
     asar: true,
-    icon: path.join(process.cwd(), 'resources', 'images', 'electron-logo.png'),
-    ignore: ['node_modules', 'src', 'ui']
+    icon: './resources/images/logo',
+    ignore: ['node_modules', 'src', '/ui/']
   },
   rebuildConfig: {},
   makers: [
@@ -17,6 +17,7 @@ module.exports = {
     {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
+      config: {}
     },
     {
       name: '@electron-forge/maker-deb',

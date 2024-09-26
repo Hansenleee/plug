@@ -1,42 +1,30 @@
+import { start } from '../dist/index.js'
 import { app, BrowserWindow, WebContentsView, Tray, Menu } from 'electron'
 import path from 'node:path'
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-
-const __dirname = path.dirname(__filename);
-
-global.__filename = __filename;
-global.__dirname = __dirname;
-
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-// import { start } from '../dist/index.js'
-
-// console.log(11111, path.join(__dirname, '..', 'resources', 'images', 'electron-logo.png'));
 const logoPath = path.join(__dirname, '..', 'resources', 'images', 'electron-logo.png')
-
-const createWindow = () => {
+const createWindow = async () => {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
     icon: logoPath,
   })
 
-  win.loadFile(path.join(__dirname, 'index.html'))
-  // start({ debug: true, originProxyPort: '7890', source: 'APP' })
+  win.loadFile(path.join(__dirname, '..', 'electron', 'index.html'))
+  await start({ debug: true, originProxyPort: '7890', source: 'APP' })
 
-  // const view1 = new WebContentsView()
-  // const [width, height] = win.getSize();
+  const view1 = new WebContentsView()
+  const [width, height] = win.getSize();
 
-  // win.contentView.addChildView(view1)
-  // view1.webContents.loadURL('http://localhost:9001/management')
-  // view1.setBounds({ x: 0, y: 0, width, height })
+  win.contentView.addChildView(view1)
+  view1.webContents.loadURL('http://localhost:9001/management')
+  view1.setBounds({ x: 0, y: 0, width, height })
 
-  // win.on('resized', () => {
-  //   const [width, height] = win.getSize();
+  win.on('resized', () => {
+    const [width, height] = win.getSize();
 
-  //   view1.setBounds({ x: 0, y: 0, width, height })
-  // })
+    view1.setBounds({ x: 0, y: 0, width, height })
+  })
 }
 
 app.on('window-all-closed', () => {

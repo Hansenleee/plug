@@ -1048,14 +1048,6 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@koa/bodyparser@^5.1.1":
-  version "5.1.1"
-  resolved "https://registry.npmmirror.com/@koa/bodyparser/-/bodyparser-5.1.1.tgz#cda8df0bc89339d6d9856ddee0d59f2ff3133d06"
-  dependencies:
-    co-body "^6.1.0"
-    lodash.merge "^4.6.2"
-    type-is "^1.6.18"
-
 "@koa/cors@^5.0.0":
   version "5.0.0"
   resolved "https://registry.npmmirror.com/@koa/cors/-/cors-5.0.0.tgz#0029b5f057fa0d0ae0e37dd2c89ece315a0daffd"
@@ -2483,7 +2475,7 @@ clone@^1.0.2:
   version "1.0.4"
   resolved "https://registry.npmmirror.com/clone/-/clone-1.0.4.tgz#da309cc263df15994c688ca902179ca3c7cd7c7e"
 
-co-body@^6.0.0, co-body@^6.1.0:
+co-body@^6.0.0:
   version "6.2.0"
   resolved "https://registry.npmmirror.com/co-body/-/co-body-6.2.0.tgz#afd776d60e5659f4eee862df83499698eb1aea1b"
   dependencies:
@@ -3471,9 +3463,10 @@ eslint-plugin-react-hooks@^4.6.0:
   version "4.6.2"
   resolved "https://registry.npmmirror.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.6.2.tgz#c829eb06c0e6f484b3fbb85a97e57784f328c596"
 
-eslint-plugin-react@^7.33.2:
+eslint-plugin-react@7.34.3, eslint-plugin-react@^7.33.2:
   version "7.34.3"
   resolved "https://registry.npmmirror.com/eslint-plugin-react/-/eslint-plugin-react-7.34.3.tgz#9965f27bd1250a787b5d4cfcc765e5a5d58dcb7b"
+  integrity sha512-aoW4MV891jkUulwDApQbPYTVZmeuSyFrudpbTAQuj5Fv8VL+o6df2xIGpw8B0hPjAaih1/Fb0om9grCdyFYemA==
   dependencies:
     array-includes "^3.1.8"
     array.prototype.findlast "^1.2.5"
