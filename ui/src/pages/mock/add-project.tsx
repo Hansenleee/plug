@@ -64,6 +64,11 @@ export const AddProject: React.FC<Props> = (props) => {
         label="启用状态"
         initialValue={true}
       />
+      <ProFormSwitch
+        name="intelligent"
+        label="智能 Mock"
+        initialValue={false}
+      />
       <ProFormRadio.Group
         name="dataType"
         label="mock 数据来源"

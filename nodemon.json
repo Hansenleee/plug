@@ -1,0 +1,10 @@
+{
+  "restartable": "rs",
+  "verbose": true,
+  "watch": [
+    "bin/",
+    "dist/"
+  ],
+  "delay": "500",
+  "exec": "yarn dev:plug"
+}

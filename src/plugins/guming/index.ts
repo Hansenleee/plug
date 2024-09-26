@@ -1,4 +1,5 @@
-import { PluginApp } from './app';
+import { PluginApp } from '../app';
+import { IntelligentMock } from './mock';
 
 const YAPI_NS = 'yapi';
 
@@ -21,11 +22,7 @@ export default (app: PluginApp) => {
     });
   });
 
-  app.defineMock(async (originMockData, mockInfo) => {
-    if (mockInfo.dataType === 'define') {
-      return originMockData;
-    }
-
-    originMockData.code = 0;
+  app.defineMock(async (originMockData, mockInfo, request) => {
+    return new IntelligentMock(originMockData, mockInfo, request).mock();
   });
 };
