@@ -87,21 +87,21 @@ export class Mock {
 
     rootPlugin.mockData(responseData, mockItem, request);
 
-    const stringfyResponseData = JSON.stringify(responseData);
+    const stringyResponseData = JSON.stringify(responseData);
 
     response.setHeader('Content-Type', 'application/json');
     response.writeHead(200, {
       'Content-Type': 'application/json',
-      'Content-length': stringfyResponseData?.length,
+      'Content-length': Buffer.byteLength(stringyResponseData),
       'x-plug-mock-id': mockItem.id,
       'x-plug-mock-type': mockItem.apiType,
     });
-    response.end(stringfyResponseData);
+    response.end(stringyResponseData);
 
     return {
       statusCode: response.statusCode,
       headers: response.getHeaders(),
-      data: stringfyResponseData,
+      data: stringyResponseData,
     };
   }
 }
