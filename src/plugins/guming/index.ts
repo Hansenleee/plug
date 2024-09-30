@@ -1,5 +1,5 @@
 import { PluginApp } from '../app';
-import { IntelligentMock } from './mock';
+import { GumingMock } from './mock';
 
 const YAPI_NS = 'yapi';
 
@@ -13,7 +13,15 @@ export default (app: PluginApp) => {
     }
 
     if (!config.mockHost?.length) {
-      initConfig.mockHost = ['back.dev1.iguming.net', 'back.test1.iguming.net', '127.0.0.1'];
+      initConfig.mockHost = [
+        'back.dev1.iguming.net',
+        'back.test1.iguming.net',
+        'back.gumingnc.com',
+        'mobile.dev1.iguming.net',
+        'mobile.test1.iguming.net',
+        'mobile.gumingnc.com',
+        '127.0.0.1',
+      ];
     }
 
     app.storage.mock.setConfig(YAPI_NS, {
@@ -23,6 +31,6 @@ export default (app: PluginApp) => {
   });
 
   app.defineMock(async (originMockData, mockInfo, request) => {
-    return new IntelligentMock(originMockData, mockInfo, request).mock();
+    return new GumingMock(originMockData, mockInfo, request).mock();
   });
 };

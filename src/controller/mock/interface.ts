@@ -11,7 +11,7 @@ interface addInfo extends Pick<MockApiItem, 'apiType' | 'token' | 'title'> {
   intelligent?: boolean;
 }
 
-interface ListSeachBody {
+interface ListSearchBody {
   page: { pageNo: number; pageSize: number };
   name: string;
   project: string;
@@ -101,7 +101,7 @@ export class MockInterfaceController extends BaseController {
   }
 
   @Post('/list/page')
-  async getYapiListByPage(@Body() info: ListSeachBody) {
+  async getYapiListByPage(@Body() info: ListSearchBody) {
     const { page, name, project } = info;
     const isValidName = !!name || (name as unknown as number) === 0;
 

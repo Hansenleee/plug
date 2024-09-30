@@ -1,13 +1,12 @@
 import http from 'http';
 import Container, { Service } from 'typedi';
-import fetch from 'node-fetch';
 import { Storage } from '../storage';
 import { MockApiItem } from '../types';
-import { RootPlugin } from '../plugins';
 import { getPath, getHost } from '../shared/request-meta';
+import { Mock } from '../mock';
 
 @Service()
-export class Mock {
+export class ProxyMock {
   check(request: http.IncomingMessage) {
     const storage = Container.get(Storage);
     const mockHostList = storage.mock.getMemoryMockHost() || [];
@@ -45,63 +44,24 @@ export class Mock {
     return false;
   }
 
-  async fetchMockData(mockItem: MockApiItem, { method }) {
-    const mockFetchResult = await fetch(mockItem.mockUrl, {
-      method,
-      // TODO: 完善下请求头信息
-      // headers: request.headers as HeadersInit,
-      headers: { 'Content-Type': 'application/json' },
-      body: null,
-    });
-    const jsonMockData = await mockFetchResult.json();
-
-    return jsonMockData;
-  }
-
-  fetchDefineMockData(mockItem: MockApiItem): string {
-    const storage = Container.get(Storage);
-    const defineMockData = storage.mock.getMockData(mockItem.id);
-
-    try {
-      return JSON.parse(defineMockData.mockString);
-    } catch (_) {
-      return defineMockData.mockString;
-    }
-  }
-
   async mock(mockItem: MockApiItem, request: http.IncomingMessage, response: http.ServerResponse) {
-    let responseData;
-
-    if (mockItem.dataType === 'url') {
-      responseData = await this.fetchMockData(mockItem, { method: request.method });
-    } else if (mockItem.dataType === 'define') {
-      responseData = this.fetchDefineMockData(mockItem);
-    } else {
-      // TODO: 待完善
-      responseData = {
-        data: 'Hello World!',
-      };
-    }
-
-    const rootPlugin = Container.get(RootPlugin);
-
-    rootPlugin.mockData(responseData, mockItem, request);
-
-    const stringyResponseData = JSON.stringify(responseData);
+    const mockServer = Container.get(Mock);
+    const mockData = await mockServer.invoke(request, response, mockItem);
+    const stringifyMockData = mockData.stringify();
 
     response.setHeader('Content-Type', 'application/json');
     response.writeHead(200, {
       'Content-Type': 'application/json',
-      'Content-length': Buffer.byteLength(stringyResponseData),
+      'Content-length': Buffer.byteLength(stringifyMockData),
       'x-plug-mock-id': mockItem.id,
       'x-plug-mock-type': mockItem.apiType,
     });
-    response.end(stringyResponseData);
+    response.end(stringifyMockData);
 
     return {
       statusCode: response.statusCode,
       headers: response.getHeaders(),
-      data: stringyResponseData,
+      data: stringifyMockData,
     };
   }
 }

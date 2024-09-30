@@ -2,7 +2,7 @@ import http from 'http';
 import Mock from 'mockjs';
 import { MockApiItem } from '../../types';
 
-export class IntelligentMock {
+export class GumingMock {
   private static readonly DEFAULT_PAGE_TOTAL_SIZE = 100;
   private static readonly DEFAULT_PAGE_SIZE = 15;
 
@@ -22,7 +22,7 @@ export class IntelligentMock {
 
   mock() {
     if (this.isIntelligent) {
-      this.intellignet();
+      this.intelligent();
     }
 
     if (this.mockInfo.dataType === 'define') {
@@ -34,7 +34,7 @@ export class IntelligentMock {
     return this.mockData;
   }
 
-  private intellignet() {
+  private intelligent() {
     if (this.mockData?.data?.page) {
       this.intelligentWithPage();
     }
@@ -45,9 +45,9 @@ export class IntelligentMock {
     const originPageInfo = this.mockData.data.page || {};
     const totalSize = this.isDefine
       ? originPageInfo?.totalSize
-      : IntelligentMock.DEFAULT_PAGE_TOTAL_SIZE;
+      : GumingMock.DEFAULT_PAGE_TOTAL_SIZE;
     const curPage = requestBodyPage?.pageNo || 1;
-    const pageSize = requestBodyPage?.pageSize || IntelligentMock.DEFAULT_PAGE_SIZE;
+    const pageSize = requestBodyPage?.pageSize || GumingMock.DEFAULT_PAGE_SIZE;
 
     this.mockData.data.page = {
       ...originPageInfo,

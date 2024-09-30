@@ -29,6 +29,9 @@ export class Certificate {
   static readonly NAME = 'plug-proxy';
   static readonly BASE_HTTPS_DOMAIN = 'BASE_HTTPS_DOMAIN';
   static readonly BASE_DIR = path.join(__dirname, '..', 'resources', 'certificate');
+  // TODO: 改成自动上传
+  static readonly CRT_OSS_URL = 'https://g.gumingnc.com/u/dRdbm7D/plug-proxy.crt';
+  static readonly CRT_QR_CODE = 'https://g.gumingnc.com/u/RRdryxC/crt-qrcode.png';
 
   private get crtPath() {
     return path.join(Certificate.BASE_DIR, `${Certificate.NAME}.crt`);

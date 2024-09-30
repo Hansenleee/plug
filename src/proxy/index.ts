@@ -1,13 +1,13 @@
 import { Inject, Service } from 'typedi';
 import http from 'http';
 import { Request } from './request';
-import { Mock } from './mock';
+import { ProxyMock } from './mock';
 import { Protocol } from '../types';
 
 @Service()
 export class Proxy {
   @Inject()
-  mock: Mock;
+  mock: ProxyMock;
 
   @Inject()
   private request: Request;

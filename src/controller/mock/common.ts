@@ -1,7 +1,7 @@
-import { Service, Container } from 'typedi';
+import { Service } from 'typedi';
 import { JsonController, Get, Post, Body, QueryParams } from 'routing-controllers';
 import { BaseController } from '../base';
-import { Proxy } from '../../proxy';
+import { Mock } from '../../mock';
 
 @Service()
 @JsonController('/mock/common')
@@ -38,9 +38,7 @@ export class MockCommonController extends BaseController {
       return this.success({ code: 0 });
     }
 
-    const proxy = Container.get(Proxy);
-
-    const jsonMockData = await proxy.mock.fetchMockData(mockApi, {
+    const jsonMockData = await Mock.RemoteMocker.fetchMockData(mockApi, {
       method: mockApi.method,
     });
 
