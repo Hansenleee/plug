@@ -22,7 +22,7 @@ export class CoreApp {
   private guards: Guardian;
 
   async start() {
-    await this.guards.start();
+    await this.guards.beforeStart();
 
     const storage = Container.get<Storage>(Storage);
     const certificate = Container.get<Certificate>(Certificate);
@@ -31,11 +31,17 @@ export class CoreApp {
     certificate.init();
     storage.init();
 
+    this.guards.start();
     this.http.start();
     this.https.start();
     this.managementServer.start();
 
     // TODO: 后续优化
     rootPlugin.init();
+    this.guards.afterStart();
+  }
+
+  stop() {
+    this.guards.lifeCycle.stop();
   }
 }

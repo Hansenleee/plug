@@ -2,6 +2,7 @@ import { Inject, Service } from 'typedi';
 import fs from 'fs';
 import { MockStorage } from './mock';
 import { SystemStorage } from './system';
+import { RuntimeStorage } from './runtime';
 import { PersistenceStorage } from './base-persistence';
 
 @Service()
@@ -11,6 +12,9 @@ export class Storage {
 
   @Inject()
   system: SystemStorage;
+
+  @Inject()
+  runtime: RuntimeStorage;
 
   init() {
     this.mock.init();

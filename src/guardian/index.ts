@@ -1,26 +1,30 @@
 import { Service, Inject } from 'typedi';
 import { OTA } from './ota';
-import { Logger } from '../shared/log';
-
-const logger = new Logger('guardian');
+import { Exception } from './exception';
+import { LifeCycle } from './life-cycle';
 
 @Service()
 export class Guardian {
   @Inject()
   ota: OTA;
 
-  async start() {
-    this.exceptionGuardian();
+  @Inject()
+  exception: Exception;
+
+  @Inject()
+  lifeCycle: LifeCycle;
+
+  async beforeStart() {
+    this.exception.beforeStart();
+    this.lifeCycle.beforeStart();
     await this.ota.checkAndUpgrade();
   }
 
-  private exceptionGuardian() {
-    process.on('uncaughtException', (error) => {
-      logger.warn(`uncaughtException: ${error.message}, ${error.stack}`);
-    });
+  start() {
+    this.lifeCycle.start();
+  }
 
-    process.on('unhandledRejection', (error) => {
-      logger.warn(`unhandledRejection: ${error}`);
-    });
+  afterStart() {
+    this.lifeCycle.afterStart();
   }
 }

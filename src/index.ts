@@ -5,8 +5,14 @@ import { CoreApp } from './app';
 import { Configuration } from './configuration';
 
 export const start = (option) => {
-  const coreApp = Container.get<CoreApp>(CoreApp);
+  const coreApp = Container.get(CoreApp);
 
   Configuration.init(option);
   coreApp.start();
+};
+
+export const stop = () => {
+  const coreApp = Container.get(CoreApp);
+
+  coreApp.stop();
 };

@@ -1,7 +1,7 @@
 import { program } from 'commander';
 import { Container } from 'typedi';
 import { pkgJson } from './shared/pkg';
-import { start } from './index';
+import { start, stop } from './index';
 import { Storage } from './storage';
 
 program.version(pkgJson.version, '-v, --version');
@@ -15,6 +15,13 @@ program
   .option('-s, --source <source>', 'origin proxy port')
   .action((option) => {
     start(option);
+  });
+
+program
+  .command('stop')
+  .description('stop plug proxy')
+  .action(() => {
+    stop();
   });
 
 program
