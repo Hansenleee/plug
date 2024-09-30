@@ -32,6 +32,6 @@ export class LifeCycle {
       process.exit(Exception.MANUAL_EXIT_CODE);
     }
 
-    execSync(`kill ${state.pid}`);
+    execSync(`kill -9 ${state.pid}`);
   }
 }
