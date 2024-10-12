@@ -32,8 +32,10 @@ export class ProxyMock {
     const mockApiList = storage.mock.getApiList();
     const pathname = getPath(request);
     const availableMockApi = mockApiList.find((item) => {
+      const wholePath = item.prefix ? `${item.prefix}${item.path}` : item.path;
+
       return (
-        item.enable && item.path === pathname && (!item.method || item.method === request.method)
+        item.enable && wholePath === pathname && (!item.method || item.method === request.method)
       );
     });
 

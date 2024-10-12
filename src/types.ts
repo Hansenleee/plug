@@ -28,6 +28,7 @@ export interface MockConfig {
 export interface MockApiItem {
   id: string;
   path: string;
+  prefix?: string;
   method?: string;
   title: string;
   dataType: 'url' | 'define';
@@ -49,6 +50,7 @@ export interface ProjectItem {
   enable: boolean;
   intelligent?: boolean;
   updateTime?: number;
+  prefix?: string;
 }
 
 export interface MockDataItem {

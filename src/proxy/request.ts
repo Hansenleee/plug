@@ -36,12 +36,12 @@ export class Request {
   }
 
   private http(request: http.IncomingMessage, response: http.ServerResponse) {
-    const { hostname, port, pathname, protocol } = new URL(request.url);
+    const { hostname, port, pathname, protocol, search } = new URL(request.url);
 
     return this.baseHandler(request, response, {
       hostname,
       port,
-      path: pathname,
+      path: pathname + search,
       method: request.method,
       protocol,
       headers: request.headers,

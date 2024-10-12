@@ -9,6 +9,7 @@ interface ProjectAddBody {
   projectName: string;
   dataType: MockApiItem['dataType'];
   intelligent?: boolean;
+  prefix?: string;
 }
 
 interface ProjectUpdateBody {
@@ -23,6 +24,7 @@ interface ProjectUpgradeBody {
   id: string;
   projectId: string;
   token: string;
+  prefix?: string;
   [key: string]: unknown;
 }
 
@@ -31,7 +33,7 @@ interface ProjectUpgradeBody {
 export class MockProjectController extends BaseController {
   @Post('/add')
   async add(@Body() info: ProjectAddBody) {
-    const { token, projectName, dataType, intelligent } = info;
+    const { token, projectName, dataType, intelligent, prefix } = info;
     const projectInfo = await this.service.yapi.fetchProjectInfo(token);
 
     const interfaceListResult = await this.service.yapi.fetchInterfaceList({
@@ -53,6 +55,7 @@ export class MockProjectController extends BaseController {
         projectId: innerProjectId,
         dataType,
         intelligent,
+        prefix,
       });
     });
 
@@ -63,6 +66,7 @@ export class MockProjectController extends BaseController {
       projectName: projectName || projectInfo.name,
       enable: true,
       intelligent: !!intelligent,
+      prefix,
     });
     this.storage.mock.appendApi(storageInterfaceList);
 
@@ -98,7 +102,7 @@ export class MockProjectController extends BaseController {
 
   @Post('/upgrade')
   async upgrade(@Body() info: ProjectUpgradeBody) {
-    const { id, projectId, token, intelligent } = info;
+    const { id, projectId, token, intelligent, prefix } = info;
 
     this.required(info, ['id', 'projectId', 'token', 'intelligent']);
     this.storage.mock.deleteApiByProject(id);
@@ -117,6 +121,7 @@ export class MockProjectController extends BaseController {
         projectId: id,
         dataType: 'url',
         intelligent: !!intelligent,
+        prefix,
       });
     });
     this.storage.mock.appendApi(storageInterfaceList);
@@ -131,12 +136,13 @@ export class MockProjectController extends BaseController {
 
   private assembleInterfaceItem(
     originInterfaceItem,
-    { host, yapiProjectId, projectId, dataType, intelligent }
+    { host, yapiProjectId, projectId, dataType, intelligent, prefix }
   ) {
     return {
       id: nanoid(),
       title: originInterfaceItem.title,
       path: originInterfaceItem.path,
+      prefix,
       method: originInterfaceItem.method,
       dataType: dataType || 'url',
       apiType: 'yapi',

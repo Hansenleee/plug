@@ -17,6 +17,7 @@ export const AddProject: React.FC<Props> = (props) => {
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       props.onClose();
+      form.resetFields();
     }
   };
 
@@ -36,7 +37,7 @@ export const AddProject: React.FC<Props> = (props) => {
     if (props.open && props.project) {
       form.setFieldsValue(props.project);
     }
-  }, [form, props.open, props.project])
+  }, [form, props.open, props.project]);
 
   return (
     <ModalForm
@@ -58,6 +59,12 @@ export const AddProject: React.FC<Props> = (props) => {
         name="projectName"
         label="yapi 项目名称"
         placeholder="请输入"
+      />
+      <ProFormText
+        name="prefix"
+        label="接口前缀"
+        placeholder="请输入"
+        disabled={!!props.project}
       />
       <ProFormSwitch
         name="enable"

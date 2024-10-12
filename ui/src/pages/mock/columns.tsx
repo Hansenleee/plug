@@ -8,8 +8,8 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, o
     dataIndex: 'path',
     width: 300,
     fixed: 'left',
-    render: (value: string) => {
-      return <Typography.Link>{value}</Typography.Link>;
+    render: (value: string, record) => {
+      return <Typography.Link>{(record.prefix || '') + value}</Typography.Link>;
     },
   },
   {
