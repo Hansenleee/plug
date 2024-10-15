@@ -4,7 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "Plug proxy",
   description: "An https/http proxy tool",
-  base: '/repo/',
+  base: '/plug/',
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
