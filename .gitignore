@@ -1,5 +1,5 @@
 node_modules
 dist
 ui-dist
-
+docs/.vitepress/cache
 out/
