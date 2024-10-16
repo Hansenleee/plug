@@ -6,24 +6,32 @@ export default defineConfig({
   description: "An https/http proxy tool",
   base: '/plug/',
   themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
+    logo: { src: 'https://leebucket01.oss-cn-shanghai.aliyuncs.com/Statics/images/plug-logo-opacity.png' },
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Examples', link: '/markdown-examples' }
+      { text: 'Doc', link: '/install' }
     ],
 
     sidebar: [
       {
-        text: 'Examples',
+        text: '安装',
+        link: '/install',
+      },
+      {
+        text: '启动',
+        link: '/start',
+      },
+      {
+        text: '使用',
         items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' }
+          { text: 'pc 端使用', link: '/use-pc' },
+          { text: '移动端端使用', link: '/use-mobile' },
         ]
       }
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
+      { icon: 'github', link: 'https://github.com/Hansenleee/plug' }
     ]
   }
 })
