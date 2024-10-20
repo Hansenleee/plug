@@ -27,6 +27,13 @@ export default defineConfig({
           { text: 'pc 端使用', link: '/use-pc' },
           { text: '移动端端使用', link: '/use-mobile' },
         ]
+      },
+      {
+        text: '功能',
+        items: [
+          { text: '监控', link: '/monitoring' },
+          { text: 'mock', link: '/mock' },
+        ]
       }
     ],
 
