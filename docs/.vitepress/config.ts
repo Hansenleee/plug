@@ -34,7 +34,11 @@ export default defineConfig({
           { text: '监控', link: '/monitoring' },
           { text: 'mock', link: '/mock' },
         ]
-      }
+      },
+      {
+        text: '系统配置',
+        link: '/system-config',
+      },
     ],
 
     socialLinks: [
