@@ -1,4 +1,4 @@
-import { start } from '../dist/index.js'
+import { start, stop } from '../dist/index.js'
 import { app, BrowserWindow, WebContentsView, Tray, Menu } from 'electron'
 import path from 'node:path'
 
@@ -28,7 +28,11 @@ const createWindow = async () => {
 }
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit()
+  stop();
+
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 })
 
 app.whenReady().then(() => {
@@ -36,15 +40,15 @@ app.whenReady().then(() => {
     // app.setIcon(path.join(process.cwd(), 'resources', 'images', 'electron-logo.png'))
     app.dock.setIcon(logoPath);
 
-    // const tray = new Tray(path.join(process.cwd(), 'resources', 'images', 'electron-logo.png'))
-    // const contextMenu = Menu.buildFromTemplate([
-    //   { label: 'Item1', type: 'radio' },
-    //   { label: 'Item2', type: 'radio' },
-    //   { label: 'Item3', type: 'radio', checked: true },
-    //   { label: 'Item4', type: 'radio' }
-    // ])
-    // tray.setToolTip('This is my application.')
-    // tray.setContextMenu(contextMenu)
+    const tray = new Tray(path.join(process.cwd(), 'resources', 'images', 'electron-logo.png'))
+    const contextMenu = Menu.buildFromTemplate([
+      { label: 'Item1', type: 'radio' },
+      { label: 'Item2', type: 'radio' },
+      { label: 'Item3', type: 'radio', checked: true },
+      { label: 'Item4', type: 'radio' }
+    ])
+    tray.setToolTip('This is my application.')
+    tray.setContextMenu(contextMenu)
   }
 }).then(() => {
   createWindow()

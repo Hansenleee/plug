@@ -28,10 +28,16 @@ export class LifeCycle {
     const storage = Container.get(Storage);
     const state = storage.runtime.getState();
 
+    storage.runtime.changeState({ status: 'stopped' });
+
     if (state.pid === process.pid) {
       process.exit(Exception.MANUAL_EXIT_CODE);
     }
 
-    execSync(`kill -9 ${state.pid}`);
+    try {
+      execSync(`kill -9 ${state.pid}`);
+    } catch (err) {
+      /* empty */
+    }
   }
 }
