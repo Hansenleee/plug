@@ -25,7 +25,7 @@ export default defineConfig({
         text: '使用',
         items: [
           { text: 'pc 端使用', link: '/use-pc' },
-          { text: '移动端端使用', link: '/use-mobile' },
+          { text: '移动端使用', link: '/use-mobile' },
         ]
       }
     ],
