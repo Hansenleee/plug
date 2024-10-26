@@ -4,27 +4,33 @@ import path from 'node:path'
 
 const logoPath = path.join(__dirname, '..', 'resources', 'images', 'electron-logo.png')
 const createWindow = async () => {
-  const win = new BrowserWindow({
+  const mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     icon: logoPath,
   })
 
-  win.loadFile(path.join(__dirname, '..', 'electron', 'index.html'))
+  mainWindow.loadFile(path.join(__dirname, '..', 'electron', 'index.html'))
   await start({ debug: true, originProxyPort: '7890', source: 'APP' })
 
   const view1 = new WebContentsView()
-  const [width, height] = win.getSize();
+  const [width, height] = mainWindow.getSize();
 
-  win.contentView.addChildView(view1)
+  mainWindow.contentView.addChildView(view1)
   view1.webContents.loadURL('http://localhost:9001/management')
   view1.setBounds({ x: 0, y: 0, width, height })
 
-  win.on('resized', () => {
-    const [width, height] = win.getSize();
+  mainWindow.on('resized', () => {
+    const [width, height] = mainWindow.getSize();
 
     view1.setBounds({ x: 0, y: 0, width, height })
-  })
+  });
+
+  mainWindow.on('close', (event) => {
+    event.preventDefault();
+    mainWindow.hide();
+    mainWindow.setSkipTaskbar(true);
+  });
 }
 
 app.on('window-all-closed', () => {
@@ -37,17 +43,24 @@ app.on('window-all-closed', () => {
 
 app.whenReady().then(() => {
   if (process.platform === 'darwin') {
-    // app.setIcon(path.join(process.cwd(), 'resources', 'images', 'electron-logo.png'))
     app.dock.setIcon(logoPath);
 
-    const tray = new Tray(path.join(process.cwd(), 'resources', 'images', 'electron-logo.png'))
+    const tray = new Tray(path.join(__dirname, '..', 'resources', 'images', 'app-dock-icon.png'))
     const contextMenu = Menu.buildFromTemplate([
-      { label: 'Item1', type: 'radio' },
-      { label: 'Item2', type: 'radio' },
-      { label: 'Item3', type: 'radio', checked: true },
-      { label: 'Item4', type: 'radio' }
+      { label: '显示', type: 'radio', click: () => {
+        const mainWindow = BrowserWindow.getAllWindows();
+
+        if (mainWindow.length) {
+          mainWindow[0].show();
+          mainWindow[0].setSkipTaskbar(false);
+        } else {
+          createWindow();
+        }
+      }},
+      { label: '退出', type: 'radio', click: () => {
+        app.quit();
+      }}
     ])
-    tray.setToolTip('This is my application.')
     tray.setContextMenu(contextMenu)
   }
 }).then(() => {
