@@ -20,4 +20,4 @@ yarn add plug-proxy -g
 
 ## APP 形式
 
-点击链接下载：[待补充](https://github.com/Hansenleee/plug)
+点击链接下载：[plug APP](https://github.com/Hansenleee/plug/releases)

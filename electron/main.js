@@ -59,6 +59,7 @@ app.whenReady().then(() => {
       }},
       { label: '退出', type: 'radio', click: () => {
         app.quit();
+        app.exit();
       }}
     ])
     tray.setContextMenu(contextMenu)
