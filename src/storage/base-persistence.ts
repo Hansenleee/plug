@@ -1,13 +1,12 @@
 import { Service } from 'typedi';
-import os from 'os';
 import path from 'path';
 import { LocalStorage } from 'node-localstorage';
 import { Logger } from '../shared/log';
+import { Configuration } from '../configuration';
 
 @Service()
 export class PersistenceStorage {
-  static BASE_DIR_ROOT = os.homedir();
-  static BASE_STORAGE_ROOT = path.join(PersistenceStorage.BASE_DIR_ROOT, '.plug-cache', 'storage');
+  static BASE_STORAGE_ROOT = path.join(Configuration.BASE_CACHE_DIR, 'storage');
 
   private storage: LocalStorage;
   private log = new Logger('persistence');

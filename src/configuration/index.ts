@@ -1,4 +1,5 @@
 import path from 'path';
+import os from 'os';
 
 interface InitOption {
   port?: number;
@@ -13,6 +14,8 @@ export enum PlugSource {
 }
 
 export class Configuration {
+  static BASE_CACHE_DIR = path.join(os.homedir(), '.plug-cache');
+
   static PROXY_PORT = 8001;
   static HTTPS_PROXY_PORT = 8090;
 
