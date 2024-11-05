@@ -46,7 +46,7 @@ export const getRequestParams = (request: http.IncomingMessage, completeUrl: str
 };
 
 export const getResponseData = (response: http.IncomingMessage) => {
-  let responseData = '';
+  const responseBuffer = [];
   let totalResponse = response;
 
   if (response.headers['content-encoding'] === 'gzip') {
@@ -57,11 +57,17 @@ export const getResponseData = (response: http.IncomingMessage) => {
   }
 
   totalResponse.on('data', (data) => {
-    responseData += data.toString('utf-8');
+    responseBuffer.push(data);
   });
 
   return {
-    getData: () => responseData,
+    getData: () => {
+      if (response.headers['content-type'] === 'image/png') {
+        return Buffer.concat(responseBuffer).toString('base64');
+      }
+
+      return Buffer.concat(responseBuffer).toString('utf-8');
+    },
     response: totalResponse,
   };
 };

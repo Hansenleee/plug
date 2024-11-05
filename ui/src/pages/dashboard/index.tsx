@@ -97,6 +97,7 @@ const Dashboard: React.FC = () => {
         pagination={false}
         bordered
         rowKey="id"
+        size="middle"
         columns={columns}
         dataSource={filterRecords}
         scroll={tableScroll}

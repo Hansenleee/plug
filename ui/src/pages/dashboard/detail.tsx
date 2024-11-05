@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Drawer, Tabs, Descriptions, Divider } from 'antd';
+import { Drawer, Tabs, Descriptions, Divider, Image } from 'antd';
 import { StatusComponent } from './status';
 
 interface Props {
@@ -11,6 +11,12 @@ interface Props {
 export const Detail: React.FC<Props> = (props) => {
   const formatJsonResponse = useMemo(() => {
     const { responseData = '' } = props.record || {};
+    const contentType = props.record?.responseHeader?.['content-type'];
+
+    if (contentType === 'image/png') {
+      // 设置图片的Base64源
+      return `data:${contentType};base64,${props.record?.responseData}`;
+    }
 
     try {
       return JSON.stringify(JSON.parse(responseData), null, '  ');
@@ -77,7 +83,7 @@ export const Detail: React.FC<Props> = (props) => {
           <>
             <Descriptions column={1} labelStyle={{ width: 250 }} items={responseHeaderItems} />
             <Divider>Body</Divider>
-            <pre style={{ overflow: 'auto' }}>{formatJsonResponse}</pre>
+            {responseHeader['content-type'] === 'image/png' ? <Image src={formatJsonResponse} /> : <pre style={{ overflow: 'auto' }}>{formatJsonResponse}</pre>}
           </>
         ),
       },
@@ -93,6 +99,7 @@ export const Detail: React.FC<Props> = (props) => {
       rootClassName="dashboard-detail"
       open={props.visible}
       onClose={props.onClose}
+      destroyOnClose
     >
       <Tabs
         defaultActiveKey="Request"

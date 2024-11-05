@@ -69,6 +69,7 @@ export class ManagementServer {
     UKS(this.app, {
       routePrefix: '/api',
       validation: false,
+      defaultErrorHandler: false,
     });
   }
 

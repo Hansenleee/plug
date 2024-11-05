@@ -19,7 +19,7 @@ export class BaseController {
 
   protected required(params: Record<string, unknown>, requiredFields: string[]) {
     const emptyFields = requiredFields.filter((fieldKey) => {
-      if (!params[fieldKey] && params[fieldKey] !== 0) {
+      if (!params[fieldKey] && params[fieldKey] !== 0 && params[fieldKey] !== false) {
         return true;
       }
 
