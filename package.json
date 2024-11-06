@@ -23,6 +23,8 @@
     "start:forge": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
+    "make:win32": "yarn make -- --platform win32",
+    "make:darwin": "yarn make -- --platform darwin",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",

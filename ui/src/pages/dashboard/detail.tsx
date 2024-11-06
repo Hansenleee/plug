@@ -13,7 +13,7 @@ export const Detail: React.FC<Props> = (props) => {
     const { responseData = '' } = props.record || {};
     const contentType = props.record?.responseHeader?.['content-type'];
 
-    if (contentType === 'image/png') {
+    if (contentType?.startsWith?.('image')) {
       // 设置图片的Base64源
       return `data:${contentType};base64,${props.record?.responseData}`;
     }
@@ -83,7 +83,7 @@ export const Detail: React.FC<Props> = (props) => {
           <>
             <Descriptions column={1} labelStyle={{ width: 250 }} items={responseHeaderItems} />
             <Divider>Body</Divider>
-            {responseHeader['content-type'] === 'image/png' ? <Image src={formatJsonResponse} /> : <pre style={{ overflow: 'auto' }}>{formatJsonResponse}</pre>}
+            {responseHeader['content-type']?.startsWith?.('image') ? <Image src={formatJsonResponse} /> : <pre style={{ overflow: 'auto' }}>{formatJsonResponse}</pre>}
           </>
         ),
       },

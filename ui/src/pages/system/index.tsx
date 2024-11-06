@@ -1,5 +1,5 @@
 import { Form, message } from 'antd';
-import { ModalForm, ProFormDigit } from '@ant-design/pro-components';
+import { ModalForm, ProFormDigit, ProFormText } from '@ant-design/pro-components';
 import { useEffect } from 'react';
 import axios from 'axios';
 
@@ -47,6 +47,11 @@ export const System: React.FC<Props> = (props) => {
         label="系统代理端口"
         placeholder="请输入"
         extra="如果系统设置了科学翻墙，请输入对应的端口"
+      />
+      <ProFormText
+        name="cacheDir"
+        label="本地数据存储文件夹"
+        disabled
       />
     </ModalForm>
   )
