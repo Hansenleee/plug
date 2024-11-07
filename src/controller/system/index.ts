@@ -3,6 +3,7 @@ import { JsonController, Get, Post, Body } from 'routing-controllers';
 import { BaseController } from '../base';
 import { SystemConfig } from '../../types';
 import { Certificate } from '../../shared/certificate';
+import { Logger } from '../../shared/log';
 import { Configuration } from '../../configuration';
 
 @Service()
@@ -16,17 +17,17 @@ export class SystemController extends BaseController {
     return this.success({
       ...systemConfig,
       certificateUrl,
+      proxyPort: Configuration.PROXY_PORT,
       cacheDir: Configuration.BASE_CACHE_DIR,
+      logDir: Logger.DIR,
+      certificateDir: Certificate.BASE_DIR,
     });
   }
 
   @Post('/config')
   async updateConfig(@Body() config: Partial<SystemConfig & { certificateUrl?: unknown }>) {
-    delete config.certificateUrl;
-
     this.storage.system.setConfig({
-      originSystemProxyPort: undefined,
-      ...config,
+      originSystemProxyPort: config.originSystemProxyPort,
     });
 
     return this.success(true);

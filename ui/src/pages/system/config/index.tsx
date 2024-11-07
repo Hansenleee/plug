@@ -37,7 +37,8 @@ export const System: React.FC<Props> = (props) => {
   return (
     <ModalForm
       open={props.open}
-      title="系统配置"
+      title="配置管理"
+      width={600}
       form={form}
       onFinish={handleFinish}
       onOpenChange={handleOpenChange}
@@ -49,8 +50,18 @@ export const System: React.FC<Props> = (props) => {
         extra="如果系统设置了科学翻墙，请输入对应的端口"
       />
       <ProFormText
+        name="proxyPort"
+        label="plug 端口"
+        disabled
+      />
+      <ProFormText
         name="cacheDir"
         label="本地数据存储文件夹"
+        disabled
+      />
+      <ProFormText
+        name="logDir"
+        label="系统日志文件夹"
         disabled
       />
     </ModalForm>

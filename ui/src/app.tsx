@@ -3,20 +3,32 @@ import { Layout, Menu, Image, Typography, Space } from 'antd';
 import { SettingOutlined, ApiOutlined, DashboardOutlined } from '@ant-design/icons';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './route';
-import { System } from './pages/system';
+import { System } from './pages/system/config';
+import { Certificate } from './pages/system/certificate';
 import './style.scss';
 
 const { Header, Content } = Layout;
 
 export const App: React.FC = () => {
   const [systemOpen, setSystemOpen] = useState(false);
+  const [certOpen, setCertOpen] = useState(false);
+
   const items = useMemo(() => [
     {
-      label: '系统配置',
+      label: '系统信息',
       key: 'config',
       path: `${router.basename}/system`,
       icon: <SettingOutlined />,
-      onClick: () => setSystemOpen(true),
+      children: [
+        {
+          label: '配置管理',
+          onClick: () => setSystemOpen(true),
+        },
+        {
+          label: '证书管理',
+          onClick: () => setCertOpen(true),
+        }
+      ],
     },
     {
       label: 'Mock 设置',
@@ -33,6 +45,7 @@ export const App: React.FC = () => {
       onClick: () => router.navigate('/')
     },
   ], []);
+
   const defaultItem = items.find((_) => window.location.pathname.endsWith(_.path as string));
 
   return (
@@ -60,6 +73,7 @@ export const App: React.FC = () => {
         </div>
       </Content>
       <System open={systemOpen} onClose={() => setSystemOpen(false)} />
+      <Certificate open={certOpen} onClose={() => setCertOpen(false)} />
     </Layout>
   );
 };

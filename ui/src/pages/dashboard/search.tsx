@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input, Space, Button } from 'antd';
+import { Input, Space, Button, Radio } from 'antd';
 import { PauseOutlined, ClearOutlined, CaretRightOutlined } from '@ant-design/icons';
 
 interface Props {
@@ -33,6 +33,12 @@ export const Search: React.FC<Props> = (props) => {
       <Button icon={<ClearOutlined />} size="middle" onClick={props.onClear}>
         清空
       </Button>
+      <Radio.Group value={1} style={{ marginLeft: 10 }}>
+        <Radio value={1}>Fetch/XHR</Radio>
+        <Radio value={2}>CSS</Radio>
+        <Radio value={3}>JSS</Radio>
+        <Radio value={4}>图片</Radio>
+      </Radio.Group>
     </Space>
   );
 };

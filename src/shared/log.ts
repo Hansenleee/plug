@@ -14,8 +14,10 @@ const LOG_LAYOUT = {
 
 export class Logger {
   static readonly PRE_FIX = 'plug';
+  static readonly DIR = path.join(Configuration.BASE_CACHE_DIR, 'log');
 
   namespace: string;
+
   private infoLogger = log4js.getLogger('info');
   private warnLogger = log4js.getLogger('warn');
 
@@ -56,14 +58,14 @@ export const initLogger = () => {
       },
       infoFile: {
         type: 'dateFile',
-        filename: path.join(Configuration.BASE_CACHE_DIR, 'log', 'info'),
+        filename: path.join(Logger.DIR, 'info'),
         pattern: 'yyyy-MM-dd.log',
         alwaysIncludePattern: true,
         layout: LOG_LAYOUT,
       },
       warnFile: {
         type: 'dateFile',
-        filename: path.join(Configuration.BASE_CACHE_DIR, 'log', 'warn'),
+        filename: path.join(Logger.DIR, 'warn'),
         pattern: 'yyyy-MM-dd.log',
         alwaysIncludePattern: true,
         layout: LOG_LAYOUT,
