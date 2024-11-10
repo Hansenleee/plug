@@ -28,7 +28,9 @@ export class Request {
 
     if (originProxyPort) {
       return {
-        agent: new ProxyAgent(`http://127.0.0.1:${originProxyPort}`) as unknown as http.Agent,
+        agent: new ProxyAgent(
+          `http://${Configuration.PROXY_HOST}:${originProxyPort}`
+        ) as unknown as http.Agent,
       };
     }
 
