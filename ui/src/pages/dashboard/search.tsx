@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Input, Space, Button, Radio } from 'antd';
 import { PauseOutlined, ClearOutlined, CaretRightOutlined } from '@ant-design/icons';
+import { Input, Space, Button, Radio, Divider, Checkbox } from 'antd';
+import React, { useState } from 'react';
 
 interface Props {
   onSearch: (value: string) => void;
@@ -20,7 +20,12 @@ export const Search: React.FC<Props> = (props) => {
 
   return (
     <Space style={{ marginBottom: 20 }}>
-      <Input.Search placeholder="请输接口地址" onSearch={props.onSearch} size="middle" style={{ width: 300 }} />
+      <Input.Search
+        placeholder="请输接口地址"
+        onSearch={props.onSearch}
+        size="middle"
+        style={{ width: 300 }}
+      />
       {isStart ? (
         <Button type="primary" danger icon={<PauseOutlined />} size="middle" onClick={handlePause}>
           暂停
@@ -33,12 +38,23 @@ export const Search: React.FC<Props> = (props) => {
       <Button icon={<ClearOutlined />} size="middle" onClick={props.onClear}>
         清空
       </Button>
-      <Radio.Group value={1} style={{ marginLeft: 10 }}>
-        <Radio value={1}>Fetch/XHR</Radio>
-        <Radio value={2}>CSS</Radio>
-        <Radio value={3}>JSS</Radio>
-        <Radio value={4}>图片</Radio>
-      </Radio.Group>
+      <Radio.Group
+        options={[
+          { label: 'Fetch/XHR', value: 'Fetch/XHR' },
+          { label: 'CSS/JS', value: 'CSS/JS' },
+          { label: '其它', value: '其它' },
+        ]}
+        style={{ marginLeft: 10 }}
+      />
+      <Divider type="vertical" />
+      <Checkbox.Group
+        options={[
+          { value: '1', label: '古茗 test' },
+          { value: '2', label: '古茗 uat' },
+          { value: '3', label: '古茗 prod' },
+        ]}
+        style={{ marginLeft: 10 }}
+      />
     </Space>
   );
 };

@@ -78,7 +78,7 @@ export const initLogger = () => {
       },
       info: {
         appenders: ['console', 'infoFile'],
-        level: process.env.NODE_ENV === 'dev' ? 'all' : 'warn',
+        level: 'all',
       },
       warn: {
         appenders: ['console', 'warnFile'],
