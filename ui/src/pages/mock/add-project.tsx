@@ -64,7 +64,6 @@ export const AddProject: React.FC<Props> = (props) => {
         name="prefix"
         label="接口前缀"
         placeholder="请输入"
-        disabled={!!props.project}
       />
       <ProFormSwitch
         name="enable"
@@ -75,6 +74,7 @@ export const AddProject: React.FC<Props> = (props) => {
         name="intelligent"
         label="智能 Mock"
         initialValue={false}
+        disabled
       />
       <ProFormRadio.Group
         name="dataType"

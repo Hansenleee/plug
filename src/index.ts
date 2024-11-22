@@ -2,7 +2,9 @@ import 'reflect-metadata';
 import './shared/polyfill';
 import { Container } from 'typedi';
 import { CoreApp } from './app';
+import { Guardian } from './guardian';
 import { Configuration } from './configuration';
+import { initLogger } from './shared/log';
 
 export const start = (option) => {
   const coreApp = Container.get(CoreApp);
@@ -10,6 +12,20 @@ export const start = (option) => {
   Configuration.init(option);
   coreApp.start();
 };
+
+export const run = async () => {
+  const [command, ...args] = process.argv;
+  const guardian = Container.get(Guardian);
+
+  initLogger();
+
+  guardian.orphan.createOrphan(
+    command,
+    args.map((arg) => (arg === 'run' ? 'start' : arg))
+  );
+};
+
+export const status = () => {};
 
 export const stop = () => {
   const coreApp = Container.get(CoreApp);

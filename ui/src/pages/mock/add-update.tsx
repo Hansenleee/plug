@@ -72,6 +72,7 @@ export const AddUpdate: React.FC<Props> = (props) => {
                   name="intelligent"
                   label="智能 Mock"
                   initialValue={false}
+                  disabled
                 />
               </>
             )
@@ -94,6 +95,7 @@ export const AddUpdate: React.FC<Props> = (props) => {
                 name="intelligent"
                 label="智能 Mock"
                 initialValue={false}
+                disabled
               />
             </>
           )

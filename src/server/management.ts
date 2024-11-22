@@ -11,6 +11,7 @@ import { execSync } from 'child_process';
 import { errorMiddleware } from '../middleware/error';
 import { Logger } from '../shared/log';
 import { SocketIO } from '../shared/socket';
+import { isDarwin } from '../shared/platform';
 import { Configuration, PlugSource } from '../configuration';
 
 UC(Container);
@@ -36,9 +37,16 @@ export class ManagementServer {
     socketIO.start(server);
 
     server.listen(Configuration.MANAGEMENT_PORT, () => {
-      logger.info(`management server start at ${Configuration.MANAGEMENT_PORT}`, { force: true });
+      logger.info(
+        `management server start at ${Configuration.MANAGEMENT_PORT}, You can now view at: http://localhost:${Configuration.MANAGEMENT_PORT}/management`,
+        { force: true }
+      );
 
-      if (process.env.NODE_ENV !== 'dev' && process.env.PLUG_SOURCE === PlugSource.COMMAND) {
+      if (
+        process.env.NODE_ENV !== 'dev' &&
+        process.env.PLUG_SOURCE === PlugSource.COMMAND &&
+        isDarwin()
+      ) {
         execSync(`osascript open "http://localhost:${Configuration.MANAGEMENT_PORT}/management"`, {
           cwd: path.join(__dirname, '..'),
           stdio: 'ignore',

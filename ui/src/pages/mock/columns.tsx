@@ -103,7 +103,7 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, o
       return (
         <Space>
           <Typography.Link onClick={() => onEdit(record)}>Mock</Typography.Link>
-          {record.apiType === 'yapi' ? <Typography.Link onClick={handleSync}>更新</Typography.Link> : null}
+          {record.apiType === 'yapi' ? <Typography.Link onClick={handleSync}>同步</Typography.Link> : null}
           {record.enable ? (
             <Typography.Link onClick={handleToggle}>禁用</Typography.Link>
           ) : (

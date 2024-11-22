@@ -2,9 +2,12 @@ import Container, { Service } from 'typedi';
 import { execSync } from 'child_process';
 import { Exception } from './exception';
 import { Storage } from '../storage';
+import { Logger } from '../shared/log';
 
 @Service()
 export class LifeCycle {
+  private logger = new Logger('LifeCycle');
+
   beforeStart() {}
 
   start() {
@@ -36,6 +39,8 @@ export class LifeCycle {
 
     try {
       execSync(`kill -9 ${state.pid}`);
+
+      this.logger.info(`plug【PID: ${state.pid}】已停止运行`);
     } catch (err) {
       /* empty */
     }
