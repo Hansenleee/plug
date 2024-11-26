@@ -32,6 +32,7 @@ export const AddUpdate: React.FC<Props> = (props) => {
       open={props.open}
       title={props.record ? '修改' : '新增'}
       form={form}
+      clearOnDestroy
       onFinish={handleFinish}
       onOpenChange={handleOpenChange}
     >

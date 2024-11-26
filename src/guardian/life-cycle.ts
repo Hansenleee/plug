@@ -40,9 +40,9 @@ export class LifeCycle {
     try {
       execSync(`kill -9 ${state.pid}`);
 
-      this.logger.info(`plug【PID: ${state.pid}】已停止运行`);
+      this.logger.info(`plug【PID: ${state.pid}】已停止运行`, { force: true });
     } catch (err) {
-      /* empty */
+      this.logger.info(`plug【PID: ${state.pid}】已停止运行`, { force: true });
     }
   }
 }
