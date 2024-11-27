@@ -9,6 +9,7 @@ export class Orphan {
   async createOrphan(command: string, args: string[]) {
     const childProcess = spawn(command, args, {
       detached: true,
+      stdio: 'ignore',
     });
 
     this.logger.info(`plug 启动成功 [PID: ${childProcess.pid}]`, { force: true });

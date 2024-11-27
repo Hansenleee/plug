@@ -19,7 +19,7 @@ export const Search: React.FC<Props> = (props) => {
   };
 
   return (
-    <Space style={{ marginBottom: 20 }}>
+    <Space className="dashboard-search-container">
       <Input.Search
         placeholder="请输接口地址"
         onSearch={props.onSearch}

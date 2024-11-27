@@ -6,7 +6,7 @@ import { Logger } from '../shared/log';
 
 @Service()
 export class LifeCycle {
-  private logger = new Logger('LifeCycle');
+  private logger = new Logger('life');
 
   beforeStart() {}
 

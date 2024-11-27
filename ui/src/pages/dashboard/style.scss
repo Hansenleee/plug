@@ -19,6 +19,15 @@
     flex: 1;
     overflow: auto;
   }
+
+  & .dashboard-search-container {
+    margin-bottom: 20px;
+    overflow: auto;
+
+    & > .ant-space-item {
+      flex-shrink: 0;
+    }
+  }
 }
 
 .dashboard-detail .ant-drawer-content-wrapper {

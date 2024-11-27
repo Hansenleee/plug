@@ -21,7 +21,7 @@ export const Search: React.FC<Props> = (props) => {
   }, [props.projectList]);
 
   return (
-    <Space style={{ marginBottom: 20 }}>
+    <Space style={{ marginBottom: 20, width: '100%', overflow: 'auto' }}>
       <Input
         placeholder="请输入接口地址或名称"
         value={props.searchValue.name}

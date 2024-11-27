@@ -4,7 +4,6 @@ import { Container } from 'typedi';
 import { CoreApp } from './app';
 import { Guardian } from './guardian';
 import { Configuration } from './configuration';
-import { initLogger } from './shared/log';
 
 export const start = (option) => {
   const coreApp = Container.get(CoreApp);
@@ -16,8 +15,6 @@ export const start = (option) => {
 export const run = async () => {
   const [command, ...args] = process.argv;
   const guardian = Container.get(Guardian);
-
-  initLogger();
 
   guardian.orphan.createOrphan(
     command,

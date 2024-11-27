@@ -64,7 +64,7 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, o
   {
     title: '操作',
     dataIndex: 'opt',
-    width: 160,
+    width: 180,
     render: (_: any, record: any) => {
       const handleDelete = () => {
         return axios
