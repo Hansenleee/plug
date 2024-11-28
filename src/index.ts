@@ -22,7 +22,11 @@ export const run = async () => {
   );
 };
 
-export const status = () => {};
+export const status = () => {
+  const guardian = Container.get(Guardian);
+
+  guardian.orphan.status();
+};
 
 export const stop = () => {
   const coreApp = Container.get(CoreApp);

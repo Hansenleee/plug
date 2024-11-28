@@ -39,6 +39,10 @@ export default defineConfig({
         text: '系统配置',
         link: '/system-config',
       },
+      {
+        text: 'CLI 命令',
+        link: '/cli',
+      },
     ],
 
     socialLinks: [
