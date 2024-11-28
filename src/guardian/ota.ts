@@ -13,6 +13,12 @@ export class OTA {
   private spinner = ora();
 
   async checkAndUpgrade() {
+    if (Configuration.SKIP_UPGRADE) {
+      logger.info('跳过自动更新', { force: true });
+
+      return;
+    }
+
     this.spinner.start('检查更新中...');
 
     try {
@@ -48,17 +54,29 @@ export class OTA {
 
   private async getLatestOfficialVersion() {
     const versions = execSync(
-      `npm view ${pkgJson.name} versions --registry=${Configuration.NPM_REGISTRY}`
+      `npm view ${pkgJson.name} versions --registry=${Configuration.NPM_REGISTRY}`,
+      { encoding: 'utf-8' }
     )
-      .toString()
-      .split('\n')
-      .filter((v) => !v.includes('beta') || !v.includes('alpha'));
+      .replace('[', '')
+      .replace(']', '')
+      .replaceAll("'", '')
+      .replace(/\n|\s*/g, '')
+      .split(',')
+      .filter((v) => !v.includes('beta'));
 
     return versions[versions.length - 1];
   }
 
   private async checkIfNeedUpgrade(latestVersion: string) {
     const currentVersion = pkgJson.version;
+
+    if (!latestVersion || !currentVersion) {
+      return {
+        needUpgrade: false,
+        auto: false,
+      };
+    }
+
     const currentVersionList = this.getVersionList(currentVersion);
     const latestVersionList = this.getVersionList(latestVersion);
 

@@ -13,6 +13,7 @@ program
   .option('-d, --debug', 'listening port')
   .option('-op, --originProxyPort <originProxyPort>', 'origin proxy port')
   .option('-s, --source <source>', 'origin proxy port')
+  .option('-su, --skipUpgrade', 'skip auto upgrade')
   .action((option) => {
     start(option);
   });
@@ -24,6 +25,7 @@ program
   .option('-d, --debug', 'listening port')
   .option('-op, --originProxyPort <originProxyPort>', 'origin proxy port')
   .option('-s, --source <source>', 'origin proxy port')
+  .option('-su, --skipUpgrade', 'skip auto upgrade')
   .action(() => {
     run();
   });
