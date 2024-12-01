@@ -1,8 +1,6 @@
 import { program } from 'commander';
-import { Container } from 'typedi';
 import { pkgJson } from './shared/pkg';
-import { start, stop, run, status } from './index';
-import { Storage } from './storage';
+import { start, stop, run, status, clear } from './index';
 
 program.version(pkgJson.version, '-v, --version');
 
@@ -46,11 +44,11 @@ program
 
 program
   .command('clear')
-  .description('clear plug storage cache')
-  .action(() => {
-    const storage = Container.get(Storage);
-
-    storage.clear();
+  .description('clear plug cache')
+  .option('-l, --log', 'clear log data')
+  .option('-s, --storage', 'clear storage data')
+  .action((option) => {
+    clear(option);
   });
 
 program.parse(process.argv);

@@ -1,9 +1,11 @@
 import 'reflect-metadata';
 import './shared/polyfill';
 import { Container } from 'typedi';
+import chalk from 'chalk';
 import { CoreApp } from './app';
 import { Guardian } from './guardian';
 import { Configuration } from './configuration';
+import { commonLogger, clearLogger } from './shared/log';
 
 export const start = (option) => {
   const coreApp = Container.get(CoreApp);
@@ -32,4 +34,19 @@ export const stop = () => {
   const coreApp = Container.get(CoreApp);
 
   coreApp.stop();
+};
+
+export const clear = (option: { log?: boolean; storage?: boolean }) => {
+  if (option.storage) {
+    const storage = Container.get(Storage);
+
+    storage.clear();
+    commonLogger.info('storage 清理完成', { force: true });
+  }
+
+  if (option.log) {
+    clearLogger();
+    global.console.log(chalk.bold.blue('log 清理完成，请重新启动'));
+    process.exit();
+  }
 };

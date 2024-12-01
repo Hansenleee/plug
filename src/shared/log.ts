@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import log4js from 'log4js';
 import path from 'path';
+import fs from 'fs';
 import { Configuration } from '../configuration';
 
 interface BaseOption {
@@ -52,7 +53,7 @@ export class Logger {
   }
 }
 
-export const initLogger = () => {
+const initLogger = () => {
   if (log4js.isConfigured()) {
     return;
   }
@@ -94,3 +95,9 @@ export const initLogger = () => {
     },
   });
 };
+
+export const clearLogger = () => {
+  fs.rmSync(Logger.DIR, { recursive: true });
+};
+
+export const commonLogger = new Logger('');
