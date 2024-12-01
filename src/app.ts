@@ -6,7 +6,6 @@ import { ManagementServer } from './server/management';
 import { Certificate } from './shared/certificate';
 import { Guardian } from './guardian';
 import { RootPlugin } from './plugins';
-import { initLogger } from './shared/log';
 
 @Service()
 export class CoreApp {
@@ -24,8 +23,6 @@ export class CoreApp {
 
   async start() {
     await this.guards.beforeStart();
-
-    initLogger();
 
     const storage = Container.get<Storage>(Storage);
     const certificate = Container.get<Certificate>(Certificate);

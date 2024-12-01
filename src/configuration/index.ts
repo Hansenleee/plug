@@ -6,6 +6,7 @@ interface InitOption {
   debug?: boolean;
   originProxyPort?: number;
   source?: PlugSource;
+  skipUpgrade?: boolean;
 }
 
 export enum PlugSource {
@@ -25,6 +26,7 @@ export class Configuration {
   static PROXY_HOST = '127.0.0.1';
 
   static IS_DEBUG = false;
+  static SKIP_UPGRADE = false;
 
   // 全局代理端口
   static ORIGIN_PROXY_PORT?: number;
@@ -39,6 +41,7 @@ export class Configuration {
     Configuration.PROXY_PORT = option.port || Configuration.PROXY_PORT;
     Configuration.IS_DEBUG = option.debug !== undefined ? !!option.debug : Configuration.IS_DEBUG;
     Configuration.ORIGIN_PROXY_PORT = option.originProxyPort;
+    Configuration.SKIP_UPGRADE = !!option.skipUpgrade;
 
     process.env.PLUG_SOURCE = option.source || PlugSource.COMMAND;
   }

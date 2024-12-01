@@ -18,11 +18,14 @@ export class Logger {
 
   namespace: string;
 
-  private infoLogger = log4js.getLogger('info');
-  private warnLogger = log4js.getLogger('warn');
+  private infoLogger!: log4js.Logger;
+  private warnLogger!: log4js.Logger;
 
   constructor(namespace?: string) {
+    initLogger();
     this.namespace = namespace ? `${Logger.PRE_FIX}-${namespace}` : Logger.PRE_FIX;
+    this.infoLogger = log4js.getLogger('info');
+    this.warnLogger = log4js.getLogger('warn');
   }
 
   info(content: string | Record<string, unknown>, option: BaseOption = {}) {
@@ -50,6 +53,10 @@ export class Logger {
 }
 
 export const initLogger = () => {
+  if (log4js.isConfigured()) {
+    return;
+  }
+
   log4js.configure({
     appenders: {
       console: {
@@ -78,7 +85,7 @@ export const initLogger = () => {
       },
       info: {
         appenders: ['console', 'infoFile'],
-        level: process.env.NODE_ENV === 'dev' ? 'all' : 'warn',
+        level: 'all',
       },
       warn: {
         appenders: ['console', 'warnFile'],

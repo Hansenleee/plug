@@ -17,6 +17,7 @@ interface ProjectUpdateBody {
   projectName: string;
   enable: boolean;
   intelligent?: boolean;
+  prefix?: string;
   [key: string]: unknown;
 }
 
@@ -75,17 +76,19 @@ export class MockProjectController extends BaseController {
 
   @Post('/update')
   async update(@Body() info: ProjectUpdateBody) {
-    const { id, projectName, enable, intelligent } = info;
+    const { id, projectName, enable, intelligent, prefix } = info;
 
     this.required(info, ['id']);
-    this.storage.mock.updateProject({ id, projectName, enable, intelligent });
+    this.storage.mock.updateProject({ id, projectName, enable, intelligent, prefix });
 
     // 批量更新下面的所有接口状态
     const yapiList = this.storage.mock.getApiList().filter((item) => {
       return item.projectId === id;
     });
 
-    this.storage.mock.batchUpdateApi(yapiList.map((api) => ({ id: api.id, enable, intelligent })));
+    this.storage.mock.batchUpdateApi(
+      yapiList.map((api) => ({ id: api.id, enable, intelligent, prefix }))
+    );
 
     return this.success(true);
   }

@@ -28,8 +28,13 @@
 
     & .content-body {
       height: 100%;
+      min-width: 1000px;
       padding: 10px 50px;
       overflow: auto;
+
+      & > div {
+        width: 100%;
+      }
 
       &__main {
         height: 100%;

@@ -22,6 +22,7 @@ export const ProjectList: React.FC<Props> = (props) => {
           projectId: project.projectId,
           token: project.token,
           intelligent: project.intelligent,
+          prefix: project.prefix,
         }).then(() => {
           message.success('更新成功');
           props.onRefresh();

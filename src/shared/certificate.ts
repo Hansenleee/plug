@@ -4,8 +4,9 @@ import path from 'path';
 import fs from 'fs';
 import { execSync } from 'child_process';
 import { LRUCache } from 'lru-cache';
-import { Logger } from './log';
 import parseDomain from 'parse-domain';
+import { Logger } from './log';
+import { isDarwin } from './platform';
 
 const logger = new Logger('cert');
 const ROOT_CERT_KEY = '__ROOT_CERT_KEY';
@@ -55,7 +56,9 @@ export class Certificate {
 
   init() {
     this.initBaseCert();
-    this.checkAndInsertBaseCert();
+    if (isDarwin()) {
+      this.checkAndInsertBaseCert();
+    }
   }
 
   createCertificateByDomain(host: string) {
