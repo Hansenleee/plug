@@ -15,3 +15,8 @@
 ## stop
 
 `plug stop` 停止 `plug` 的运行
+
+## clear
+
+- `plug clear -l` 清理日志缓存
+- `plug clear -s` 清理数据缓存（**谨慎操作，会影响 `plug` 运行**）
