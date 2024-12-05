@@ -38,7 +38,7 @@ export class MockCommonController extends BaseController {
       return this.success({ code: 0 });
     }
 
-    const jsonMockData = await Mock.RemoteMocker.fetchMockData(mockApi, {
+    const jsonMockData = await Mock.RemoteMocker.fetchMockData(mockApi.mockUrl, {
       method: mockApi.method,
     });
 

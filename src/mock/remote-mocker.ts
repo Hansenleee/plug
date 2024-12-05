@@ -1,23 +1,26 @@
 import fetch from 'node-fetch';
 import { BaseMocker } from './base-mocker';
-import { MockApiItem } from '../types';
 
 export class RemoteMocker extends BaseMocker {
-  static async fetchMockData(mockItem: MockApiItem, { method }) {
-    const mockFetchResult = await fetch(mockItem.mockUrl, {
+  static async fetchMockData(mockUrl: string, { method, body }: { method: string; body?: any }) {
+    const mockFetchResult = await fetch(mockUrl, {
       method,
-      // TODO: 完善下请求头信息
       headers: { 'Content-Type': 'application/json' },
-      body: null,
+      body,
     });
+
     const jsonMockData = await mockFetchResult.json();
 
     return jsonMockData;
   }
 
   async invoke() {
-    this.mockData = await RemoteMocker.fetchMockData(this.mockItem, {
+    const requestSearch = this.request.url.split('?')?.[1] || '';
+    const searchString = requestSearch ? `?${requestSearch}` : '';
+
+    this.mockData = await RemoteMocker.fetchMockData(`${this.mockItem.mockUrl}${searchString}`, {
       method: this.request.method,
+      body: this.request.body,
     });
   }
 }

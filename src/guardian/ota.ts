@@ -26,7 +26,7 @@ export class OTA {
       const { needUpgrade, auto } = await this.checkIfNeedUpgrade(latestVersion);
 
       if (!needUpgrade) {
-        this.spinner.stop();
+        this.spinner.succeed('已是最新版本');
         return;
       }
 

@@ -10,7 +10,7 @@ interface BaseOption {
 
 const LOG_LAYOUT = {
   type: 'pattern',
-  pattern: '[%d] [%p] - %m%n',
+  pattern: '[%d] [%p] - %m',
 };
 
 export class Logger {

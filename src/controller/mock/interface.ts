@@ -110,7 +110,8 @@ export class MockInterfaceController extends BaseController {
     const yapiList = this.storage.mock
       .getApiList()
       .filter((item) => {
-        const isMatchName = !isValidName || item.path.includes(name) || item.title.includes(name);
+        const wholePath = (item.prefix || '') + item.path;
+        const isMatchName = !isValidName || wholePath.includes(name) || item.title.includes(name);
         const isMatchProject = !project || item.projectId === project;
 
         return isMatchName && isMatchProject;
