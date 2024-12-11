@@ -46,15 +46,6 @@ export const Search: React.FC<Props> = (props) => {
         ]}
         style={{ marginLeft: 10 }}
       />
-      <Divider type="vertical" />
-      <Checkbox.Group
-        options={[
-          { value: '1', label: '古茗 test' },
-          { value: '2', label: '古茗 uat' },
-          { value: '3', label: '古茗 prod' },
-        ]}
-        style={{ marginLeft: 10 }}
-      />
     </Space>
   );
 };

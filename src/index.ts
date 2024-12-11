@@ -18,7 +18,7 @@ export const run = async () => {
   const [command, ...args] = process.argv;
   const guardian = Container.get(Guardian);
 
-  guardian.orphan.createOrphan(
+  guardian.permanent.createOrphan(
     command,
     args.map((arg) => (arg === 'run' ? 'start' : arg))
   );
@@ -47,6 +47,7 @@ export const clear = (option: { log?: boolean; storage?: boolean }) => {
   if (option.log) {
     clearLogger();
     global.console.log(chalk.bold.blue('log 清理完成，请重新启动'));
-    process.exit();
   }
+
+  process.exit();
 };

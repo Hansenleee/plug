@@ -2,7 +2,7 @@ import { Service, Inject } from 'typedi';
 import { OTA } from './ota';
 import { Exception } from './exception';
 import { LifeCycle } from './life-cycle';
-import { Orphan } from './orphan';
+import { Orphan, Permanent } from './orphan';
 
 @Service()
 export class Guardian {
@@ -17,6 +17,9 @@ export class Guardian {
 
   @Inject()
   orphan: Orphan;
+
+  @Inject()
+  permanent: Permanent;
 
   async beforeStart() {
     this.exception.beforeStart();

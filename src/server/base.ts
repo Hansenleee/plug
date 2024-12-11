@@ -24,7 +24,7 @@ export class BaseServer {
   }
 
   protected errorHandler(error) {
-    this.logger.info(`${this.protocol} server error occured: ${error.message}`);
+    this.logger.info(`${this.protocol} server error occurred: ${error.message}`);
   }
 
   private async parseBodyMiddleware(request: http.IncomingMessage) {
@@ -42,7 +42,6 @@ export class BaseServer {
     const controller = Container.get<Controller>(Controller);
     const proxy = Container.get<Proxy>(Proxy);
     const requestId = await controller.record.saveRequestRecords(request, this.protocol);
-
     const proxyResponseData = await proxy.proxy(request, response, this.protocol);
 
     return controller.record.saveResponseRecords(proxyResponseData, {
