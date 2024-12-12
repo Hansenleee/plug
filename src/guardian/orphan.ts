@@ -1,7 +1,8 @@
 import { Service, Container } from 'typedi';
-import { spawn } from 'child_process';
+import { spawn, execSync } from 'child_process';
 import ora from 'ora';
 import { Logger } from '../shared/log';
+import { isDarwin } from '../shared/platform';
 import { Storage } from '../storage';
 import { Exception } from './exception';
 
@@ -58,6 +59,22 @@ export class Orphan {
 
     if (state.status === 'running') {
       statusText += ` [PID: ${state.pid}]`;
+
+      if (isDarwin()) {
+        try {
+          const topResult = execSync(
+            `top -pid ${state.pid} -l 1  | tail -n 1 | awk '{print $3,$8}'`,
+            {
+              encoding: 'utf-8',
+            }
+          );
+          const [cpuUsage = '0.0', memoUsage = 0] = topResult.replace('\n', '').split(' ');
+
+          statusText += ` [CPU: ${cpuUsage}%, MEMO: ${memoUsage}]`;
+        } catch (error) {
+          /* empty */
+        }
+      }
     }
 
     this.logger.info(statusText, { force: true });
