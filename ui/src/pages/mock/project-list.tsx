@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Drawer, message, Modal, Space, Typography, Button, Empty } from 'antd';
+import { Card, Drawer, message, Modal, Space, Typography, Button, Empty, Radio } from 'antd';
 import { DeleteOutlined, SyncOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -11,23 +11,35 @@ interface Props {
   onRefresh: () => void;
   onAddProject: () => void;
 }
+const UPGRADE_OPTIONS = [{
+  label: '全部更新',
+  value: 'all',
+}, {
+  label: '部分更新(自定义接口将不会更新)',
+  value: 'notDefine',
+}];
 
 export const ProjectList: React.FC<Props> = (props) => {
   const handleUpgrade = (project: Record<string, string>) => {
+    let value = UPGRADE_OPTIONS[0].value;
+
     Modal.confirm({
-      title: '更新项目后会丢失之前改动的数据，是否确认更新？',
-      onOk: () => {
-        return axios.post('/api/mock/project/upgrade', {
-          id: project.id,
-          projectId: project.projectId,
-          token: project.token,
-          intelligent: project.intelligent,
-          prefix: project.prefix,
-        }).then(() => {
-          message.success('更新成功');
-          props.onRefresh();
-        })
-      }
+      title: '请选择更新策略',
+      content: <Radio.Group options={UPGRADE_OPTIONS} value={value} onChange={(e) => value = e.target.value} />,
+      footer: null,
+      // onOk: () => {
+      //   return axios.post('/api/mock/project/upgrade', {
+      //     id: project.id,
+      //     projectId: project.projectId,
+      //     token: project.token,
+      //     intelligent: project.intelligent,
+      //     prefix: project.prefix,
+      //     upgradeType: value,
+      //   }).then(() => {
+      //     message.success('更新成功');
+      //     props.onRefresh();
+      //   })
+      // }
     });
   };
 

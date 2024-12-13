@@ -25,6 +25,7 @@ interface ProjectUpgradeBody {
   id: string;
   projectId: string;
   token: string;
+  upgradeType: 'all' | 'notDefine';
   prefix?: string;
   [key: string]: unknown;
 }
@@ -105,18 +106,35 @@ export class MockProjectController extends BaseController {
 
   @Post('/upgrade')
   async upgrade(@Body() info: ProjectUpgradeBody) {
-    const { id, projectId, token, intelligent, prefix } = info;
+    const { id, projectId, token, intelligent, prefix, upgradeType } = info;
 
     this.required(info, ['id', 'projectId', 'token', 'intelligent']);
-    this.storage.mock.deleteApiByProject(id);
 
     const interfaceListResult = await this.service.yapi.fetchInterfaceList({
       token,
       project_id: projectId,
     });
-    const interfaceList = interfaceListResult?.list || [];
-    const config = this.storage.mock.getConfig(BaseController.YAPI_NS);
+    let interfaceList = interfaceListResult?.list || [];
 
+    if (upgradeType === 'all') {
+      this.storage.mock.deleteApiByProject(id);
+    } else {
+      const deletedYapiIds = [];
+
+      this.storage.mock.deleteApiByProject(id, (item) => {
+        if (item.dataType === 'url') {
+          deletedYapiIds.push(item.yapiId);
+
+          return true;
+        }
+
+        return false;
+      });
+
+      interfaceList = interfaceList.filter((item) => deletedYapiIds.includes(item._id));
+    }
+
+    const config = this.storage.mock.getConfig(BaseController.YAPI_NS);
     const storageInterfaceList = interfaceList.map((item) => {
       return this.assembleInterfaceItem(item, {
         host: config.host,
@@ -127,6 +145,7 @@ export class MockProjectController extends BaseController {
         prefix,
       });
     });
+
     this.storage.mock.appendApi(storageInterfaceList);
 
     return this.success(true);

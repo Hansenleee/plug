@@ -77,13 +77,20 @@ export class MockStorage extends BaseStorage {
     );
   }
 
-  deleteApiByProject(projectId: string) {
+  deleteApiByProject(projectId: string, filter?: (item: MockApiItem) => boolean) {
     const apiList = this.persistence.get(MockStorage.API_META_KEY, []) as MockApiItem[];
+    let leftApiList = [];
 
-    this.persistence.set(
-      MockStorage.API_META_KEY,
-      apiList.filter((item) => item.projectId !== projectId)
-    );
+    if (typeof filter !== 'function') {
+      leftApiList = apiList.filter((item) => item.projectId !== projectId);
+    } else {
+      leftApiList = apiList.filter(
+        // 其他 project 的 api 或者当前 project 的 api 且不满足 filter 的都被留下来
+        (item) => item.projectId !== projectId || (item.projectId === projectId && !filter(item))
+      );
+    }
+
+    this.persistence.set(MockStorage.API_META_KEY, leftApiList);
   }
 
   getApi(id: string) {
