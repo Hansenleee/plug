@@ -1,6 +1,7 @@
 import Container, { Service } from 'typedi';
 import fetch from 'node-fetch';
 import { Logger } from '../shared/log';
+import { HttpException } from '../shared/exception';
 import { Storage } from '../storage';
 
 @Service()
@@ -50,17 +51,27 @@ export class YapiService {
         body: options.method === 'get' ? null : JSON.stringify(data),
       });
 
-      const jsonResult = (await yapiResult.json()) as { errcode: number; data: any };
+      const jsonResult = (await yapiResult.json()) as {
+        errcode: number;
+        data: any;
+        errmsg?: string;
+      };
 
       if (jsonResult.errcode !== 0) {
-        return Promise.reject(jsonResult);
+        throw new HttpException(jsonResult.errcode, jsonResult.errmsg);
       }
 
       return jsonResult.data;
     } catch (err) {
-      this.log.warn(`三方接口 ${formattedPath} 请求出错: ${err}`, { force: true });
+      if (err instanceof HttpException) {
+        this.log.warn(`三方接口 ${formattedPath} 请求出错: ${err.message}`, { force: true });
 
-      throw err;
+        throw err;
+      }
+
+      this.log.warn(`三方接口 ${formattedPath} 请求出错: ${err.code}`, { force: true });
+
+      throw new HttpException(err.code, err.message);
     }
   }
 }

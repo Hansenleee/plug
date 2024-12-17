@@ -114,6 +114,7 @@ export class MockProjectController extends BaseController {
       token,
       project_id: projectId,
     });
+
     let interfaceList = interfaceListResult?.list || [];
 
     if (upgradeType === 'all') {

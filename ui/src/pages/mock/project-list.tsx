@@ -1,7 +1,7 @@
-import React from 'react';
-import { Card, Drawer, message, Modal, Space, Typography, Button, Empty, Radio } from 'antd';
 import { DeleteOutlined, SyncOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { Card, Drawer, message, Modal, Space, Typography, Button, Empty, Tooltip } from 'antd';
 import axios from 'axios';
+import React from 'react';
 
 interface Props {
   visible: boolean;
@@ -11,35 +11,44 @@ interface Props {
   onRefresh: () => void;
   onAddProject: () => void;
 }
-const UPGRADE_OPTIONS = [{
-  label: '全部更新',
-  value: 'all',
-}, {
-  label: '部分更新(自定义接口将不会更新)',
-  value: 'notDefine',
-}];
 
 export const ProjectList: React.FC<Props> = (props) => {
   const handleUpgrade = (project: Record<string, string>) => {
-    let value = UPGRADE_OPTIONS[0].value;
+    const handleConfirm = (upgradeType: 'all' | 'notDefine') => {
+      const destroy = message.loading('正在更新...');
+  
+      return axios
+        .post('/api/mock/project/upgrade', {
+          id: project.id,
+          projectId: project.projectId,
+          token: project.token,
+          intelligent: project.intelligent,
+          prefix: project.prefix,
+          upgradeType,
+        })
+        .then(() => {
+          message.success('更新成功');
+          props.onRefresh();
+          confirmModal.destroy();
+          destroy();
+        });
+    };
 
-    Modal.confirm({
+    const confirmModal = Modal.confirm({
       title: '请选择更新策略',
-      content: <Radio.Group options={UPGRADE_OPTIONS} value={value} onChange={(e) => value = e.target.value} />,
-      footer: null,
-      // onOk: () => {
-      //   return axios.post('/api/mock/project/upgrade', {
-      //     id: project.id,
-      //     projectId: project.projectId,
-      //     token: project.token,
-      //     intelligent: project.intelligent,
-      //     prefix: project.prefix,
-      //     upgradeType: value,
-      //   }).then(() => {
-      //     message.success('更新成功');
-      //     props.onRefresh();
-      //   })
-      // }
+      footer: (_, extra) => (
+        <Space>
+          <Button type="primary" danger onClick={() => handleConfirm('all')}>
+            全部更新
+          </Button>
+          <Tooltip placement="top" title="已经自定义过的接口将不会更新">
+            <Button type="primary" onClick={() => handleConfirm('notDefine')}>
+              部分更新
+            </Button>
+          </Tooltip>
+          <extra.CancelBtn />
+        </Space>
+      ),
     });
   };
 
@@ -47,13 +56,15 @@ export const ProjectList: React.FC<Props> = (props) => {
     Modal.confirm({
       title: '删除项目后会同步删除其下的所有接口，是否确认删除？',
       onOk: () => {
-        return axios.post('/api/mock/project/delete', {
-          id: project.id,
-        }).then(() => {
-          message.success('删除成功');
-          props.onRefresh();
-        })
-      }
+        return axios
+          .post('/api/mock/project/delete', {
+            id: project.id,
+          })
+          .then(() => {
+            message.success('删除成功');
+            props.onRefresh();
+          });
+      },
     });
   };
 
@@ -61,7 +72,11 @@ export const ProjectList: React.FC<Props> = (props) => {
     <Drawer
       title="项目列表"
       width={500}
-      extra={<Button type="primary" icon={<PlusOutlined />} onClick={props.onAddProject}>添加</Button>}
+      extra={
+        <Button type="primary" icon={<PlusOutlined />} onClick={props.onAddProject}>
+          添加
+        </Button>
+      }
       onClose={props.onClose}
       open={props.visible}
     >
@@ -69,7 +84,11 @@ export const ProjectList: React.FC<Props> = (props) => {
         const actions: React.ReactNode[] = [
           <EditOutlined key="edit" onClick={() => props.onEdit(project)} />,
           <SyncOutlined key="upgrade" onClick={() => handleUpgrade(project)} />,
-          <DeleteOutlined key="delete" style={{ color: 'red' }} onClick={() => handleDelete(project)} />,
+          <DeleteOutlined
+            key="delete"
+            style={{ color: 'red' }}
+            onClick={() => handleDelete(project)}
+          />,
         ];
 
         return (
@@ -79,21 +98,21 @@ export const ProjectList: React.FC<Props> = (props) => {
               <Typography.Text>项目名称: {project.projectName}</Typography.Text>
             </Space>
           </Card>
-        )
+        );
       })}
-      {
-        !props.projectList?.length ? (
-          <Empty
-            className="project-empty"
-            style={{ transform: 'translateY(100%)'}}
-            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-            imageStyle={{ height: 150 }}
-            description="暂无数据"
-          >
-            <Button type="primary" icon={<PlusOutlined />} onClick={props.onAddProject}>添加项目</Button>
-          </Empty>
-        ) : null
-      }
+      {!props.projectList?.length ? (
+        <Empty
+          className="project-empty"
+          style={{ transform: 'translateY(100%)' }}
+          image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+          imageStyle={{ height: 150 }}
+          description="暂无数据"
+        >
+          <Button type="primary" icon={<PlusOutlined />} onClick={props.onAddProject}>
+            添加项目
+          </Button>
+        </Empty>
+      ) : null}
     </Drawer>
-  )
+  );
 };
