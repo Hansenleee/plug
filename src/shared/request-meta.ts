@@ -27,17 +27,7 @@ export const getContentType = (contentType: string) => {
 
 export const getRequestParams = (request: http.IncomingMessage, completeUrl: string) => {
   if (request.method.toLocaleUpperCase() === 'POST') {
-    return new Promise((resolve) => {
-      let requestBody = '';
-
-      request.on('data', (data) => {
-        requestBody += data;
-      });
-
-      request.on('end', () => {
-        resolve(qs.parse(requestBody));
-      });
-    });
+    return qs.parse(request.body);
   }
 
   const url = new URL(completeUrl);

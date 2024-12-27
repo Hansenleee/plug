@@ -1,6 +1,6 @@
 import { Container, Service } from 'typedi';
 import http from 'http';
-import getRawBody from 'raw-body';
+import { Response } from 'node-fetch';
 import { Controller } from '../controller';
 import { Proxy } from '../proxy';
 import { Logger } from '../shared/log';
@@ -15,8 +15,8 @@ export class BaseServer {
   }
 
   protected async requestHandler(request: http.IncomingMessage, response: http.ServerResponse) {
-    this.parseBodyMiddleware(request);
-    this.proxyAndRecordMiddleware(request, response);
+    await this.parseBodyMiddleware(request);
+    await this.proxyAndRecordMiddleware(request, response);
   }
 
   protected closeHandler() {
@@ -28,11 +28,23 @@ export class BaseServer {
   }
 
   private async parseBodyMiddleware(request: http.IncomingMessage) {
-    const rawBody = await getRawBody(request, {
-      encoding: request.headers['content-encoding'] || 'utf-8',
+    const rawBody = new Response(request, {
+      headers: request.headers as Record<string, any>,
     });
 
-    request.body = rawBody;
+    if (request.headers['content-type']?.includes('multipart/form-data')) {
+      request.formData = await rawBody.formData();
+
+      // const ext = rawBody.type;
+
+      // console.log(22222, rawBody.body);
+
+      // request.formData.forEach((value, key) => {
+      //   console.log(666, value, key);
+      // });
+    } else {
+      request.body = await rawBody.text();
+    }
   }
 
   private async proxyAndRecordMiddleware(

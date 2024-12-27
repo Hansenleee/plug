@@ -1,18 +1,13 @@
-import { Service } from 'typedi';
+import Container, { Service } from 'typedi';
 import http from 'http';
 import net from 'net';
-import { URL } from 'url';
-import HttpProxy from 'http-proxy';
+import { Proxy } from '../proxy';
 import { BaseServer } from './base';
 import { Configuration } from '../configuration';
 
 @Service()
 export class Http extends BaseServer {
   server: http.Server = new http.Server();
-
-  private proxyServer: HttpProxy = HttpProxy.createProxyServer({
-    secure: false,
-  });
 
   constructor() {
     super('http');
@@ -50,15 +45,8 @@ export class Http extends BaseServer {
   }
 
   private upgradeHandler(request: http.IncomingMessage, socket: net.Socket, head: Buffer) {
-    const fullUrl = `ws://${request.headers.host}${request.url}`;
-    const { hostname, port, protocol } = new URL(fullUrl);
+    const proxy = Container.get(Proxy);
 
-    this.proxyServer.ws(request, socket, head, {
-      target: {
-        hostname,
-        port,
-        protocol,
-      },
-    });
+    return proxy.proxyWS(request, socket, head);
   }
 }
