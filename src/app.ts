@@ -36,7 +36,6 @@ export class CoreApp {
     this.https.start();
     this.managementServer.start();
 
-    // TODO: 后续优化
     rootPlugin.init();
     this.guards.afterStart();
   }

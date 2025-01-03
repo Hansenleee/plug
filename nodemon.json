@@ -6,5 +6,5 @@
     "dist/"
   ],
   "delay": "500",
-  "exec": "yarn dev:plug"
+  "exec": "yarn dev:stop && yarn dev:plug"
 }

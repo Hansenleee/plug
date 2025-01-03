@@ -1,4 +1,5 @@
 import http from 'http';
+import type { FormData } from 'node-fetch';
 
 export type Protocol = 'http' | 'https';
 
@@ -11,6 +12,7 @@ declare module 'http' {
   interface IncomingMessage {
     body?: any;
     rawBody: string;
+    formData?: FormData;
   }
 }
 

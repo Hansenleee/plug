@@ -34,14 +34,6 @@ export class BaseServer {
 
     if (request.headers['content-type']?.includes('multipart/form-data')) {
       request.formData = await rawBody.formData();
-
-      // const ext = rawBody.type;
-
-      // console.log(22222, rawBody.body);
-
-      // request.formData.forEach((value, key) => {
-      //   console.log(666, value, key);
-      // });
     } else {
       request.body = await rawBody.text();
     }

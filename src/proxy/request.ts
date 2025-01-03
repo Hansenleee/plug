@@ -3,6 +3,8 @@ import http from 'http';
 import https from 'https';
 import { URL } from 'url';
 import ProxyAgent from 'proxy-agent';
+import HttpProxy from 'http-proxy';
+import fetch, { Headers } from 'node-fetch';
 import { Configuration } from '../configuration';
 import { Storage } from '../storage';
 import { Logger } from '../shared/log';
@@ -13,6 +15,10 @@ const log = new Logger('proxy-request');
 
 @Service()
 export class Request {
+  private proxyServer: HttpProxy = HttpProxy.createProxyServer({
+    secure: false,
+  });
+
   request(request: http.IncomingMessage, response: http.ServerResponse, protocol: Protocol) {
     if (protocol === 'http') {
       return this.http(request, response);
@@ -66,16 +72,52 @@ export class Request {
     });
   }
 
-  private baseHandler(
+  private async baseHandler(
     request: http.IncomingMessage,
     response: http.ServerResponse,
     options: https.RequestOptions
   ): Promise<ResponseDataInfo> {
-    const requestClient = options.protocol.startsWith('https') ? https : http;
-
     log.info(`请求[${options.protocol}] ${request.url} 准备代理到原地址`);
 
-    return new Promise((resolve) => {
+    if (request.formData) {
+      return this.baseFormRequest(request, response);
+    }
+
+    return this.baseJsonRequest(request, response, options);
+  }
+
+  private async baseFormRequest(request: http.IncomingMessage, response: http.ServerResponse) {
+    const formHeader = new Headers(request.headers as Record<string, string>);
+
+    formHeader.delete('content-type');
+
+    const formResult = await fetch(request.url, {
+      method: request.method,
+      body: request.formData,
+      headers: formHeader.raw() as unknown as Record<string, string>,
+    });
+    const formResultText = await formResult.text();
+    const responseHeader = formResult.headers as unknown as http.OutgoingHttpHeaders;
+
+    response.setHeader('Content-Type', 'application/json');
+    response.writeHead(200, formResult.headers.raw());
+    response.end(formResultText);
+
+    return {
+      statusCode: formResult.status,
+      headers: responseHeader,
+      data: formResultText,
+    };
+  }
+
+  private baseJsonRequest(
+    request: http.IncomingMessage,
+    response: http.ServerResponse,
+    options: https.RequestOptions
+  ) {
+    const requestClient = options.protocol.startsWith('https') ? https : http;
+
+    return new Promise<ResponseDataInfo>((resolve) => {
       const proxyToOriginRequest = requestClient.request(
         {
           ...options,
@@ -98,7 +140,7 @@ export class Request {
       );
 
       if (request.body) {
-        proxyToOriginRequest.write(request.body);
+        proxyToOriginRequest.write(request.formData || request.body);
       }
 
       request.pipe(proxyToOriginRequest);
