@@ -3,7 +3,6 @@ import http from 'http';
 import https from 'https';
 import { URL } from 'url';
 import ProxyAgent from 'proxy-agent';
-import HttpProxy from 'http-proxy';
 import fetch, { Headers } from 'node-fetch';
 import { Configuration } from '../configuration';
 import { Storage } from '../storage';
@@ -15,10 +14,6 @@ const log = new Logger('proxy-request');
 
 @Service()
 export class Request {
-  private proxyServer: HttpProxy = HttpProxy.createProxyServer({
-    secure: false,
-  });
-
   request(request: http.IncomingMessage, response: http.ServerResponse, protocol: Protocol) {
     if (protocol === 'http') {
       return this.http(request, response);

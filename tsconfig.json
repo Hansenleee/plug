@@ -13,4 +13,5 @@
     "skipLibCheck": true
   },
   "include": ["src", "ui"],
+  "exclude": ["node_modules"],
 }

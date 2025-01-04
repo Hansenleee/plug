@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import { execSync, spawnSync } from 'child_process';
 import ora from 'ora';
-import inquirer from 'inquirer';
+import { confirm } from '@inquirer/prompts';
 import { pkgJson } from '../shared/pkg';
 import { Logger } from '../shared/log';
 import { Configuration } from '../configuration';
@@ -37,6 +37,8 @@ export class OTA {
         this.restart();
       };
 
+      this.spinner.stop();
+
       if (auto) {
         return callUpgrade();
       }
@@ -45,6 +47,8 @@ export class OTA {
 
       if (toUpgrade) {
         return callUpgrade();
+      } else {
+        logger.info('跳过更新', { force: true });
       }
     } catch (err) {
       logger.warn(`更新失败: ${err.message}`);
@@ -98,6 +102,18 @@ export class OTA {
       };
     }
 
+    if (
+      (latestVersionList[0] > currentVersionList[0] ||
+        latestVersionList[1] === currentVersionList[1] ||
+        latestVersionList[2] === currentVersionList[2]) &&
+      currentVersion.includes('beta')
+    ) {
+      return {
+        needUpgrade: true,
+        auto: true,
+      };
+    }
+
     return {
       needUpgrade: false,
       auto: false,
@@ -117,18 +133,8 @@ export class OTA {
     }
   }
 
-  private askToUpgrade(latestVersion: string) {
-    return inquirer
-      .prompt([
-        {
-          type: 'confirm',
-          name: 'upgrade',
-          message: `发现新版本 ${latestVersion}，是否更新？`,
-          default: true,
-        },
-      ] as any)
-      .then(({ upgrade }) => upgrade)
-      .catch(() => false);
+  private async askToUpgrade(latestVersion: string) {
+    return confirm({ message: `发现新版本 ${latestVersion}，是否更新？` });
   }
 
   private upgrade() {
@@ -142,6 +148,9 @@ export class OTA {
 
   private restart() {
     const [command, ...args] = process.argv;
+
+    // 重启后不要再触发自动更新
+    args.push('-su');
 
     return spawnSync(command, args, {
       stdio: [process.stdin, process.stdout, process.stderr],
