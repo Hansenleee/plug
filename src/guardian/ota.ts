@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import { execSync, spawnSync } from 'child_process';
 import ora from 'ora';
-import { confirm } from '@inquirer/prompts';
+import confirm from '@inquirer/confirm';
 import { pkgJson } from '../shared/pkg';
 import { Logger } from '../shared/log';
 import { Configuration } from '../configuration';

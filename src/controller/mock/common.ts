@@ -29,7 +29,7 @@ export class MockCommonController extends BaseController {
     const mockData = this.storage.mock.getMockData(apiId as string);
 
     if (mockData?.apiId) {
-      return this.success(JSON.parse(mockData.mockString));
+      return this.success(mockData.mockString);
     }
 
     const mockApi = this.storage.mock.getApi(apiId as string);
@@ -38,11 +38,11 @@ export class MockCommonController extends BaseController {
       return this.success({ code: 0 });
     }
 
-    const jsonMockData = await Mock.RemoteMocker.fetchMockData(mockApi.mockUrl, {
+    const remoteMockData = await Mock.RemoteMocker.fetchMockData(mockApi.mockUrl, {
       method: mockApi.method,
     });
 
-    return this.success(jsonMockData);
+    return this.success(remoteMockData.text);
   }
 
   @Post('/data')

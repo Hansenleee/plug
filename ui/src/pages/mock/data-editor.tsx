@@ -21,7 +21,7 @@ export const DataEditor: React.FC<Props> = (props) => {
 
     return axios.post('/api/mock/common/data', {
       apiId: props.record?.id,
-      mockString: editorRef.current?.getValue().replaceAll('\n', '').replaceAll('  ', ''),
+      mockString: editorRef.current?.getValue(),
     }).then(() => {
       message.success('修改成功');
       props.onSave();
@@ -34,7 +34,8 @@ export const DataEditor: React.FC<Props> = (props) => {
     return axios.get('/api/mock/common/data', {
       params: { apiId: props.record?.id }
     }).then((mockData) => {
-      editorRef.current?.setValue(JSON.stringify(mockData, null, '  '));
+      editorRef.current?.setValue(mockData as unknown as string);
+      editorRef.current?.getAction('editor.action.formatDocument')?.run();;
     });
   }, [props.record?.id]);
 

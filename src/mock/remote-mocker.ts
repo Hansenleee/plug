@@ -9,18 +9,29 @@ export class RemoteMocker extends BaseMocker {
       body,
     });
 
-    const jsonMockData = await mockFetchResult.json();
+    const stringMockData = await mockFetchResult.text();
+    let jsonMockData = {};
 
-    return jsonMockData;
+    try {
+      jsonMockData = JSON.parse(stringMockData);
+      // eslint-disable-next-line no-empty
+    } catch (_) {}
+
+    return {
+      text: stringMockData,
+      json: jsonMockData,
+    };
   }
 
   async invoke() {
     const requestSearch = this.request.url.split('?')?.[1] || '';
     const searchString = requestSearch ? `?${requestSearch}` : '';
 
-    this.mockData = await RemoteMocker.fetchMockData(`${this.mockItem.mockUrl}${searchString}`, {
-      method: this.request.method,
-      body: this.request.body,
-    });
+    this.mockData = (
+      await RemoteMocker.fetchMockData(`${this.mockItem.mockUrl}${searchString}`, {
+        method: this.request.method,
+        body: this.request.body,
+      })
+    ).json;
   }
 }
