@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Drawer, Tabs, Descriptions, Divider, Image } from 'antd';
+import { Drawer, Tabs, Descriptions, Divider, Image, Space, Button } from 'antd';
+import React, { useMemo, useState } from 'react';
 import { StatusComponent } from './status';
 
 interface Props {
@@ -9,6 +9,20 @@ interface Props {
 }
 
 export const Detail: React.FC<Props> = (props) => {
+  const [viewFormatRequestParams, setViewFormatRequestParams] = useState(false);
+
+  const formatJsonRequest = useMemo(() => {
+    if (!viewFormatRequestParams) {
+      return props.record?.params;
+    }
+
+    try {
+      return JSON.stringify(JSON.parse(props.record?.params), null, '  ');
+    } catch (err) {
+      return props.record?.params;
+    }
+  }, [props.record?.params, viewFormatRequestParams]);
+
   const formatJsonResponse = useMemo(() => {
     const { responseData = '' } = props.record || {};
     const contentType = props.record?.responseHeader?.['content-type'];
@@ -26,14 +40,7 @@ export const Detail: React.FC<Props> = (props) => {
   }, [props.record]);
 
   const items = useMemo(() => {
-    const {
-      requestHeaders = {},
-      responseHeader = {},
-      url,
-      method,
-      status,
-      params = {},
-    } = props.record || {};
+    const { requestHeaders = {}, responseHeader = {}, url, method, status } = props.record || {};
     const requestHeaderItems = Object.entries(requestHeaders).map(([key, value]) => ({
       label: key,
       children: value as any,
@@ -54,7 +61,7 @@ export const Detail: React.FC<Props> = (props) => {
               labelStyle={{ width: 250 }}
               items={[
                 {
-                  label: 'request-url',
+                  label: 'url',
                   children: url?.indexOf('?') > -1 ? url.split('?')[0] : url,
                 },
                 {
@@ -66,8 +73,18 @@ export const Detail: React.FC<Props> = (props) => {
                   children: <StatusComponent status={status} />,
                 },
                 {
-                  label: 'params',
-                  children: JSON.stringify(params),
+                  label: (
+                    <Space>
+                      <span>params</span>
+                      <Button
+                        size="small"
+                        onClick={() => setViewFormatRequestParams((pre) => !pre)}
+                      >
+                        {viewFormatRequestParams ? '查看源码' : '查看格式化'}
+                      </Button>
+                    </Space>
+                  ),
+                  children: <pre style={{ margin: 0 }}>{formatJsonRequest}</pre>,
                 },
               ]}
             />
@@ -83,12 +100,16 @@ export const Detail: React.FC<Props> = (props) => {
           <>
             <Descriptions column={1} labelStyle={{ width: 250 }} items={responseHeaderItems} />
             <Divider>Body</Divider>
-            {responseHeader['content-type']?.startsWith?.('image') ? <Image src={formatJsonResponse} /> : <pre style={{ overflow: 'auto' }}>{formatJsonResponse}</pre>}
+            {responseHeader['content-type']?.startsWith?.('image') ? (
+              <Image src={formatJsonResponse} />
+            ) : (
+              <pre style={{ overflow: 'auto' }}>{formatJsonResponse}</pre>
+            )}
           </>
         ),
       },
     ];
-  }, [formatJsonResponse, props.record]);
+  }, [formatJsonRequest, formatJsonResponse, props.record, viewFormatRequestParams]);
 
   return (
     <Drawer

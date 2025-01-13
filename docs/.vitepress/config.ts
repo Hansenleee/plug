@@ -1,15 +1,26 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig } from 'vitepress';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Plug proxy",
-  description: "An https/http proxy tool",
+  title: 'Plug proxy',
+  description: 'An https/http proxy tool',
   base: '/plug/',
+  head: [
+    [
+      'link',
+      {
+        rel: 'icon',
+        href: 'https://leebucket01.oss-cn-shanghai.aliyuncs.com/Statics/images/plug-logo-opacity.png',
+      },
+    ],
+  ],
   themeConfig: {
-    logo: { src: 'https://leebucket01.oss-cn-shanghai.aliyuncs.com/Statics/images/plug-logo-opacity.png' },
+    logo: {
+      src: 'https://leebucket01.oss-cn-shanghai.aliyuncs.com/Statics/images/plug-logo-opacity.png',
+    },
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Doc', link: '/install' }
+      { text: 'Doc', link: '/install' },
     ],
 
     sidebar: [
@@ -26,14 +37,14 @@ export default defineConfig({
         items: [
           { text: 'pc 端使用', link: '/use-pc' },
           { text: '移动端使用', link: '/use-mobile' },
-        ]
+        ],
       },
       {
         text: '功能',
         items: [
           { text: '监控', link: '/monitoring' },
           { text: 'mock', link: '/mock' },
-        ]
+        ],
       },
       {
         text: '系统配置',
@@ -45,8 +56,6 @@ export default defineConfig({
       },
     ],
 
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/Hansenleee/plug' }
-    ]
-  }
-})
+    socialLinks: [{ icon: 'github', link: 'https://github.com/Hansenleee/plug' }],
+  },
+});

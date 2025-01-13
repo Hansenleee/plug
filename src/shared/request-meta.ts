@@ -1,6 +1,5 @@
 import http from 'http';
 import { URL } from 'url';
-import qs from 'querystring';
 import zlib from 'zlib';
 import { ResponseDataInfo } from '../types';
 
@@ -27,12 +26,12 @@ export const getContentType = (contentType: string) => {
 
 export const getRequestParams = (request: http.IncomingMessage, completeUrl: string) => {
   if (request.method.toLocaleUpperCase() === 'POST') {
-    return qs.parse(request.body);
+    return request.body;
   }
 
   const url = new URL(completeUrl);
 
-  return Promise.resolve(qs.parse(url.search.slice(1)));
+  return Promise.resolve(url.search.slice(1));
 };
 
 export const getResponseData = (response: http.IncomingMessage) => {

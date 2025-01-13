@@ -32,4 +32,13 @@
 
 .dashboard-detail .ant-drawer-content-wrapper {
   min-width: 600px;
+
+  & .ant-descriptions-item-label {
+    flex-shrink: 0;
+  }
+
+  & .ant-descriptions-item-content {
+    flex: 1;
+    overflow: auto;
+  }
 }

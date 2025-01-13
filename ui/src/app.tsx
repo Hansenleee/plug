@@ -6,10 +6,12 @@ import { router } from './route';
 import { System } from './pages/system/config';
 import { Certificate } from './pages/system/certificate';
 import './style.scss';
+import { useMount } from 'ahooks';
 
 const { Header, Content } = Layout;
 
 export const App: React.FC = () => {
+  const [activeMenuKeys, setActiveMenuKeys] = useState<string[]>([]);
   const [systemOpen, setSystemOpen] = useState(false);
   const [certOpen, setCertOpen] = useState(false);
 
@@ -46,7 +48,19 @@ export const App: React.FC = () => {
     },
   ], []);
 
-  const defaultItem = items.find((_) => window.location.pathname.endsWith(_.path as string));
+  const handleMenuSelect = ({ keyPath }: { keyPath: string[] }) => {
+    if (keyPath.includes('config')) {
+      return;
+    }
+
+    setActiveMenuKeys(keyPath);
+  };
+
+  useMount(() => {
+    const defaultItem = items.find((_) => window.location.pathname.endsWith(_.path as string));
+
+    setActiveMenuKeys(defaultItem?.key ? [defaultItem?.key] : []);
+  });
 
   return (
     <Layout className="app-container">
@@ -63,8 +77,9 @@ export const App: React.FC = () => {
         <Menu
           mode="horizontal"
           items={items}
-          defaultSelectedKeys={defaultItem?.key ? [defaultItem.key] : undefined}
+          selectedKeys={activeMenuKeys}
           style={{ flex: 1, minWidth: 0, flexDirection: 'row-reverse', border: 0 }}
+          onSelect={handleMenuSelect}
         />
       </Header>
       <Content>

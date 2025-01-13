@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Typography, Table, Space, message } from 'antd';
+import { Table, Space, message } from 'antd';
 import axios from 'axios';
 import { useMount } from 'ahooks';
 import { Search } from './search';
@@ -103,9 +103,6 @@ export default function YapiMock() {
 
   return (
     <Space direction="vertical" style={{ paddingBottom: 20 }}>
-      <Typography.Title level={4} style={{ marginTop: 0 }}>
-        Mock 配置
-      </Typography.Title>
       <Search
         projectList={projectList}
         searchValue={searchValue}

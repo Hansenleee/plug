@@ -1,5 +1,5 @@
 import { PauseOutlined, ClearOutlined, CaretRightOutlined } from '@ant-design/icons';
-import { Input, Space, Button, Radio, Divider, Checkbox } from 'antd';
+import { Input, Space, Button } from 'antd';
 import React, { useState } from 'react';
 
 interface Props {
@@ -38,14 +38,6 @@ export const Search: React.FC<Props> = (props) => {
       <Button icon={<ClearOutlined />} size="middle" onClick={props.onClear}>
         清空
       </Button>
-      <Radio.Group
-        options={[
-          { label: 'Fetch/XHR', value: 'Fetch/XHR' },
-          { label: 'CSS/JS', value: 'CSS/JS' },
-          { label: '其它', value: '其它' },
-        ]}
-        style={{ marginLeft: 10 }}
-      />
     </Space>
   );
 };
