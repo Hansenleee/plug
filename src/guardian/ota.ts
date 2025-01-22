@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { execSync, spawnSync } from 'child_process';
+import { ChildProcessByStdio, execSync, spawn } from 'child_process';
 import ora from 'ora';
 import confirm from '@inquirer/confirm';
 import { pkgJson } from '../shared/pkg';
@@ -11,6 +11,7 @@ const logger = new Logger('OTA');
 @Service()
 export class OTA {
   private spinner = ora();
+  private childProcess: ChildProcessByStdio<any, any, any>;
 
   async checkAndUpgrade() {
     if (Configuration.SKIP_UPGRADE) {
@@ -53,6 +54,12 @@ export class OTA {
     } catch (err) {
       logger.warn(`更新失败: ${err.message}`);
       this.spinner.fail('检查更新失败, 已自动跳过');
+    }
+  }
+
+  async afterStop() {
+    if (this.childProcess) {
+      this.childProcess.kill();
     }
   }
 
@@ -103,9 +110,9 @@ export class OTA {
     }
 
     if (
-      (latestVersionList[0] > currentVersionList[0] ||
-        latestVersionList[1] === currentVersionList[1] ||
-        latestVersionList[2] === currentVersionList[2]) &&
+      latestVersionList[0] === currentVersionList[0] &&
+      latestVersionList[1] === currentVersionList[1] &&
+      latestVersionList[2] === currentVersionList[2] &&
       currentVersion.includes('beta')
     ) {
       return {
@@ -152,7 +159,7 @@ export class OTA {
     // 重启后不要再触发自动更新
     args.push('-su');
 
-    return spawnSync(command, args, {
+    this.childProcess = spawn(command, args, {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
   }

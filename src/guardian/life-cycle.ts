@@ -36,8 +36,6 @@ export class LifeCycle {
     const storage = Container.get(Storage);
     const state = storage.runtime.getState();
 
-    storage.runtime.changeState({ status: 'stopped' });
-
     if (state.pid === process.pid) {
       process.exit(Exception.MANUAL_EXIT_CODE);
     }
@@ -48,6 +46,10 @@ export class LifeCycle {
       this.logger.info(`plug【PID: ${state.pid}】已停止运行`, { force: true });
     } catch (err) {
       this.logger.info(`plug【PID: ${state.pid}】已停止运行`, { force: true });
+    } finally {
+      storage.runtime.changeState({ status: 'stopped' });
     }
   }
+
+  afterStop() {}
 }

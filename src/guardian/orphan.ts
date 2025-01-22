@@ -6,6 +6,12 @@ import { isDarwin } from '../shared/platform';
 import { Storage } from '../storage';
 import { Exception } from './exception';
 
+interface MessageType {
+  type: 'lifeCycle' | 'error';
+  data: any;
+  extra?: any;
+}
+
 @Service()
 export class Permanent {
   private spinner = ora();
@@ -16,11 +22,22 @@ export class Permanent {
 
     const childProcess = spawn(command, args, {
       detached: true,
-      stdio: ['ignore', 'ignore', 'ignore', 'ipc'],
     });
 
-    childProcess.on('message', (payload: { type: string; data: string; extra: unknown }) => {
-      const { type, data, extra } = payload || {};
+    childProcess.stdout.on('data', (message) => {
+      let dataParse: MessageType | string;
+
+      try {
+        dataParse = JSON.parse(message.toString());
+      } catch (error) {
+        dataParse = message.toString();
+      }
+
+      if (typeof dataParse === 'string') {
+        return;
+      }
+
+      const { type, data, extra } = dataParse || {};
 
       if (type === 'lifeCycle') {
         if (data === 'afterStart') {
@@ -95,9 +112,13 @@ export class Orphan {
     });
   }
 
-  private emitMessage(message: Record<string, any>) {
-    if (typeof process.send === 'function') {
-      process.send(message);
+  private emitMessage(message: MessageType) {
+    if (typeof process.stdout.write === 'function') {
+      try {
+        process.stdout.write(JSON.stringify(message));
+      } catch (error) {
+        process.stdout.write(JSON.stringify({ type: 'error', data: '通信数据序列化失败' }));
+      }
     }
   }
 }

@@ -34,4 +34,9 @@ export class Guardian {
   afterStart() {
     this.lifeCycle.afterStart();
   }
+
+  afterStop() {
+    this.lifeCycle.afterStop();
+    this.ota.afterStop();
+  }
 }
