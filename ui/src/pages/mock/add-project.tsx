@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Form } from 'antd';
 import axios from 'axios';
-import { ModalForm, ProFormText, ProFormRadio, ProFormSwitch } from '@ant-design/pro-components';
+import { ModalForm, ProFormText, ProFormSwitch } from '@ant-design/pro-components';
 import { message } from 'antd/lib';
 
 interface Props {
@@ -59,6 +59,7 @@ export const AddProject: React.FC<Props> = (props) => {
         name="projectName"
         label="yapi 项目名称"
         placeholder="请输入"
+        rules={[{ required: true }]}
       />
       <ProFormText
         name="prefix"
@@ -74,24 +75,8 @@ export const AddProject: React.FC<Props> = (props) => {
         name="intelligent"
         label="智能 Mock"
         initialValue={false}
-        disabled
-      />
-      <ProFormRadio.Group
-        name="dataType"
-        label="mock 数据来源"
-        rules={[{ required: true }]}
-        options={[
-          {
-            label: 'yapi',
-            value: 'url',
-          },
-          {
-            label: '自定义',
-            value: 'define',
-            disabled: true,
-          },
-        ]}
-        initialValue="url"
+        extra="功能正在测试中，智能 Mock 需要更长(2s 左右)的等待时间"
+        disabled={!!props.project}
       />
     </ModalForm>
   );

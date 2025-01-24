@@ -1,4 +1,4 @@
-import { Service } from 'typedi';
+import { Service, Container } from 'typedi';
 import { JsonController, Get, Post, Body, QueryParams } from 'routing-controllers';
 import { BaseController } from '../base';
 import { Mock } from '../../mock';
@@ -26,23 +26,16 @@ export class MockCommonController extends BaseController {
 
     this.required(query, ['apiId']);
 
-    const mockData = this.storage.mock.getMockData(apiId as string);
-
-    if (mockData?.apiId) {
-      return this.success(mockData.mockString);
-    }
-
-    const mockApi = this.storage.mock.getApi(apiId as string);
-
-    if (mockApi.apiType === 'default') {
-      return this.success({ code: 0 });
-    }
-
-    const remoteMockData = await Mock.RemoteMocker.fetchMockData(mockApi.mockUrl, {
-      method: mockApi.method,
+    // const mockItem = this.storage.mock.getMockData(apiId as string);
+    const mockItem = this.storage.mock.getApi(apiId as string);
+    const mockServer = Container.get(Mock);
+    const mockData = await mockServer.invoke(mockItem, {
+      url: '',
+      method: mockItem.method,
+      body: '',
     });
 
-    return this.success(remoteMockData.text);
+    return this.success(mockData.stringify());
   }
 
   @Post('/data')

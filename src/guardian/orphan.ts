@@ -5,6 +5,7 @@ import { Logger } from '../shared/log';
 import { isDarwin } from '../shared/platform';
 import { Storage } from '../storage';
 import { Exception } from './exception';
+import { PlugSource } from '../configuration';
 
 interface MessageType {
   type: 'lifeCycle' | 'error';
@@ -22,6 +23,9 @@ export class Permanent {
 
     const childProcess = spawn(command, args, {
       detached: true,
+      env: {
+        PLUG_SOURCE: PlugSource.ORPHAN,
+      },
     });
 
     childProcess.stdout.on('data', (message) => {
@@ -113,7 +117,10 @@ export class Orphan {
   }
 
   private emitMessage(message: MessageType) {
-    if (typeof process.stdout.write === 'function') {
+    if (
+      typeof process.stdout.write === 'function' &&
+      process.env.PLUG_SOURCE === PlugSource.ORPHAN
+    ) {
       try {
         process.stdout.write(JSON.stringify(message));
       } catch (error) {

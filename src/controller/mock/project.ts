@@ -35,7 +35,7 @@ interface ProjectUpgradeBody {
 export class MockProjectController extends BaseController {
   @Post('/add')
   async add(@Body() info: ProjectAddBody) {
-    const { token, projectName, dataType, intelligent, prefix } = info;
+    const { token, projectName, dataType = 'url', intelligent, prefix } = info;
     const projectInfo = await this.service.yapi.fetchProjectInfo(token);
 
     const interfaceListResult = await this.service.yapi.fetchInterfaceList({
@@ -58,6 +58,7 @@ export class MockProjectController extends BaseController {
         dataType,
         intelligent,
         prefix,
+        token,
       });
     });
 
@@ -144,6 +145,7 @@ export class MockProjectController extends BaseController {
         dataType: 'url',
         intelligent: !!intelligent,
         prefix,
+        token,
       });
     });
 
@@ -159,7 +161,7 @@ export class MockProjectController extends BaseController {
 
   private assembleInterfaceItem(
     originInterfaceItem,
-    { host, yapiProjectId, projectId, dataType, intelligent, prefix }
+    { host, yapiProjectId, projectId, dataType, intelligent, prefix, token }
   ) {
     return {
       id: nanoid(),
@@ -174,6 +176,7 @@ export class MockProjectController extends BaseController {
       mockUrl: `${host}/mock/${yapiProjectId}${originInterfaceItem.path}`,
       projectId,
       yapiId: originInterfaceItem._id,
+      token,
     };
   }
 }

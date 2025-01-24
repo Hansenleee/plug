@@ -12,6 +12,7 @@ interface InitOption {
 export enum PlugSource {
   APP = 'APP',
   COMMAND = 'COMMAND',
+  ORPHAN = 'ORPHAN',
 }
 
 export class Configuration {

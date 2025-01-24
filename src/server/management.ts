@@ -44,7 +44,7 @@ export class ManagementServer {
 
       if (
         process.env.NODE_ENV !== 'dev' &&
-        process.env.PLUG_SOURCE === PlugSource.COMMAND &&
+        process.env.PLUG_SOURCE !== PlugSource.APP &&
         isDarwin()
       ) {
         execSync(`osascript open "http://localhost:${Configuration.MANAGEMENT_PORT}/management"`, {
