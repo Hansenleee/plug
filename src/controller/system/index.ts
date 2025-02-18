@@ -32,4 +32,11 @@ export class SystemController extends BaseController {
 
     return this.success(true);
   }
+
+  @Post('/config/llm')
+  async updateLLMConfig(@Body() config: Partial<SystemConfig>) {
+    this.storage.system.setConfig(config);
+
+    return this.success(true);
+  }
 }

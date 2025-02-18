@@ -4,6 +4,7 @@ import { Response } from 'node-fetch';
 import { Controller } from '../controller';
 import { Proxy } from '../proxy';
 import { Logger } from '../shared/log';
+import { RequestParser } from '../shared/request-parser';
 import { Protocol } from '../types';
 
 @Service()
@@ -31,6 +32,8 @@ export class BaseServer {
     const rawBody = new Response(request, {
       headers: request.headers as Record<string, any>,
     });
+
+    request.parser = new RequestParser(request, this.protocol);
 
     if (request.headers['content-type']?.includes('multipart/form-data')) {
       request.formData = await rawBody.formData();

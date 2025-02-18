@@ -9,7 +9,7 @@ import { Setting } from './setting';
 import { getColumns } from './columns';
 import { ProjectList } from './project-list';
 import { DataEditor } from './data-editor';
-import './style.less';
+import './style.scss';
 
 export default function YapiMock() {
   const [addVisible, setAddVisible] = useState(false);

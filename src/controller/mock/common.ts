@@ -1,7 +1,9 @@
+import http from 'http';
 import { Service, Container } from 'typedi';
-import { JsonController, Get, Post, Body, QueryParams } from 'routing-controllers';
+import { JsonController, Get, Post, Body, QueryParams, Req } from 'routing-controllers';
 import { BaseController } from '../base';
-import { Mock } from '../../mock';
+import { Mock, MockOptions } from '../../mock';
+import { RequestParser } from '../../shared/request-parser';
 
 @Service()
 @JsonController('/mock/common')
@@ -21,19 +23,29 @@ export class MockCommonController extends BaseController {
   }
 
   @Get('/data')
-  async getMockData(@QueryParams() query: { apiId: string }) {
-    const { apiId } = query;
+  async getMockData(
+    @QueryParams() query: { apiId: string; mockType: MockOptions['mockType'] },
+    @Req() request: http.IncomingMessage
+  ) {
+    const { apiId, mockType } = query;
 
     this.required(query, ['apiId']);
 
-    // const mockItem = this.storage.mock.getMockData(apiId as string);
     const mockItem = this.storage.mock.getApi(apiId as string);
     const mockServer = Container.get(Mock);
-    const mockData = await mockServer.invoke(mockItem, {
-      url: '',
-      method: mockItem.method,
-      body: '',
-    });
+    const mockData = await mockServer.invoke(
+      mockItem,
+      RequestParser.create({
+        url: request.url,
+        method: mockItem.method,
+        body: '',
+        protocol: 'http',
+        host: request.headers.host,
+      }),
+      {
+        mockType,
+      }
+    );
 
     return this.success(mockData.stringify());
   }

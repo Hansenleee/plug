@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Drawer, Button, message } from 'antd';
+import { Drawer, Button, message, Space, Spin } from 'antd';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import 'monaco-editor/esm/vs/language/json/monaco.contribution';
 import axios from 'axios';
 import { useUnmount } from 'ahooks';
@@ -13,31 +13,50 @@ interface Props {
 }
 
 export const DataEditor: React.FC<Props> = (props) => {
+  const [mocking, setMocking] = useState(false);
   const [saving, setSaving] = useState(false);
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>();
 
   const handleUpdateData = () => {
     setSaving(true);
 
-    return axios.post('/api/mock/common/data', {
-      apiId: props.record?.id,
-      mockString: editorRef.current?.getValue(),
-    }).then(() => {
-      message.success('修改成功');
-      props.onSave();
-    }).finally(() => {
-      setSaving(false);
-    });
+    return axios
+      .post('/api/mock/common/data', {
+        apiId: props.record?.id,
+        mockString: editorRef.current?.getValue(),
+      })
+      .then(() => {
+        message.success('修改成功');
+        props.onSave();
+      })
+      .finally(() => {
+        setSaving(false);
+      });
   };
 
-  const fetchMockData = useCallback(() => {
-    return axios.get('/api/mock/common/data', {
-      params: { apiId: props.record?.id }
-    }).then((mockData) => {
-      editorRef.current?.setValue(mockData as unknown as string);
-      editorRef.current?.getAction('editor.action.formatDocument')?.run();;
-    });
-  }, [props.record?.id]);
+  const fetchMockData = useCallback(
+    (params = {}) => {
+      setMocking(true);
+      return axios
+        .get('/api/mock/common/data', {
+          params: { apiId: props.record?.id, ...params },
+        })
+        .then((mockData) => {
+          editorRef.current?.setValue(mockData as unknown as string);
+          setTimeout(() => {
+            editorRef.current?.getAction('editor.action.formatDocument')?.run();
+          }, 100);
+        })
+        .finally(() => {
+          setMocking(false);
+        });
+    },
+    [props.record?.id]
+  );
+
+  const fetchRemoteMockDataForce = () => {
+    return fetchMockData({ mockType: 'intelligent' });
+  };
 
   const initEditor = useCallback(() => {
     const container = document.getElementById('editorId') as HTMLElement;
@@ -51,7 +70,7 @@ export const DataEditor: React.FC<Props> = (props) => {
       tabSize: 2,
       fontSize: 14,
     });
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (props.visible) {
@@ -69,12 +88,21 @@ export const DataEditor: React.FC<Props> = (props) => {
       title="编辑"
       width="60%"
       style={{ minWidth: 600 }}
-      extra={<Button type="primary" loading={saving} onClick={handleUpdateData}>保存</Button>}
+      extra={
+        <Space>
+          <Button onClick={fetchRemoteMockDataForce} loading={mocking}>智能 Mock</Button>
+          <Button type="primary" size="small" loading={saving} onClick={handleUpdateData}>
+            保存
+          </Button>
+        </Space>
+      }
       onClose={props.onClose}
       open={props.visible}
       destroyOnClose
     >
-      <div id="editorId" style={{ height: '100%' }} />
+      <Spin tip="数据 Mock 中，请耐心等候" spinning={mocking} wrapperClassName="data-editor-class">
+        <div id="editorId" style={{ height: '100%' }} />
+      </Spin>
     </Drawer>
-  )
+  );
 };

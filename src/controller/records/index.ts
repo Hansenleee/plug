@@ -14,7 +14,7 @@ export class RecordController extends BaseController {
     const socket = Container.get(SocketIO);
     const pathname = request.url.startsWith('/') ? request.url : new URL(request.url).pathname;
     const url = `${protocol}://${request.headers.host}${pathname}`;
-    const params = await getRequestParams(request, url);
+    const params = getRequestParams(request, url);
 
     socket.emit('PROXY_REQUEST_RECORD', {
       id,

@@ -1,5 +1,4 @@
-import { PluginApp } from '../app';
-import { GumingMock } from './mock';
+import { PluginApp } from './app';
 
 const YAPI_NS = 'yapi';
 
@@ -28,9 +27,5 @@ export default (app: PluginApp) => {
       ...config,
       ...initConfig,
     });
-  });
-
-  app.defineMock(async (originMockData, mockInfo, request) => {
-    return new GumingMock(originMockData, mockInfo, request).mock();
   });
 };

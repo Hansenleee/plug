@@ -48,7 +48,7 @@ export class ProxyMock {
 
   async mock(mockItem: MockApiItem, request: http.IncomingMessage, response: http.ServerResponse) {
     const mockServer = Container.get(Mock);
-    const mockData = await mockServer.invoke(mockItem, request);
+    const mockData = await mockServer.invoke(mockItem, request.parser);
     const stringifyMockData = mockData.stringify();
 
     response.setHeader('Content-Type', 'application/json');

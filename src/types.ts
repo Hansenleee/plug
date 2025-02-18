@@ -1,5 +1,6 @@
 import http from 'http';
 import type { FormData } from 'node-fetch';
+import type { RequestParser } from './shared/request-parser';
 
 export type Protocol = 'http' | 'https';
 
@@ -13,6 +14,7 @@ declare module 'http' {
     body?: any;
     rawBody: string;
     formData?: FormData;
+    parser: RequestParser;
   }
 }
 
@@ -62,4 +64,8 @@ export interface MockDataItem {
 
 export interface SystemConfig {
   originSystemProxyPort?: number;
+  LLMProvider?: string;
+  LLMType?: string;
+  LLMId?: string;
+  LLMApiToken?: string;
 }

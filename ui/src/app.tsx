@@ -2,11 +2,13 @@ import React, { useMemo, useState } from 'react';
 import { Layout, Menu, Image, Typography, Space } from 'antd';
 import { SettingOutlined, ApiOutlined, DashboardOutlined } from '@ant-design/icons';
 import { RouterProvider } from 'react-router-dom';
+import { useMount } from 'ahooks';
 import { router } from './route';
 import { System } from './pages/system/config';
 import { Certificate } from './pages/system/certificate';
+import { LLMConfig } from './pages/system/llm';
+import { AppContext } from './context';
 import './style.scss';
-import { useMount } from 'ahooks';
 
 const { Header, Content } = Layout;
 
@@ -14,6 +16,7 @@ export const App: React.FC = () => {
   const [activeMenuKeys, setActiveMenuKeys] = useState<string[]>([]);
   const [systemOpen, setSystemOpen] = useState(false);
   const [certOpen, setCertOpen] = useState(false);
+  const [llmOpen, setLlmOpen] = useState(false);
 
   const items = useMemo(() => [
     {
@@ -29,6 +32,10 @@ export const App: React.FC = () => {
         {
           label: '证书管理',
           onClick: () => setCertOpen(true),
+        },
+        {
+          label: '模型管理',
+          onClick: () => setLlmOpen(true),
         }
       ],
     },
@@ -41,7 +48,7 @@ export const App: React.FC = () => {
     },
     {
       label: '监控',
-      key: 'dashborard',
+      key: 'dashboard',
       icon: <DashboardOutlined />,
       path: router.basename,
       onClick: () => router.navigate('/')
@@ -84,11 +91,14 @@ export const App: React.FC = () => {
       </Header>
       <Content>
         <div className="content-body">
-          <RouterProvider router={router} />
+          <AppContext.Provider value={{ showLLMConfig: () => setLlmOpen(true)}}>
+            <RouterProvider router={router} />
+          </AppContext.Provider>
         </div>
       </Content>
       <System open={systemOpen} onClose={() => setSystemOpen(false)} />
       <Certificate open={certOpen} onClose={() => setCertOpen(false)} />
+      <LLMConfig open={llmOpen} onClose={() => setLlmOpen(false)} />
     </Layout>
   );
 };

@@ -4,3 +4,11 @@
   top: 50%;
   transform: translate(-50%, -50%);
 }
+
+.data-editor-class {
+  height: 100%;
+
+  & .ant-spin-container {
+    height: 100%;
+  }
+}

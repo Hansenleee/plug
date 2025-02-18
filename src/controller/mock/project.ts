@@ -8,8 +8,9 @@ interface ProjectAddBody {
   token: string;
   projectName: string;
   dataType: MockApiItem['dataType'];
-  intelligent?: boolean;
   prefix?: string;
+  intelligent?: boolean;
+  intelligentTriggerType?: 'invoke' | 'create';
 }
 
 interface ProjectUpdateBody {
@@ -35,7 +36,14 @@ interface ProjectUpgradeBody {
 export class MockProjectController extends BaseController {
   @Post('/add')
   async add(@Body() info: ProjectAddBody) {
-    const { token, projectName, dataType = 'url', intelligent, prefix } = info;
+    const {
+      token,
+      projectName,
+      dataType = 'url',
+      prefix,
+      intelligent,
+      intelligentTriggerType,
+    } = info;
     const projectInfo = await this.service.yapi.fetchProjectInfo(token);
 
     const interfaceListResult = await this.service.yapi.fetchInterfaceList({
@@ -57,6 +65,7 @@ export class MockProjectController extends BaseController {
         projectId: innerProjectId,
         dataType,
         intelligent,
+        intelligentTriggerType,
         prefix,
         token,
       });
@@ -107,7 +116,7 @@ export class MockProjectController extends BaseController {
 
   @Post('/upgrade')
   async upgrade(@Body() info: ProjectUpgradeBody) {
-    const { id, projectId, token, intelligent, prefix, upgradeType } = info;
+    const { id, projectId, token, intelligent, intelligentTriggerType, prefix, upgradeType } = info;
 
     this.required(info, ['id', 'projectId', 'token', 'intelligent']);
 
@@ -144,6 +153,7 @@ export class MockProjectController extends BaseController {
         projectId: id,
         dataType: 'url',
         intelligent: !!intelligent,
+        intelligentTriggerType,
         prefix,
         token,
       });
@@ -161,7 +171,7 @@ export class MockProjectController extends BaseController {
 
   private assembleInterfaceItem(
     originInterfaceItem,
-    { host, yapiProjectId, projectId, dataType, intelligent, prefix, token }
+    { host, yapiProjectId, projectId, dataType, intelligent, prefix, token, intelligentTriggerType }
   ) {
     return {
       id: nanoid(),
@@ -173,6 +183,7 @@ export class MockProjectController extends BaseController {
       apiType: 'yapi',
       enable: true,
       intelligent: !!intelligent,
+      intelligentTriggerType,
       mockUrl: `${host}/mock/${yapiProjectId}${originInterfaceItem.path}`,
       projectId,
       yapiId: originInterfaceItem._id,

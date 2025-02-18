@@ -1,15 +1,13 @@
-import http from 'http';
 import { MockApiItem } from '../types';
-
-export type RequestParams = Pick<http.IncomingMessage, 'url' | 'method' | 'body'>;
+import { RequestParser } from '../shared/request-parser';
 
 export abstract class BaseMocker {
   static async create<T extends BaseMocker>(
     this: { new (...args: any[]): T },
     mockItem: MockApiItem,
-    request: RequestParams
+    requestParser: RequestParser
   ) {
-    const ins = new this(mockItem, request);
+    const ins = new this(mockItem, requestParser);
 
     await ins.invoke();
 
@@ -18,7 +16,7 @@ export abstract class BaseMocker {
 
   protected mockData: any;
 
-  constructor(protected mockItem: MockApiItem, protected request: RequestParams) {}
+  constructor(protected mockItem: MockApiItem, protected requestParser: RequestParser) {}
 
   stringify() {
     return JSON.stringify(this.mockData);

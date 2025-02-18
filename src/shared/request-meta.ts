@@ -31,7 +31,7 @@ export const getRequestParams = (request: http.IncomingMessage, completeUrl: str
 
   const url = new URL(completeUrl);
 
-  return Promise.resolve(url.search.slice(1));
+  return url.search.slice(1);
 };
 
 export const getResponseData = (response: http.IncomingMessage) => {

@@ -24,14 +24,14 @@ export class RemoteMocker extends BaseMocker {
   }
 
   async invoke() {
-    const requestSearch = this.request.url.split('?')?.[1] || '';
-    const searchString = requestSearch ? `?${requestSearch}` : '';
-
     this.mockData = (
-      await RemoteMocker.fetchMockData(`${this.mockItem.mockUrl}${searchString}`, {
-        method: this.request.method,
-        body: this.request.body,
-      })
+      await RemoteMocker.fetchMockData(
+        `${this.mockItem.mockUrl}${this.requestParser.completeUrl.search}`,
+        {
+          method: this.requestParser.method,
+          body: this.requestParser.body,
+        }
+      )
     ).json;
   }
 }
