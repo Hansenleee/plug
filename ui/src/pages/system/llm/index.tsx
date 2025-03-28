@@ -1,7 +1,13 @@
-import { ModalForm, ProFormSelect, ProFormText } from '@ant-design/pro-components';
-import { Form, message, Typography } from 'antd';
+import {
+  ModalForm,
+  ProFormSelect,
+  ProFormText,
+  ProFormDependency,
+} from '@ant-design/pro-components';
+import { Form, message } from 'antd';
 import axios from 'axios';
 import { useEffect } from 'react';
+import { LLMProviderEnum, LLM_APPLY_MAP } from './shared';
 
 interface Props {
   open: boolean;
@@ -45,9 +51,13 @@ export const LLMConfig: React.FC<Props> = (props) => {
     >
       <ProFormSelect
         name="LLMProvider"
-        label="大模型提供方"
+        label="大模型平台"
         placeholder="请选择"
-        valueEnum={{ volcengine: '火山引擎', local: '本地 ollama' }}
+        valueEnum={{
+          [LLMProviderEnum.volcengine]: '火山引擎',
+          [LLMProviderEnum.baidu]: '百度千帆',
+          [LLMProviderEnum.local]: '本地 ollama',
+        }}
         rules={[{ required: true }]}
         required
       />
@@ -59,24 +69,24 @@ export const LLMConfig: React.FC<Props> = (props) => {
         rules={[{ required: true }]}
         required
       />
-      <ProFormText
-        name="LLMId"
-        label="大模型 ID"
-      />
-      <ProFormText
-        name="LLMApiToken"
-        label="API token"
-        rules={[{ required: true }]}
-        required
-        extra={
-          <Typography.Link
-            href="https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey"
-            target="_blank"
-          >
-            火山引擎申请 API 地址
-          </Typography.Link>
-        }
-      />
+      <ProFormText name="LLMId" label="大模型 ID" />
+      <ProFormDependency name={['LLMProvider']}>
+        {({ LLMProvider }) => {
+          if (LLMProvider === LLMProviderEnum.local) {
+            return null;
+          }
+
+          return (
+            <ProFormText
+              name="LLMApiToken"
+              label="API token"
+              rules={[{ required: true }]}
+              required
+              extra={LLM_APPLY_MAP[LLMProvider as LLMProviderEnum]}
+            />
+          );
+        }}
+      </ProFormDependency>
     </ModalForm>
   );
 };

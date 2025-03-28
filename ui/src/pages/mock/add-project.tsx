@@ -1,9 +1,8 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Form } from 'antd';
 import axios from 'axios';
-import { ModalForm, ProFormText, ProFormSwitch, ProForm, ProFormRadio, ProFormDependency } from '@ant-design/pro-components';
+import { ModalForm, ProFormText, ProFormSwitch } from '@ant-design/pro-components';
 import { message } from 'antd/lib';
-import { AppContext } from '../../context';
 
 interface Props {
   open: boolean;
@@ -14,7 +13,6 @@ interface Props {
 
 export const AddProject: React.FC<Props> = (props) => {
   const [form] = Form.useForm<{ name: string; company: string }>();
-  const { showLLMConfig } = useContext(AppContext);
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
@@ -36,19 +34,6 @@ export const AddProject: React.FC<Props> = (props) => {
   };
 
   const handleFinish = (values: Record<string, any>) => {
-    if (values.intelligent) {
-      return axios.get('/api/system/config').then((systemConfig: Record<string, any>) => {
-        if (!systemConfig.LLMApiToken) {
-          showLLMConfig();
-          message.warning('开启「智能 Mock」前需要配置模型信息');
-
-          return;
-        }
-
-        return postProject(values);
-      });
-    }
-
     return postProject(values);
   };
 
@@ -90,37 +75,6 @@ export const AddProject: React.FC<Props> = (props) => {
         label="启用状态"
         initialValue={true}
       />
-      <ProForm.Group>
-        <ProFormSwitch
-          name="intelligent"
-          label="智能 Mock"
-          initialValue={false}
-          tooltip="智能 Mock 会将 Mock 的内容缓存到本地，点击列表页的同步会更新 Mock 内容"
-          extra="智能 Mock 需要更长(10s 左右)的等待时间"
-          disabled={true}
-        />
-        <ProFormDependency name={['intelligent']}>
-          {({ intelligent }) => {
-            return intelligent ? (
-              <ProFormRadio.Group
-                name="intelligentTriggerType"
-                label="触发方式"
-                options={[
-                  {
-                    label: '调用时触发',
-                    value: 'invoke',
-                  },
-                  {
-                    label: '创建时触发',
-                    value: 'create',
-                  },
-                ]}
-                rules={[{ required: true }]}
-              />
-            ) : null;
-          }}
-        </ProFormDependency>
-      </ProForm.Group>
     </ModalForm>
   );
 };

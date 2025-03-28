@@ -48,7 +48,9 @@ export class RequestParser {
 
     if (this.request.method.toUpperCase() === 'POST') {
       try {
-        return JSON.parse(this.request.body);
+        return typeof this.request.body === 'object'
+          ? this.request.body
+          : JSON.parse(this.request.body);
       } catch (_err) {
         return {};
       }

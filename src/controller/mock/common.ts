@@ -1,6 +1,6 @@
 import http from 'http';
 import { Service, Container } from 'typedi';
-import { JsonController, Get, Post, Body, QueryParams, Req } from 'routing-controllers';
+import { JsonController, Get, Post, Body, Req } from 'routing-controllers';
 import { BaseController } from '../base';
 import { Mock, MockOptions } from '../../mock';
 import { RequestParser } from '../../shared/request-parser';
@@ -22,14 +22,15 @@ export class MockCommonController extends BaseController {
     return this.success(true);
   }
 
-  @Get('/data')
+  @Post('/data')
   async getMockData(
-    @QueryParams() query: { apiId: string; mockType: MockOptions['mockType'] },
+    @Body()
+    info: { apiId: string; mockType: MockOptions['mockType']; requestParams: Record<string, any> },
     @Req() request: http.IncomingMessage
   ) {
-    const { apiId, mockType } = query;
+    const { apiId, mockType, requestParams } = info;
 
-    this.required(query, ['apiId']);
+    this.required(info, ['apiId']);
 
     const mockItem = this.storage.mock.getApi(apiId as string);
     const mockServer = Container.get(Mock);
@@ -38,7 +39,7 @@ export class MockCommonController extends BaseController {
       RequestParser.create({
         url: request.url,
         method: mockItem.method,
-        body: '',
+        body: requestParams,
         protocol: 'http',
         host: request.headers.host,
       }),
@@ -50,7 +51,7 @@ export class MockCommonController extends BaseController {
     return this.success(mockData.stringify());
   }
 
-  @Post('/data')
+  @Post('/data/update')
   async insertOrUpdateMockData(@Body() info: { apiId: string; mockString: string }) {
     const { apiId, mockString } = info;
 

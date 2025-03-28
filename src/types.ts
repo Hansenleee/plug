@@ -64,7 +64,7 @@ export interface MockDataItem {
 
 export interface SystemConfig {
   originSystemProxyPort?: number;
-  LLMProvider?: string;
+  LLMProvider?: 'volcengine' | 'baidu' | 'local';
   LLMType?: string;
   LLMId?: string;
   LLMApiToken?: string;

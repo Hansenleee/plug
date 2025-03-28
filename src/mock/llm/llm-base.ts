@@ -15,7 +15,10 @@ export abstract class LLMBase {
 
   protected generatePagination<T = any>(params: Pick<MockParams, 'requestParser'>) {
     const requestParams = params.requestParser.getJSONRequestParams();
-    const pageParams = requestParams?.page || { pageNo: 1, pageSize: 15 };
+    const pageParams = requestParams?.page || {
+      pageNo: 1,
+      pageSize: LLMBase.DEFAULT_MOCK_PAGE_SIZE,
+    };
 
     const curPage = pageParams?.pageNo;
     const pageSize = pageParams.pageSize || LLMBase.DEFAULT_MOCK_PAGE_SIZE;

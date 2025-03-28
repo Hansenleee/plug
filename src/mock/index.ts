@@ -7,7 +7,7 @@ import { HttpException } from '../shared/exception';
 import { RequestParser } from '../shared/request-parser';
 
 export interface MockOptions {
-  mockType?: 'intelligent';
+  mockType?: 'intelligent' | 'remote';
 }
 
 @Service()
@@ -17,13 +17,13 @@ export class Mock {
   static IntelligentMocker = IntelligentMocker;
 
   async invoke(mockItem: MockApiItem, requestParser: RequestParser, options: MockOptions = {}) {
-    const { dataType, intelligent } = mockItem;
+    const { dataType } = mockItem;
 
     if (dataType === 'define' && !options.mockType) {
       return StorageMocker.create(mockItem, requestParser);
     }
 
-    if (intelligent || options.mockType === 'intelligent') {
+    if (options.mockType === 'intelligent') {
       const intelligentMockIns = await IntelligentMocker.create(mockItem, requestParser);
 
       if (intelligentMockIns.mockResult === false) {

@@ -103,7 +103,6 @@ export const ProjectList: React.FC<Props> = (props) => {
       {!props.projectList?.length ? (
         <Empty
           className="project-empty"
-          style={{ transform: 'translateY(100%)' }}
           image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
           imageStyle={{ height: 150 }}
           description="暂无数据"
