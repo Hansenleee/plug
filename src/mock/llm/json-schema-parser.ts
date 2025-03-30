@@ -64,7 +64,7 @@ export class JsonSchemaParser {
 
       return new JsonSchemaParser(schema);
     } catch (err) {
-      log.warn('解析成 json schema 失败');
+      log.warn(`解析成 json schema 失败: ${err.message}`);
 
       return false;
     }

@@ -1,8 +1,41 @@
 import React, { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import { Button, Space } from 'antd';
+import axios from 'axios';
 
-export const MockParams =forwardRef((props, ref) => {
+interface Props {
+  record?: Record<string, any>;
+}
+
+export const MockParams =forwardRef<any, Props>((props, ref) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>();
+
+  const updateEditorValue = (value: object) => {
+    editorRef.current?.setValue(JSON.stringify(value));
+    editorRef.current?.getAction('editor.action.formatDocument')?.run();
+  }
+
+  const handleFetchDefault = () => {
+    return axios
+      .get('/api/mock/interface/detail/request', {
+        params: {
+          yapiId: props.record?.yapiId,
+          token: props.record?.token,
+        }
+      })
+      .then((requestMap) => {
+        updateEditorValue(requestMap);
+      })
+  };
+
+  const handlePagination = () => {
+    updateEditorValue({
+      page: {
+        pageNo: 1,
+        pageSize: 15
+      }
+    });
+  };
 
   useEffect(() => {
     const container = document.getElementById('paramsEditorId') as HTMLElement;
@@ -26,5 +59,13 @@ export const MockParams =forwardRef((props, ref) => {
     };
   });
 
-  return <div id="paramsEditorId" style={{ height: 300 }} />
+  return (
+    <div>
+      <Space style={{ marginBottom: 12 }}>
+        <Button color="primary" size="small" variant="outlined" onClick={handleFetchDefault}>默认请求参数</Button>
+        <Button color="cyan" size="small" variant="outlined" onClick={handlePagination}>分页参数</Button>
+      </Space>
+      <div id="paramsEditorId" style={{ height: 400 }} />
+    </div>
+  )
 })

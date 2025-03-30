@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 import { nanoid } from 'nanoid';
-import { JsonController, Post, Body } from 'routing-controllers';
+import { JsonController, Post, Get, Body, QueryParams } from 'routing-controllers';
 import { BaseController } from '../base';
 import { MockApiItem } from '../../types';
 
@@ -98,6 +98,23 @@ export class MockInterfaceController extends BaseController {
     this.storage.mock.deleteApi(id);
 
     return this.success(true);
+  }
+
+  @Get('/detail/request')
+  async getInterfaceDetail(@QueryParams() query: { yapiId: string; token: string }) {
+    const { yapiId, token } = query;
+    const interfaceInfo = await this.service.yapi.fetchInterface({ id: yapiId, token });
+    const rawReqBody = interfaceInfo.req_body_other;
+    const jsonReqBody = JSON.parse(rawReqBody);
+
+    return this.success(
+      Object.keys(jsonReqBody.properties).reduce((total, currentKey) => {
+        return {
+          ...total,
+          [currentKey]: '',
+        };
+      }, {})
+    );
   }
 
   @Post('/list/page')

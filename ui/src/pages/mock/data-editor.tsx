@@ -47,7 +47,7 @@ export const DataEditor: React.FC<Props> = (props) => {
           editorRef.current?.setValue(mockData as unknown as string);
           setTimeout(() => {
             editorRef.current?.getAction('editor.action.formatDocument')?.run();
-          }, 100);
+          }, 20);
         })
         .finally(() => {
           setMocking(false);
@@ -64,9 +64,9 @@ export const DataEditor: React.FC<Props> = (props) => {
     if (e.key === 'pro') {
       return Modal.confirm({
         title: 'Mock 请求参数',
-        content: <MockParams ref={editorParamsRef} />,
-        width: 600,
-        height: 400,
+        content: <MockParams ref={editorParamsRef} record={props.record} />,
+        width: 650,
+        height: 500,
         onOk: () => {
           const params = editorParamsRef.current.getValue();
           const parsedParams = JSON.parse(params);
@@ -98,9 +98,9 @@ export const DataEditor: React.FC<Props> = (props) => {
     if (e.key === 'pro') {
       return Modal.confirm({
         title: 'Mock 请求参数',
-        content: <MockParams ref={editorParamsRef} />,
-        width: 600,
-        height: 400,
+        content: <MockParams record={props.record} ref={editorParamsRef} />,
+        width: 650,
+        height: 500,
         onOk: () => {
           const params = editorParamsRef.current.getValue();
           const parsedParams = JSON.parse(params);
@@ -151,7 +151,7 @@ export const DataEditor: React.FC<Props> = (props) => {
               onClick: handleClickIntelligentItem,
             }}
             loading={mocking}
-            onClick={fetchIntelligentMockData}
+            onClick={() => fetchIntelligentMockData()}
           >
             AI Mock
           </Dropdown.Button>
@@ -168,6 +168,7 @@ export const DataEditor: React.FC<Props> = (props) => {
           <Button type="primary" loading={saving} onClick={handleUpdateData}>
             保存
           </Button>
+          <Button danger onClick={props.onClose}>取消</Button>
         </Space>
       }
       onClose={props.onClose}

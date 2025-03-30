@@ -24,13 +24,7 @@ export class Mock {
     }
 
     if (options.mockType === 'intelligent') {
-      const intelligentMockIns = await IntelligentMocker.create(mockItem, requestParser);
-
-      if (intelligentMockIns.mockResult === false) {
-        return RemoteMocker.create(mockItem, requestParser);
-      }
-
-      return intelligentMockIns;
+      return IntelligentMocker.create(mockItem, requestParser);
     }
 
     if (dataType === 'url') {

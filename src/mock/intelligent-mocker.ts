@@ -12,6 +12,7 @@ export class IntelligentMocker extends BaseMocker {
 
     if (!jsonSchema) {
       this.mockResult = false;
+      this.mockData = { message: 'Mock 失败' };
       return;
     }
 

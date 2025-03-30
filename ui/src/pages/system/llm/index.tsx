@@ -46,6 +46,7 @@ export const LLMConfig: React.FC<Props> = (props) => {
       title="模型管理"
       width={600}
       form={form}
+      modalProps={{ zIndex: 1100 }}
       onFinish={handleFinish}
       onOpenChange={handleOpenChange}
     >
