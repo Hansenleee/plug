@@ -16,6 +16,11 @@ export class IntelligentMocker extends BaseMocker {
       return;
     }
 
-    this.mockData = await this.llm.mock({ jsonSchema, requestParser: this.requestParser });
+    this.mockData = await this.llm.mock({
+      jsonSchema,
+      requestParser: this.requestParser,
+      stream: !!this.options.stream,
+      socketId: this.options.socketId,
+    });
   }
 }

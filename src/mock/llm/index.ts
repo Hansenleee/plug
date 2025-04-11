@@ -19,7 +19,7 @@ export class LLM {
   @Inject()
   private storage: Storage;
 
-  mock(params: Pick<MockParams, 'jsonSchema' | 'requestParser'>) {
+  mock(params: Pick<MockParams, 'jsonSchema' | 'requestParser' | 'stream' | 'socketId'>) {
     const systemConfig = this.storage.system.getMemoryConfig();
 
     if (systemConfig.LLMProvider === 'volcengine') {

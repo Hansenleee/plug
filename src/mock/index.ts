@@ -1,4 +1,5 @@
 import { Service } from 'typedi';
+import { BaseMockOptions } from './base-mocker';
 import { StorageMocker } from './storage-mocker';
 import { RemoteMocker } from './remote-mocker';
 import { IntelligentMocker } from './intelligent-mocker';
@@ -6,7 +7,7 @@ import { MockApiItem } from '../types';
 import { HttpException } from '../shared/exception';
 import { RequestParser } from '../shared/request-parser';
 
-export interface MockOptions {
+export interface MockOptions extends BaseMockOptions {
   mockType?: 'intelligent' | 'remote';
 }
 
@@ -24,10 +25,10 @@ export class Mock {
     }
 
     if (options.mockType === 'intelligent') {
-      return IntelligentMocker.create(mockItem, requestParser);
+      return IntelligentMocker.create(mockItem, requestParser, options);
     }
 
-    if (dataType === 'url') {
+    if (dataType === 'url' || options.mockType === 'remote') {
       return RemoteMocker.create(mockItem, requestParser);
     }
 

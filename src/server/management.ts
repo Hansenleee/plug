@@ -5,14 +5,16 @@ import cors from '@koa/cors';
 import staticServer from 'koa-static';
 import views from '@ladjs/koa-views';
 import { useContainer as UC, useKoaServer as UKS } from 'routing-controllers/esm2015';
-import { createServer } from 'http';
+import { createServer, Server } from 'http';
 import path from 'path';
 import { execSync } from 'child_process';
 import { errorMiddleware } from '../middleware/error';
 import { Logger } from '../shared/log';
 import { SocketIO } from '../shared/socket';
 import { isDarwin } from '../shared/platform';
+import { RequestParser } from '../shared/request-parser';
 import { Configuration, PlugSource } from '../configuration';
+import { Mock } from '../mock';
 
 UC(Container);
 
@@ -32,9 +34,8 @@ export class ManagementServer {
     this.app.use(this.router.routes()).use(this.router.allowedMethods());
 
     const server = createServer(this.app.callback());
-    const socketIO = Container.get(SocketIO);
 
-    socketIO.start(server);
+    this.startSocketIO(server);
 
     server.listen(Configuration.MANAGEMENT_PORT, () => {
       logger.info(
@@ -78,6 +79,31 @@ export class ManagementServer {
       routePrefix: '/api',
       validation: false,
       defaultErrorHandler: false,
+    });
+  }
+
+  private startSocketIO(server: Server) {
+    const socketIO = Container.get(SocketIO);
+
+    socketIO.start(server);
+    socketIO.on('MOCK_LLM_START', ({ mockItem, requestParams }, { socketId }) => {
+      const mockServer = Container.get(Mock);
+
+      mockServer.invoke(
+        mockItem,
+        RequestParser.create({
+          url: `http://localhost:${Configuration.MANAGEMENT_PORT}/mock`,
+          method: 'POST',
+          body: requestParams || {},
+          protocol: 'http',
+          host: '',
+        }),
+        {
+          stream: true,
+          mockType: 'intelligent',
+          socketId,
+        }
+      );
     });
   }
 

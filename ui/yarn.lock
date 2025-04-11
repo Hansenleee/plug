@@ -4178,9 +4178,10 @@ eslint-plugin-react-hooks@^4.3.0:
   version "4.6.2"
   resolved "https://registry.npmmirror.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.6.2.tgz#c829eb06c0e6f484b3fbb85a97e57784f328c596"
 
-eslint-plugin-react@^7.27.1:
+eslint-plugin-react@7.34.3, eslint-plugin-react@^7.27.1:
   version "7.34.3"
   resolved "https://registry.npmmirror.com/eslint-plugin-react/-/eslint-plugin-react-7.34.3.tgz#9965f27bd1250a787b5d4cfcc765e5a5d58dcb7b"
+  integrity sha512-aoW4MV891jkUulwDApQbPYTVZmeuSyFrudpbTAQuj5Fv8VL+o6df2xIGpw8B0hPjAaih1/Fb0om9grCdyFYemA==
   dependencies:
     array-includes "^3.1.8"
     array.prototype.findlast "^1.2.5"

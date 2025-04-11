@@ -1,11 +1,16 @@
-import { Drawer, Button, message, Space, Spin, Dropdown, Modal } from 'antd';
+import { Drawer, Button, message, Space, Dropdown, Modal } from 'antd';
+import type { MenuInfo } from 'rc-menu/lib/interface';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import React, { useCallback, useEffect, useRef, useState, useContext } from 'react';
 import 'monaco-editor/esm/vs/language/json/monaco.contribution';
 import axios from 'axios';
+import { io, Socket } from 'socket.io-client';
 import { useUnmount } from 'ahooks';
+import { LLMMockButton } from './llm-mock-button';
 import { AppContext } from '../../context';
+import { BASE_API_PORT } from '../../constants';
 import { MockParams } from './mock-params';
+import { JSON_RESULT_TAG } from '../../constants';
 
 interface Props {
   visible: boolean;
@@ -17,8 +22,10 @@ interface Props {
 export const DataEditor: React.FC<Props> = (props) => {
   const [mocking, setMocking] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [llMockData, setLlmMockData] = useState({ loading: false });
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>();
   const editorParamsRef = useRef<any>();
+  const socketRef = useRef<Socket>();
   const { showLLMConfig } = useContext(AppContext);
 
   const handleUpdateData = () => {
@@ -79,6 +86,82 @@ export const DataEditor: React.FC<Props> = (props) => {
     }
   };
 
+  const disconnectSocket = () => {
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+      socketRef.current.close();
+    }
+  }
+
+  const fetchMockDataByLLM = (params = {}) => {
+    const now = Date.now();
+
+    disconnectSocket();
+    setLlmMockData({ loading: true });
+
+    const socket = io(`ws://127.0.0.1:${BASE_API_PORT}`, { transports: ['websocket'] });
+    let streamStr = '';
+
+    socket.on('connect', () => {
+      socket.on('PLUG_SOCKET', (args) => {
+        if (args.name === 'MOCK_STREAM_ITEM') {
+          const item = args.payload?.[0];
+
+          if (item?.end) {
+            message.success(`Mock 成功, 耗时: ${(Date.now() - now) / 1000}s`);
+
+            setTimeout(() => {
+              setLlmMockData({ loading: false });
+
+              if (item.pagination) {
+                try {
+                  const parsedStream = JSON.parse(streamStr);
+  
+                  parsedStream.page = JSON.parse(item.content);
+                  editorRef.current?.setValue(JSON.stringify(parsedStream));
+                } catch (err) {
+                  console.log('[解析 LLM mock 数据异常]', err);
+                }
+              }
+
+              editorRef.current?.getAction('editor.action.formatDocument')?.run();
+              disconnectSocket();
+            }, 200);
+
+            return;
+          }
+
+          streamStr += item?.content;
+
+          if (streamStr.includes(`<${JSON_RESULT_TAG}>`)) {
+            streamStr = streamStr.replace(`<${JSON_RESULT_TAG}>`, '');
+          }
+
+          if (streamStr.includes(`</${JSON_RESULT_TAG}>`)) {
+            streamStr = streamStr.replace(`</${JSON_RESULT_TAG}>`, '');
+          }
+
+          editorRef.current?.setValue(streamStr);
+        }
+      });
+
+      socket.emit('PLUG_SOCKET', {
+        name: 'MOCK_LLM_START',
+        payload: {
+          mockItem: props.record,
+          ...params
+        },
+      });
+    });
+
+    socketRef.current = socket;
+  };
+
+  const handleStopIntelligentMock = () => {
+    disconnectSocket();
+    setLlmMockData({ loading: false });
+  };
+
   const fetchIntelligentMockData = (params = {}) => {
     return axios.get('/api/system/config').then((systemConfig: Record<string, any>) => {
       if (!systemConfig.LLMApiToken) {
@@ -88,13 +171,11 @@ export const DataEditor: React.FC<Props> = (props) => {
         return;
       }
 
-      return fetchMockData({ mockType: 'intelligent', ...params }).then(() => {
-        message.success('智能 Mock 成功');
-      });
+      fetchMockDataByLLM(params);
     });
   };
 
-  const handleClickIntelligentItem = (e: any) => {
+  const handleClickIntelligentItem = (e: MenuInfo) => {
     if (e.key === 'pro') {
       return Modal.confirm({
         title: 'Mock 请求参数',
@@ -110,6 +191,12 @@ export const DataEditor: React.FC<Props> = (props) => {
           });
         }
       });
+    }
+
+    if (e.key === 'stop') {
+      setLlmMockData({ loading: false });
+
+      return;
     }
   };
 
@@ -136,6 +223,7 @@ export const DataEditor: React.FC<Props> = (props) => {
 
   useUnmount(() => {
     editorRef.current?.dispose();
+    disconnectSocket();
   });
 
   return (
@@ -145,27 +233,24 @@ export const DataEditor: React.FC<Props> = (props) => {
       style={{ minWidth: 600 }}
       extra={
         <Space>
-          <Dropdown.Button
-            menu={{
-              items: [{ key: 'pro', label: '自定义请求参数' }],
-              onClick: handleClickIntelligentItem,
-            }}
-            loading={mocking}
-            onClick={() => fetchIntelligentMockData()}
-          >
-            AI Mock
-          </Dropdown.Button>
+          <LLMMockButton
+            loading={llMockData.loading}
+            onClick={fetchIntelligentMockData}
+            onItemClick={handleClickIntelligentItem}
+            onStop={handleStopIntelligentMock}
+          />
           <Dropdown.Button
             menu={{
               items: [{ key: 'pro', label: '自定义请求参数' }],
               onClick: handleClickRemoteItem,
             }}
+            type="primary"
             loading={mocking}
             onClick={() => fetchRemoteMock()}
           >
             yapi Mock
           </Dropdown.Button>
-          <Button type="primary" loading={saving} onClick={handleUpdateData}>
+          <Button color="primary" variant="outlined" loading={saving} onClick={handleUpdateData}>
             保存
           </Button>
           <Button danger onClick={props.onClose}>取消</Button>
@@ -175,9 +260,7 @@ export const DataEditor: React.FC<Props> = (props) => {
       open={props.visible}
       destroyOnClose
     >
-      <Spin tip="数据 Mock 中，请耐心等候" spinning={mocking} wrapperClassName="data-editor-class">
-        <div id="editorId" style={{ height: '100%' }} />
-      </Spin>
+      <div id="editorId" style={{ height: '100%' }} />
     </Drawer>
   );
 };

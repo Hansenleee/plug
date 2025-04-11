@@ -7,6 +7,8 @@ export interface MockParams {
   jsonSchema: JsonSchemaParser;
   requestParser: RequestParser;
   token?: string;
+  stream?: boolean;
+  socketId?: string;
 }
 
 export abstract class LLMBase {
@@ -26,7 +28,7 @@ export abstract class LLMBase {
     const totalPage = Math.ceil(totalSize / pageSize);
     const curPageSize = curPage < totalPage ? pageSize : totalSize - (curPage - 1) * pageSize;
 
-    return (data: { data: T[] }) => ({
+    const returnFn = (data: { data: T[] }) => ({
       data: curPageSize < 0 ? [] : data?.data?.slice(0, curPageSize),
       page: {
         curPage,
@@ -35,6 +37,15 @@ export abstract class LLMBase {
         totalPage,
       },
     });
+
+    returnFn.pagination = {
+      curPage,
+      pageSize,
+      totalSize,
+      totalPage,
+    };
+
+    return returnFn;
   }
 
   abstract mock(params: MockParams): Promise<any>;
