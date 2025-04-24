@@ -51,7 +51,10 @@ export default function YapiMock() {
     return axios.get('/api/mock/project/list').then((list: any) => setProjectList(list));
   };
 
-  const columns = useMemo(() => getColumns({ onRefresh: searchByPage, onEdit: handleEditMock }), [searchByPage]);
+  const columns = useMemo(
+    () => getColumns({ onRefresh: searchByPage, onEdit: handleEditMock }),
+    [searchByPage]
+  );
 
   const checkInitConfig = () => {
     return axios.get('/api/mock/common/config').then((initSetting: any) => {
@@ -75,7 +78,7 @@ export default function YapiMock() {
 
   const handleCloseProject = () => {
     setProjectVisible(false);
-    setActiveProject(undefined);  
+    setActiveProject(undefined);
   };
 
   const handleEditProject = (project: Record<string, string>) => {

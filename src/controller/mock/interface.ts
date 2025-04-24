@@ -4,7 +4,7 @@ import { JsonController, Post, Get, Body, QueryParams } from 'routing-controller
 import { BaseController } from '../base';
 import { MockApiItem } from '../../types';
 
-interface addInfo extends Pick<MockApiItem, 'apiType' | 'token' | 'title'> {
+interface addInfo extends Pick<MockApiItem, 'apiType' | 'token' | 'title' | 'responseTime'> {
   yapiId: string;
   url: string;
   dataType?: MockApiItem['dataType'];
@@ -147,6 +147,7 @@ export class MockInterfaceController extends BaseController {
       apiType: 'default',
       enable: true,
       intelligent: !!info.intelligent,
+      responseTime: info.responseTime || 0,
     });
 
     return this.success(true);
@@ -165,6 +166,7 @@ export class MockInterfaceController extends BaseController {
       apiType: 'yapi',
       enable: true,
       intelligent,
+      responseTime: info.responseTime || 0,
     };
     const yapiList = this.storage.mock.getApiList();
     const exist = yapiList.find((yapi) => yapi.path === interfaceInfo.path && yapi.token === token);

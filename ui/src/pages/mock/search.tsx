@@ -37,11 +37,7 @@ export const Search: React.FC<Props> = (props) => {
         allowClear
         style={{ width: 300 }}
       />
-      <Button
-        type="primary"
-        icon={<SearchOutlined />}
-        onClick={() => props.onSearch()}
-      >
+      <Button type="primary" icon={<SearchOutlined />} onClick={() => props.onSearch()}>
         搜索
       </Button>
       <Button icon={<PlusOutlined />} onClick={props.onAdd}>

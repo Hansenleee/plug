@@ -1,7 +1,15 @@
 import React from 'react';
 import { Form } from 'antd';
 import axios from 'axios';
-import { ModalForm, ProFormText, ProFormRadio, ProFormDependency, ProFormSwitch } from '@ant-design/pro-components';
+import {
+  ModalForm,
+  ProForm,
+  ProFormText,
+  ProFormDigit,
+  ProFormRadio,
+  ProFormDependency,
+  ProFormSwitch,
+} from '@ant-design/pro-components';
 import { message } from 'antd/lib';
 
 interface Props {
@@ -69,39 +77,33 @@ export const AddUpdate: React.FC<Props> = (props) => {
                   placeholder="请输入"
                   rules={[{ required: true }]}
                 />
-                <ProFormSwitch
-                  name="intelligent"
-                  label="智能 Mock"
-                  initialValue={false}
-                  disabled
-                />
               </>
-            )
+            );
           }
 
           return (
             <>
-              <ProFormText
-                name="title"
-                label="描述"
-                placeholder="请输入"
-              />
+              <ProFormText name="title" label="描述" placeholder="请输入" />
               <ProFormText
                 name="url"
                 label="接口地址"
                 placeholder="请输入"
                 rules={[{ required: true }]}
               />
-              <ProFormSwitch
-                name="intelligent"
-                label="智能 Mock"
-                initialValue={false}
-                disabled
-              />
             </>
-          )
+          );
         }}
       </ProFormDependency>
+      <ProForm.Group>
+        <ProFormDigit
+          name="responseTime"
+          extra="0代表不限制"
+          label="接口响应时间(单位毫秒)"
+          min={0}
+          initialValue={0}
+        />
+        <ProFormSwitch name="intelligent" label="智能 Mock" initialValue={false} disabled />
+      </ProForm.Group>
     </ModalForm>
   );
 };

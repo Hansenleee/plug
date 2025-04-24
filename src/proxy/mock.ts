@@ -3,6 +3,7 @@ import Container, { Service } from 'typedi';
 import { Storage } from '../storage';
 import { MockApiItem } from '../types';
 import { getPath, getHost } from '../shared/request-meta';
+import { cors } from '../shared/cors';
 import { Mock } from '../mock';
 
 @Service()
@@ -49,7 +50,7 @@ export class ProxyMock {
   async mock(mockItem: MockApiItem, request: http.IncomingMessage, response: http.ServerResponse) {
     const mockServer = Container.get(Mock);
     const mockData = await mockServer.invoke(mockItem, request.parser);
-    const stringifyMockData = mockData.stringify();
+    const stringifyMockData = mockData.stringify() || '';
 
     response.setHeader('Content-Type', 'application/json');
     response.writeHead(200, {
@@ -57,6 +58,7 @@ export class ProxyMock {
       'Content-length': Buffer.byteLength(stringifyMockData),
       'x-plug-mock-id': mockItem.id,
       'x-plug-mock-type': mockItem.apiType,
+      ...cors(request),
     });
     response.end(stringifyMockData);
 

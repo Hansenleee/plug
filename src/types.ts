@@ -44,6 +44,8 @@ export interface MockApiItem {
   token?: string;
   projectId?: string;
   updateTime?: number;
+  // 单位毫秒，0 或者空时代表不限制
+  responseTime?: number;
 }
 
 export interface ProjectItem {
