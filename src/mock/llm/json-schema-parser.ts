@@ -22,6 +22,10 @@ export class JsonSchemaParser {
   };
 
   static async getFromInterface(mockItem: MockApiItem) {
+    if (!mockItem.yapiId || !mockItem.token) {
+      return false;
+    }
+
     try {
       const service = Container.get(Services);
       const mockItemInfo = await service.yapi.fetchInterface({

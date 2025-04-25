@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Layout, Menu, Image, Typography, Space } from 'antd';
-import { SettingOutlined, ApiOutlined, DashboardOutlined } from '@ant-design/icons';
+import { SettingOutlined, ApiOutlined, DashboardOutlined, SwapOutlined } from '@ant-design/icons';
 import { RouterProvider } from 'react-router-dom';
 import { useMount } from 'ahooks';
 import { router } from './route';
@@ -18,42 +18,52 @@ export const App: React.FC = () => {
   const [certOpen, setCertOpen] = useState(false);
   const [llmOpen, setLlmOpen] = useState(false);
 
-  const items = useMemo(() => [
-    {
-      label: '系统信息',
-      key: 'config',
-      path: `${router.basename}/system`,
-      icon: <SettingOutlined />,
-      children: [
-        {
-          label: '配置管理',
-          onClick: () => setSystemOpen(true),
-        },
-        {
-          label: '证书管理',
-          onClick: () => setCertOpen(true),
-        },
-        {
-          label: '模型管理',
-          onClick: () => setLlmOpen(true),
-        }
-      ],
-    },
-    {
-      label: 'Mock 设置',
-      key: 'mock',
-      icon: <ApiOutlined />,
-      path: `${router.basename}/mock`,
-      onClick: () => router.navigate('/mock')
-    },
-    {
-      label: '监控',
-      key: 'dashboard',
-      icon: <DashboardOutlined />,
-      path: router.basename,
-      onClick: () => router.navigate('/')
-    },
-  ], []);
+  const items = useMemo(
+    () => [
+      {
+        label: '系统信息',
+        key: 'config',
+        path: `${router.basename}/system`,
+        icon: <SettingOutlined />,
+        children: [
+          {
+            label: '配置管理',
+            onClick: () => setSystemOpen(true),
+          },
+          {
+            label: '证书管理',
+            onClick: () => setCertOpen(true),
+          },
+          {
+            label: '模型管理',
+            onClick: () => setLlmOpen(true),
+          },
+        ],
+      },
+      {
+        label: '代理设置',
+        key: 'proxySetting',
+        icon: <SwapOutlined />,
+        path: `${router.basename}/proxy`,
+        onClick: () => router.navigate('/proxy'),
+      },
+      {
+        label: 'Mock 设置',
+        key: 'mock',
+        icon: <ApiOutlined />,
+        path: `${router.basename}/mock`,
+        onClick: () => router.navigate('/mock'),
+      },
+      {
+        label: '监控',
+        key: 'dashboard',
+        icon: <DashboardOutlined />,
+        path: router.basename,
+        onClick: () => router.navigate('/'),
+      },
+    ],
+    []
+  );
 
   const handleMenuSelect = ({ keyPath }: { keyPath: string[] }) => {
     if (keyPath.includes('config')) {
@@ -91,7 +101,7 @@ export const App: React.FC = () => {
       </Header>
       <Content>
         <div className="content-body">
-          <AppContext.Provider value={{ showLLMConfig: () => setLlmOpen(true)}}>
+          <AppContext.Provider value={{ showLLMConfig: () => setLlmOpen(true) }}>
             <RouterProvider router={router} />
           </AppContext.Provider>
         </div>

@@ -13,6 +13,14 @@ export class IntelligentMocker extends BaseMocker {
     if (!jsonSchema) {
       this.mockResult = false;
       this.mockData = { message: 'Mock 失败' };
+
+      if (this.options.stream) {
+        this.llm.mockFail({
+          stream: true,
+          socketId: this.options.socketId,
+        });
+      }
+
       return;
     }
 

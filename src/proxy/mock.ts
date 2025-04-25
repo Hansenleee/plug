@@ -1,5 +1,6 @@
 import http from 'http';
 import Container, { Service } from 'typedi';
+import { Configuration } from '../configuration';
 import { Storage } from '../storage';
 import { MockApiItem } from '../types';
 import { getPath, getHost } from '../shared/request-meta';
@@ -18,7 +19,7 @@ export class ProxyMock {
         return true;
       }
 
-      if (mockHost === '127.0.0.1') {
+      if (mockHost === Configuration.PROXY_HOST) {
         // 如果 mock host 包含本地地址，则自动适配
         return /^\d{0,4}\.\d{0,4}\.\d{0,4}\.\d{0,4}:\d{0,6}$/.test(requestHost);
       }

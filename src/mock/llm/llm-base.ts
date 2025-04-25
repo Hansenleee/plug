@@ -1,5 +1,7 @@
+import Container, { Service } from 'typedi';
 import { JsonSchemaParser } from './json-schema-parser';
 import { RequestParser } from '../../shared/request-parser';
+import { SocketIO } from '../../shared/socket';
 
 export interface MockParams {
   model?: string;
@@ -11,9 +13,25 @@ export interface MockParams {
   socketId?: string;
 }
 
+export interface SocketEmitData {
+  content: string;
+  end?: boolean;
+  pagination?: boolean;
+  socketId: string;
+}
+
+@Service()
 export abstract class LLMBase {
   static DEFAULT_MOCK_PAGE_SIZE = 15;
   static DEFAULT_MOCK_TOTAL_SIZE = 100;
+
+  private static readonly SOCKET_MOCK_STEAM_EVENT = 'MOCK_STREAM_ITEM';
+
+  private socket = Container.get(SocketIO);
+
+  emitMockDataBySocket(data: SocketEmitData) {
+    return this.socket.emit(LLMBase.SOCKET_MOCK_STEAM_EVENT, data, { socketId: data.socketId });
+  }
 
   protected generatePagination<T = any>(params: Pick<MockParams, 'requestParser'>) {
     const requestParams = params.requestParser.getJSONRequestParams();

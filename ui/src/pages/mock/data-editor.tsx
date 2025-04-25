@@ -8,9 +8,8 @@ import { io, Socket } from 'socket.io-client';
 import { useUnmount } from 'ahooks';
 import { LLMMockButton } from './llm-mock-button';
 import { AppContext } from '../../context';
-import { BASE_API_PORT } from '../../constants';
+import { BASE_API_PORT, JSON_RESULT_TAG } from '../../constants';
 import { MockParams } from './mock-params';
-import { JSON_RESULT_TAG } from '../../constants';
 
 interface Props {
   visible: boolean;
@@ -79,9 +78,9 @@ export const DataEditor: React.FC<Props> = (props) => {
           const parsedParams = JSON.parse(params);
 
           fetchRemoteMock({
-            requestParams: parsedParams
+            requestParams: parsedParams,
           });
-        }
+        },
       });
     }
   };
@@ -91,7 +90,7 @@ export const DataEditor: React.FC<Props> = (props) => {
       socketRef.current.disconnect();
       socketRef.current.close();
     }
-  }
+  };
 
   const fetchMockDataByLLM = (params = {}) => {
     const now = Date.now();
@@ -116,10 +115,11 @@ export const DataEditor: React.FC<Props> = (props) => {
               if (item.pagination) {
                 try {
                   const parsedStream = JSON.parse(streamStr);
-  
+
                   parsedStream.page = JSON.parse(item.content);
                   editorRef.current?.setValue(JSON.stringify(parsedStream));
                 } catch (err) {
+                  // eslint-disable-next-line no-console
                   console.log('[解析 LLM mock 数据异常]', err);
                 }
               }
@@ -149,7 +149,7 @@ export const DataEditor: React.FC<Props> = (props) => {
         name: 'MOCK_LLM_START',
         payload: {
           mockItem: props.record,
-          ...params
+          ...params,
         },
       });
     });
@@ -187,16 +187,14 @@ export const DataEditor: React.FC<Props> = (props) => {
           const parsedParams = JSON.parse(params);
 
           fetchIntelligentMockData({
-            requestParams: parsedParams
+            requestParams: parsedParams,
           });
-        }
+        },
       });
     }
 
     if (e.key === 'stop') {
       setLlmMockData({ loading: false });
-
-      return;
     }
   };
 
@@ -233,27 +231,33 @@ export const DataEditor: React.FC<Props> = (props) => {
       style={{ minWidth: 600 }}
       extra={
         <Space>
-          <LLMMockButton
-            loading={llMockData.loading}
-            onClick={fetchIntelligentMockData}
-            onItemClick={handleClickIntelligentItem}
-            onStop={handleStopIntelligentMock}
-          />
-          <Dropdown.Button
-            menu={{
-              items: [{ key: 'pro', label: '自定义请求参数' }],
-              onClick: handleClickRemoteItem,
-            }}
-            type="primary"
-            loading={mocking}
-            onClick={() => fetchRemoteMock()}
-          >
-            yapi Mock
-          </Dropdown.Button>
+          {props.record?.yapiId ? (
+            <>
+              <LLMMockButton
+                loading={llMockData.loading}
+                onClick={fetchIntelligentMockData}
+                onItemClick={handleClickIntelligentItem}
+                onStop={handleStopIntelligentMock}
+              />
+              <Dropdown.Button
+                menu={{
+                  items: [{ key: 'pro', label: '自定义请求参数' }],
+                  onClick: handleClickRemoteItem,
+                }}
+                type="primary"
+                loading={mocking}
+                onClick={() => fetchRemoteMock()}
+              >
+                yapi Mock
+              </Dropdown.Button>
+            </>
+          ) : null}
           <Button color="primary" variant="outlined" loading={saving} onClick={handleUpdateData}>
             保存
           </Button>
-          <Button danger onClick={props.onClose}>取消</Button>
+          <Button danger onClick={props.onClose}>
+            取消
+          </Button>
         </Space>
       }
       onClose={props.onClose}

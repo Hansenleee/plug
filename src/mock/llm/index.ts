@@ -1,7 +1,7 @@
-import { Service, Inject } from 'typedi';
+import Container, { Service, Inject } from 'typedi';
 import { LLMVolcengine } from './llm-volcengine';
 import { LLMBaidu } from './llm-baidu';
-import type { MockParams } from './llm-base';
+import { LLMBase, type MockParams } from './llm-base';
 import { Storage } from '../../storage';
 import { JsonSchemaParser } from './json-schema-parser';
 
@@ -36,6 +36,22 @@ export class LLM {
         token: systemConfig.LLMApiToken,
         modelId: systemConfig.LLMId,
       });
+    }
+
+    return this.mockFail(params);
+  }
+
+  mockFail(params: Pick<MockParams, 'stream' | 'socketId'>) {
+    if (params.stream) {
+      const llmBase = Container.get(LLMBase);
+
+      llmBase.emitMockDataBySocket({
+        content: '',
+        end: true,
+        socketId: params.socketId,
+      });
+
+      return;
     }
 
     return Promise.resolve({

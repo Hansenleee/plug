@@ -3,7 +3,6 @@ import Container, { Service } from 'typedi';
 import { Prompt } from './prompt';
 import { LLMBase, MockParams } from './llm-base';
 import { Logger } from '../../shared/log';
-import { SocketIO } from '../../shared/socket';
 
 @Service()
 export class LLMVolcengine extends LLMBase {
@@ -39,7 +38,6 @@ export class LLMVolcengine extends LLMBase {
   private async mockByStream(params: MockParams) {
     const startTime = Date.now();
     const chatMessage = await this.chat(params);
-    const socket = Container.get(SocketIO);
 
     try {
       for await (const chunk of chatMessage.body) {
@@ -63,15 +61,12 @@ export class LLMVolcengine extends LLMBase {
                 pagination = JSON.stringify(paginationFactory.pagination);
               }
 
-              socket.emit(
-                'MOCK_STREAM_ITEM',
-                {
-                  content: pagination,
-                  end: true,
-                  pagination: !!pagination,
-                },
-                { socketId: params.socketId }
-              );
+              this.emitMockDataBySocket({
+                content: pagination,
+                end: true,
+                pagination: !!pagination,
+                socketId: params.socketId,
+              });
 
               return;
             }
@@ -88,14 +83,10 @@ export class LLMVolcengine extends LLMBase {
           });
 
         if (combinedStr) {
-          socket.emit(
-            'MOCK_STREAM_ITEM',
-            {
-              content: combinedStr,
-              end: false,
-            },
-            { socketId: params.socketId }
-          );
+          this.emitMockDataBySocket({
+            content: combinedStr,
+            socketId: params.socketId,
+          });
         }
       }
     } catch (err) {
