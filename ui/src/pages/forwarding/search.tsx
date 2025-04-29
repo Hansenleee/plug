@@ -13,7 +13,7 @@ export const Search: React.FC<Props> = (props) => {
   return (
     <Space style={{ marginBottom: 20, width: '100%', overflow: 'auto' }}>
       <Input
-        placeholder="请输入代理名称"
+        placeholder="请输入转发名称"
         value={props.searchValue.name}
         allowClear
         onChange={(event) => props.onSearchValueChange({ name: event.target.value })}
@@ -30,7 +30,7 @@ export const Search: React.FC<Props> = (props) => {
         搜索
       </Button>
       <Button icon={<PlusOutlined />} onClick={props.onAdd}>
-        添加代理项
+        添加转发规则
       </Button>
     </Space>
   );

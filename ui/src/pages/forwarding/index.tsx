@@ -4,31 +4,44 @@ import React, { useState, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { Search } from './search';
 import { getColumns } from './columns';
-import { ProxyDetail } from './proxy-detail';
-import './style.scss';
+import { ForwardingDetail } from './forwarding-detail';
 
 export default () => {
   const [searchValue, setSearchValue] = useState({ name: '', url: '' });
   const [loading, setLoading] = useState(false);
-  const [proxyList, setProxyList] = useState([]);
+  const [forwardList, setForwardList] = useState([]);
   const [page, setPage] = useState({ current: 1, pageSize: 15, total: 0 });
-  const [proxyDetail, setProxyDetail] = useState<{
+  const [forwardDetail, setForwardDetail] = useState<{
     visible: boolean;
     detail?: Record<string, any>;
   }>({ visible: false });
 
-  const columns = useMemo(() => getColumns({}), []);
+  const handleEdit = (record: Record<string, any>) => {
+    setForwardDetail({
+      visible: true,
+      detail: record,
+    });
+  };
+
+  const columns = useMemo(
+    () =>
+      getColumns({
+        onRefresh: () => searchByPage(),
+        onEdit: handleEdit,
+      }),
+    []
+  );
 
   const searchByPage = useCallback(
     (pageNo = 1) => {
       setLoading(true);
       return axios
-        .post('/api/proxy/list/page', {
+        .post('/api/forward/list/page', {
           ...searchValue,
           page: { pageNo, pageSize: page.pageSize },
         })
         .then((result: any) => {
-          setProxyList(result.data);
+          setForwardList(result.data);
           setPage(result.page);
         })
         .finally(() => {
@@ -37,6 +50,11 @@ export default () => {
     },
     [page.pageSize, searchValue]
   );
+
+  const handleSave = () => {
+    searchByPage();
+    setForwardDetail({ visible: false });
+  };
 
   useMount(() => {
     searchByPage();
@@ -48,15 +66,14 @@ export default () => {
         searchValue={searchValue}
         onSearch={searchByPage}
         onSearchValueChange={(map) => setSearchValue((pre) => ({ ...pre, ...map }))}
-        onAdd={() => setProxyDetail({ visible: true })}
+        onAdd={() => setForwardDetail({ visible: true })}
       />
       <Table
-        className="proxy-table-list"
         bordered
         rowKey="id"
         loading={loading}
         columns={columns}
-        dataSource={proxyList}
+        dataSource={forwardList}
         pagination={{
           ...page,
           showTotal: (total) => `共 ${total} 条`,
@@ -67,10 +84,10 @@ export default () => {
         sticky={{ offsetHeader: -10 }}
         size="middle"
       />
-      <ProxyDetail
-        {...proxyDetail}
-        onSave={() => {}}
-        onClose={() => setProxyDetail({ visible: false })}
+      <ForwardingDetail
+        {...forwardDetail}
+        onSave={handleSave}
+        onClose={() => setForwardDetail({ visible: false })}
       />
     </Space>
   );

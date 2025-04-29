@@ -8,6 +8,7 @@ import { System } from './pages/system/config';
 import { Certificate } from './pages/system/certificate';
 import { LLMConfig } from './pages/system/llm';
 import { AppContext } from './context';
+import { SystemProxySwitch } from './system-proxy-switch';
 import './style.scss';
 
 const { Header, Content } = Layout;
@@ -38,10 +39,13 @@ export const App: React.FC = () => {
             label: '模型管理',
             onClick: () => setLlmOpen(true),
           },
+          {
+            label: <SystemProxySwitch />,
+          },
         ],
       },
       {
-        label: '代理设置',
+        label: '转发设置',
         key: 'proxySetting',
         icon: <SwapOutlined />,
         path: `${router.basename}/proxy`,

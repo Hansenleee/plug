@@ -74,11 +74,14 @@ export interface SystemConfig {
 
 export type ProxyAddedType = Array<{ key: string; value: string }>;
 
-export interface ProxyItem {
+export interface ForwardItem {
   id: string;
   name: string;
+  matchType: 'string' | 'regExp';
   matchValue: RegExp | string;
+  forwardValue?: string;
   enable: boolean;
+  rt?: number;
   requestSetting?: {
     addedHeaders: ProxyAddedType;
     addedUrlParams: ProxyAddedType;
@@ -86,7 +89,6 @@ export interface ProxyItem {
   };
   responseSetting?: {
     addedHeaders: ProxyAddedType;
-    rt?: number;
   };
   updateTime: number;
 }

@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Dashboard from './pages/dashboard';
 import MockPage from './pages/mock';
-import ProxyPage from './pages/proxy';
+import ForwardingPage from './pages/forwarding';
 
 export const router = createBrowserRouter(
   [
@@ -15,7 +15,7 @@ export const router = createBrowserRouter(
     },
     {
       path: '/proxy',
-      element: <ProxyPage />,
+      element: <ForwardingPage />,
     },
   ],
   {

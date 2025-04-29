@@ -57,7 +57,7 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, o
       return value ? (
         <Badge status="success" text="已启用" />
       ) : (
-        <Badge status="error" text="已禁用" />
+        <Badge status="error" text="已停用" />
       );
     },
   },

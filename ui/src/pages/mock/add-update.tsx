@@ -101,6 +101,7 @@ export const AddUpdate: React.FC<Props> = (props) => {
           label="接口响应时间(单位毫秒)"
           min={0}
           initialValue={0}
+          disabled
         />
         <ProFormSwitch name="intelligent" label="智能 Mock" initialValue={false} disabled />
       </ProForm.Group>

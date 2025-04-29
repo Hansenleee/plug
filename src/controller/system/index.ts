@@ -4,6 +4,7 @@ import { BaseController } from '../base';
 import { SystemConfig } from '../../types';
 import { Certificate } from '../../shared/certificate';
 import { Logger } from '../../shared/log';
+import systemProxy from '../../shared/system-proxy';
 import { Configuration } from '../../configuration';
 
 @Service()
@@ -36,6 +37,30 @@ export class SystemController extends BaseController {
   @Post('/config/llm')
   async updateLLMConfig(@Body() config: Partial<SystemConfig>) {
     this.storage.system.setConfig(config);
+
+    return this.success(true);
+  }
+
+  @Get('/proxy/status')
+  async getGlobalProxyStatus() {
+    const statusStdout = await systemProxy.getStatus();
+    const enabled = statusStdout.match(/Enabled: (\w+)/)[1];
+    const port = statusStdout.match(/Port: (\d+)/)[1];
+
+    return this.success({
+      enabled: enabled === 'Yes' && port === `${Configuration.PROXY_PORT}`,
+    });
+  }
+
+  @Post('/proxy/toggle')
+  async toggleGlobalProxy(@Body() config: { enabled: boolean }) {
+    const { enabled } = config;
+
+    if (enabled) {
+      await systemProxy.setProxy('127.0.0.1', Configuration.PROXY_PORT);
+    } else {
+      await systemProxy.closeProxy();
+    }
 
     return this.success(true);
   }

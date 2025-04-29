@@ -2,7 +2,7 @@ import { Inject, Service } from 'typedi';
 import { RecordController } from './records';
 import { MockController } from './mock';
 import { SystemController } from './system';
-import { ProxyController } from './proxy';
+import { ForwardController } from './forward';
 
 @Service()
 export class Controller {
@@ -16,5 +16,5 @@ export class Controller {
   system: SystemController;
 
   @Inject()
-  proxy: ProxyController;
+  forward: ForwardController;
 }
