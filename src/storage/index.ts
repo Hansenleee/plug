@@ -3,6 +3,7 @@ import fs from 'fs';
 import { MockStorage } from './mock';
 import { SystemStorage } from './system';
 import { RuntimeStorage } from './runtime';
+import { ProxyStorage } from './proxy';
 import { PersistenceStorage } from './base-persistence';
 
 @Service()
@@ -15,6 +16,9 @@ export class Storage {
 
   @Inject()
   runtime: RuntimeStorage;
+
+  @Inject()
+  proxy: ProxyStorage;
 
   init() {
     this.mock.init();

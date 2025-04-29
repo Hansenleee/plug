@@ -1,9 +1,10 @@
 import Container, { Service, Inject } from 'typedi';
 import { LLMVolcengine } from './llm-volcengine';
 import { LLMBaidu } from './llm-baidu';
-import { LLMBase, type MockParams } from './llm-base';
+import { LLMBase } from './llm-base';
 import { Storage } from '../../storage';
 import { JsonSchemaParser } from './json-schema-parser';
+import type { MockParams } from './types';
 
 @Service()
 export class LLM {

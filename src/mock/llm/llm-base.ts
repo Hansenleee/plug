@@ -1,17 +1,9 @@
 import Container, { Service } from 'typedi';
-import { JsonSchemaParser } from './json-schema-parser';
-import { RequestParser } from '../../shared/request-parser';
+import { Prompt } from './prompt';
 import { SocketIO } from '../../shared/socket';
-
-export interface MockParams {
-  model?: string;
-  modelId?: string;
-  jsonSchema: JsonSchemaParser;
-  requestParser: RequestParser;
-  token?: string;
-  stream?: boolean;
-  socketId?: string;
-}
+import { LLMPaginationHelper } from './llm-pagination-helper';
+import { LLMStreamHelper } from './llm-stream-helper';
+import type { MockParams } from './types';
 
 export interface SocketEmitData {
   content: string;
@@ -24,6 +16,10 @@ export interface SocketEmitData {
 export abstract class LLMBase {
   static DEFAULT_MOCK_PAGE_SIZE = 15;
   static DEFAULT_MOCK_TOTAL_SIZE = 100;
+  static HELP = {
+    Pagination: LLMPaginationHelper,
+    Stream: LLMStreamHelper,
+  };
 
   private static readonly SOCKET_MOCK_STEAM_EVENT = 'MOCK_STREAM_ITEM';
 
@@ -33,38 +29,24 @@ export abstract class LLMBase {
     return this.socket.emit(LLMBase.SOCKET_MOCK_STEAM_EVENT, data, { socketId: data.socketId });
   }
 
-  protected generatePagination<T = any>(params: Pick<MockParams, 'requestParser'>) {
-    const requestParams = params.requestParser.getJSONRequestParams();
-    const pageParams = requestParams?.page || {
-      pageNo: 1,
-      pageSize: LLMBase.DEFAULT_MOCK_PAGE_SIZE,
-    };
+  protected parseLLMResult2Json(llmResult: Record<string, any>) {
+    try {
+      let content = llmResult.choices?.[0]?.message?.content;
+      content = content
+        .replace(`<${Prompt.JSON_RESULT_TAG}>`, '')
+        .replace(`</${Prompt.JSON_RESULT_TAG}>`, '');
 
-    const curPage = pageParams?.pageNo;
-    const pageSize = pageParams.pageSize || LLMBase.DEFAULT_MOCK_PAGE_SIZE;
-    const totalSize = LLMBase.DEFAULT_MOCK_TOTAL_SIZE;
-    const totalPage = Math.ceil(totalSize / pageSize);
-    const curPageSize = curPage < totalPage ? pageSize : totalSize - (curPage - 1) * pageSize;
-
-    const returnFn = (data: { data: T[] }) => ({
-      data: curPageSize < 0 ? [] : data?.data?.slice(0, curPageSize),
-      page: {
-        curPage,
-        pageSize,
-        totalSize,
-        totalPage,
-      },
-    });
-
-    returnFn.pagination = {
-      curPage,
-      pageSize,
-      totalSize,
-      totalPage,
-    };
-
-    return returnFn;
+      return JSON.parse(content);
+    } catch (_err) {
+      return [];
+    }
   }
 
   abstract mock(params: MockParams): Promise<any>;
+
+  // 所有子类需要实现基于 json 格式的 mock 方法
+  protected abstract mockByJSON(params: MockParams): Promise<any>;
+
+  // 所有子类需要实现基于 stream 格式的 mock 方法
+  protected abstract mockByStream(params: MockParams): Promise<any>;
 }

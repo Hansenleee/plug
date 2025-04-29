@@ -1,8 +1,9 @@
 import fetch from 'node-fetch';
 import Container, { Service } from 'typedi';
 import { Prompt } from './prompt';
-import { LLMBase, MockParams } from './llm-base';
+import { LLMBase } from './llm-base';
 import { Logger } from '../../shared/log';
+import type { MockParams } from './types';
 
 @Service()
 export class LLMVolcengine extends LLMBase {
@@ -17,7 +18,7 @@ export class LLMVolcengine extends LLMBase {
     return params.stream ? this.mockByStream(params) : this.mockByJSON(params);
   }
 
-  private async mockByJSON(params: MockParams) {
+  protected async mockByJSON(params: MockParams) {
     const startTime = Date.now();
     const chatMessage = await this.chat(params);
 
@@ -27,15 +28,15 @@ export class LLMVolcengine extends LLMBase {
     this.log.info(`Mock 生成耗时：${(Date.now() - startTime) / 1000}s`);
 
     if (params.jsonSchema.isPageSchema) {
-      const paginationFactory = this.generatePagination({ requestParser: params.requestParser });
-
-      return paginationFactory(chatMessageJsonParsed);
+      return LLMBase.HELP.Pagination.getPageData(chatMessageJsonParsed.data, {
+        requestParser: params.requestParser,
+      });
     }
 
     return chatMessageJsonParsed;
   }
 
-  private async mockByStream(params: MockParams) {
+  protected async mockByStream(params: MockParams) {
     const startTime = Date.now();
     const chatMessage = await this.chat(params);
 
@@ -54,11 +55,9 @@ export class LLMVolcengine extends LLMBase {
               let pagination = '';
 
               if (params.jsonSchema.isPageSchema) {
-                const paginationFactory = this.generatePagination({
-                  requestParser: params.requestParser,
-                });
-
-                pagination = JSON.stringify(paginationFactory.pagination);
+                pagination = JSON.stringify(
+                  LLMBase.HELP.Pagination.getPage({ requestParser: params.requestParser })
+                );
               }
 
               this.emitMockDataBySocket({
@@ -119,18 +118,5 @@ export class LLMVolcengine extends LLMBase {
         stream: !!stream,
       }),
     });
-  }
-
-  private parseLLMResult2Json(llmResult: Record<string, any>) {
-    try {
-      let content = llmResult.choices?.[0]?.message?.content;
-      content = content
-        .replace(`<${Prompt.JSON_RESULT_TAG}>`, '')
-        .replace(`</${Prompt.JSON_RESULT_TAG}>`, '');
-
-      return JSON.parse(content);
-    } catch (_err) {
-      return [];
-    }
   }
 }

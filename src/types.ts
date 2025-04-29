@@ -71,3 +71,22 @@ export interface SystemConfig {
   LLMId?: string;
   LLMApiToken?: string;
 }
+
+export type ProxyAddedType = Array<{ key: string; value: string }>;
+
+export interface ProxyItem {
+  id: string;
+  name: string;
+  matchValue: RegExp | string;
+  enable: boolean;
+  requestSetting?: {
+    addedHeaders: ProxyAddedType;
+    addedUrlParams: ProxyAddedType;
+    addedBodyPrams: ProxyAddedType;
+  };
+  responseSetting?: {
+    addedHeaders: ProxyAddedType;
+    rt?: number;
+  };
+  updateTime: number;
+}

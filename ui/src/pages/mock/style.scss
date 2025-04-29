@@ -5,6 +5,12 @@
   transform: translate(-50%, -50%);
 }
 
+.mock-table-list {
+  & .ant-table-cell {
+    word-break: keep-all;
+  }
+}
+
 .data-editor-class {
   height: 100%;
 

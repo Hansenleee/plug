@@ -31,7 +31,7 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, o
       }
 
       return <Tag color="#ecc853">{text}</Tag>;
-    }
+    },
   },
   {
     title: '数据来源',
@@ -78,34 +78,40 @@ export const getColumns: (value: any) => TableProps['columns'] = ({ onRefresh, o
       };
 
       const handleToggle = () => {
-        return axios.post('/api/mock/interface/toggle', {
-          id: record.id,
-        }).then(() => {
-          message.success('操作成功');
-          onRefresh();
-        });
+        return axios
+          .post('/api/mock/interface/toggle', {
+            id: record.id,
+          })
+          .then(() => {
+            message.success('操作成功');
+            onRefresh();
+          });
       };
 
       const handleSync = () => {
         Modal.confirm({
           title: '更新接口后会丢失之前改动的数据，是否确认更新？',
           onOk: () => {
-            return axios.post('/api/mock/interface/upgrade', {
-              id: record.id,
-            }).then(() => {
-              message.success('更新成功');
-              onRefresh();
-            })
-          }
+            return axios
+              .post('/api/mock/interface/upgrade', {
+                id: record.id,
+              })
+              .then(() => {
+                message.success('更新成功');
+                onRefresh();
+              });
+          },
         });
       };
 
       return (
         <Space>
           <Typography.Link onClick={() => onEdit(record)}>Mock</Typography.Link>
-          {record.apiType === 'yapi' ? <Typography.Link onClick={handleSync}>同步</Typography.Link> : null}
+          {record.apiType === 'yapi' ? (
+            <Typography.Link onClick={handleSync}>同步</Typography.Link>
+          ) : null}
           {record.enable ? (
-            <Typography.Link onClick={handleToggle}>禁用</Typography.Link>
+            <Typography.Link onClick={handleToggle}>停用</Typography.Link>
           ) : (
             <Typography.Link onClick={handleToggle}>启用</Typography.Link>
           )}

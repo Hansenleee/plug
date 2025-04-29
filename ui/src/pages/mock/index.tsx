@@ -116,6 +116,7 @@ export default function YapiMock() {
         onProjectManage={() => setProjectListVisible(true)}
       />
       <Table
+        className="mock-table-list"
         bordered
         rowKey="id"
         loading={loading}

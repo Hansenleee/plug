@@ -16,7 +16,7 @@ export const ProjectList: React.FC<Props> = (props) => {
   const handleUpgrade = (project: Record<string, string>) => {
     const handleConfirm = (upgradeType: 'all' | 'notDefine') => {
       const destroy = message.loading('正在更新...');
-  
+
       return axios
         .post('/api/mock/project/upgrade', {
           id: project.id,
