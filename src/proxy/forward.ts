@@ -72,14 +72,15 @@ export class Forward {
         'x-plug-forward-id': forwardItem.id,
         ...this.transformHeaders2Object(forwardItem.responseSetting.addedHeaders),
       },
+      rt: forwardItem.rt,
     });
 
     requestHelper
       .on('beforeRequest', () => {
-        log.info(`转发请求 ${requestParser.completeUrl.pathname} 准备转发到原地址`);
+        log.info(`${requestParser.completeUrl.pathname} 接口触发转发规则[${forwardItem.id}]`);
       })
       .on('errorRequest', (error) => {
-        log.warn(`转发请求 ${requestParser.completeUrl.pathname} 转发异常: ${error.message}`, {
+        log.warn(`${requestParser.completeUrl.pathname} 接口转发异常: ${error.message}`, {
           force: true,
         });
       });

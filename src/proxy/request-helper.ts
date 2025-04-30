@@ -9,6 +9,7 @@ import { Storage } from '../storage';
 import { ResponseDataInfo } from '../types';
 import { getResponseData } from '../shared/request-meta';
 import { RequestParser } from '../shared/request-parser';
+import { RtHelper } from './rt-helper';
 
 @Service()
 export class RequestHelper extends EventEmitter<{ beforeRequest: []; errorRequest: [Error] }> {
@@ -29,6 +30,7 @@ export class RequestHelper extends EventEmitter<{ beforeRequest: []; errorReques
       parser: RequestParser;
       extraReqHeader?: Record<string, string>;
       extraResHeader?: Record<string, string>;
+      rt?: number;
     }
   ) {
     super();
@@ -104,11 +106,13 @@ export class RequestHelper extends EventEmitter<{ beforeRequest: []; errorReques
 
     formHeader.delete('content-type');
 
-    const formResult = await fetch(this.options.parser.completeUrl.href, {
-      method: this.request.method,
-      body: this.request.formData,
-      headers: formHeader.raw() as unknown as Record<string, string>,
-    });
+    const formResult = await RtHelper.promisify(() => {
+      return fetch(this.options.parser.completeUrl.href, {
+        method: this.request.method,
+        body: this.request.formData,
+        headers: formHeader.raw() as unknown as Record<string, string>,
+      });
+    }, this.options.rt);
     const formResultText = await formResult.text();
     const responseHeader = {
       ...formResult.headers.raw(),
@@ -128,6 +132,7 @@ export class RequestHelper extends EventEmitter<{ beforeRequest: []; errorReques
 
   private baseJsonRequest(options: https.RequestOptions) {
     const requestClient = this.options.parser.isHttps ? https : http;
+    const rtHelper = RtHelper.start(this.options.rt);
 
     return new Promise<ResponseDataInfo>((resolve) => {
       const proxyToOriginRequest = requestClient.request(
@@ -135,7 +140,9 @@ export class RequestHelper extends EventEmitter<{ beforeRequest: []; errorReques
           ...options,
           ...this.getProxyAgent(),
         },
-        (proxyResult) => {
+        async (proxyResult) => {
+          await rtHelper.end();
+
           const responseHeaders = {
             ...(proxyResult.headers || {}),
             ...(this.options.extraResHeader || {}),

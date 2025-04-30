@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Layout, Menu, Image, Typography, Space } from 'antd';
+import { Layout, Menu, Image, Typography, Space, theme } from 'antd';
 import { SettingOutlined, ApiOutlined, DashboardOutlined, SwapOutlined } from '@ant-design/icons';
 import { RouterProvider } from 'react-router-dom';
 import { useMount } from 'ahooks';
@@ -18,6 +18,9 @@ export const App: React.FC = () => {
   const [systemOpen, setSystemOpen] = useState(false);
   const [certOpen, setCertOpen] = useState(false);
   const [llmOpen, setLlmOpen] = useState(false);
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
 
   const items = useMemo(
     () => [
@@ -84,8 +87,8 @@ export const App: React.FC = () => {
   });
 
   return (
-    <Layout className="app-container">
-      <Header style={{ display: 'flex', alignItems: 'center', background: '#fff' }}>
+    <Layout className="app-container" style={{ background: colorBgContainer }}>
+      <Header style={{ display: 'flex', alignItems: 'center', background: colorBgContainer }}>
         <Space.Compact className="header-logo" onClick={() => router.navigate('/')}>
           <Image
             height={58}

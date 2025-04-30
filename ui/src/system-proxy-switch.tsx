@@ -54,8 +54,8 @@ export const SystemProxySwitch: React.FC<unknown> = () => {
     <Switch
       checked={checked}
       loading={loading}
-      checkedChildren="关闭系统代理"
-      unCheckedChildren="开启系统代理"
+      checkedChildren="系统代理"
+      unCheckedChildren="系统代理"
       onChange={handleChange}
     />
   );
