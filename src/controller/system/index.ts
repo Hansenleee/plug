@@ -57,7 +57,7 @@ export class SystemController extends BaseController {
     const { enabled } = config;
 
     if (enabled) {
-      await systemProxy.setProxy('127.0.0.1', Configuration.PROXY_PORT);
+      await systemProxy.setProxy('127.0.0.1', `${Configuration.PROXY_PORT}`);
     } else {
       await systemProxy.closeProxy();
     }

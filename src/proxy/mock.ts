@@ -9,7 +9,7 @@ import { Mock } from '../mock';
 
 @Service()
 export class ProxyMock {
-  check(request: http.IncomingMessage) {
+  has(request: http.IncomingMessage) {
     const storage = Container.get(Storage);
     const mockHostList = storage.mock.getMemoryMockHost() || [];
     const requestHost = getHost(request);

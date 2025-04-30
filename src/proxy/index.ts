@@ -2,9 +2,9 @@ import { Inject, Service } from 'typedi';
 import http from 'http';
 import net from 'net';
 import HttpProxy from 'http-proxy';
-import { Request } from './request';
+import { ProxyOrigin } from './proxy-origin';
 import { ProxyMock } from './mock';
-import { Protocol } from '../types';
+import { Forward } from './forward';
 
 @Service()
 export class Proxy {
@@ -12,21 +12,30 @@ export class Proxy {
   mock: ProxyMock;
 
   @Inject()
-  private request: Request;
+  forward: Forward;
+
+  @Inject()
+  private origin: ProxyOrigin;
 
   private proxyServer: HttpProxy = HttpProxy.createProxyServer({
     secure: false,
   });
 
   // 请求代理转发的核心入口
-  async proxy(request: http.IncomingMessage, response: http.ServerResponse, protocol: Protocol) {
-    const mockCheckResult = this.mock.check(request);
+  async proxy(request: http.IncomingMessage, response: http.ServerResponse) {
+    const forwardCheckResult = this.forward.has(request);
+
+    if (forwardCheckResult.forwardItem) {
+      return this.forward.forward(request, response, forwardCheckResult);
+    }
+
+    const mockCheckResult = this.mock.has(request);
 
     if (mockCheckResult) {
       return this.mock.mock(mockCheckResult, request, response);
     }
 
-    return this.request.request(request, response, protocol);
+    return this.origin.proxy(request, response);
   }
 
   proxyWS(request: http.IncomingMessage, socket: net.Socket, head: Buffer) {

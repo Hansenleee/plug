@@ -49,7 +49,7 @@ export class BaseServer {
     const controller = Container.get<Controller>(Controller);
     const proxy = Container.get<Proxy>(Proxy);
     const requestId = await controller.record.saveRequestRecords(request, this.protocol);
-    const proxyResponseData = await proxy.proxy(request, response, this.protocol);
+    const proxyResponseData = await proxy.proxy(request, response);
 
     return controller.record.saveResponseRecords(proxyResponseData, {
       requestId,

@@ -1,5 +1,6 @@
 import http from 'http';
 import { Protocol } from '../types';
+import { URL } from 'url';
 
 export type RequestParserCtxBase = Pick<http.IncomingMessage, 'method' | 'body' | 'url'>;
 export type RequestParserCtx = RequestParserCtxBase & { headers: { host?: string } };
@@ -15,7 +16,24 @@ export class RequestParser {
     );
   }
 
-  constructor(private readonly request: RequestParserCtx, private readonly protocol: Protocol) {}
+  static createByHref(href: string, options: Pick<http.IncomingMessage, 'method' | 'body'>) {
+    const url = new URL(href);
+
+    return new RequestParser(
+      {
+        url: url.pathname,
+        ...options,
+        headers: { host: url.host },
+      },
+      url.protocol.replace(':', '') as Protocol
+    );
+  }
+
+  constructor(private readonly request: RequestParserCtx, readonly protocol: Protocol) {}
+
+  get isHttps() {
+    return this.protocol === 'https';
+  }
 
   get host() {
     return this.request.headers.host;

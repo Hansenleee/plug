@@ -45,6 +45,15 @@ export class ForwardController extends BaseController {
     return this.success(true);
   }
 
+  @Post('/item/update')
+  async updateForwardItem(@Body() info: Record<string, unknown> & ForwardItem) {
+    this.required(info, ['id']);
+
+    this.storage.forward.batchUpdateForward([{ id: info.id, ...info }]);
+
+    return this.success(true);
+  }
+
   @Post('/item/delete')
   async deleteForwardItem(@Body() info: { id: string }) {
     this.required(info, ['id']);

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Form, message } from 'antd';
+import { Form, message, Tooltip } from 'antd';
 import {
   DrawerForm,
   ProFormList,
@@ -50,15 +50,30 @@ export const ForwardingDetail: React.FC<Props> = (props) => {
   const handleSubmit = (values: Record<string, any>) => {
     const { requestSetting, responseSetting } = values;
 
+    if (!props.detail) {
+      return axios
+        .post('/api/forward/item/add', {
+          ...values,
+          requestSetting: transformSetting2Map(requestSetting),
+          responseSetting: transformSetting2Map(responseSetting),
+        })
+        .then(() => {
+          form.resetFields();
+          message.success('保存成功');
+          props.onSave();
+        });
+    }
+
     return axios
-      .post('/api/forward/item/add', {
+      .post('/api/forward/item/update', {
+        id: props.detail.id,
         ...values,
         requestSetting: transformSetting2Map(requestSetting),
         responseSetting: transformSetting2Map(responseSetting),
       })
       .then(() => {
         form.resetFields();
-        message.success('保存成功');
+        message.success('修改成功');
         props.onSave();
       });
   };
@@ -131,7 +146,10 @@ export const ForwardingDetail: React.FC<Props> = (props) => {
             valueEnum={{
               addedHeaders: '增加请求头',
               addedUrlParams: '增加 query 参数',
-              addedBodyPrams: '增加请求体参数',
+              addedBodyPrams: {
+                text: <Tooltip title="后续逐步支持">增加请求体参数</Tooltip>,
+                disabled: true,
+              },
             }}
           />
           <ProFormText name="key" width={180} label="key" />
