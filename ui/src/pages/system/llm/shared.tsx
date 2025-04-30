@@ -3,7 +3,7 @@ import { Typography } from 'antd';
 export enum LLMProviderEnum {
   volcengine = 'volcengine',
   baidu = 'baidu',
-  local = 'local'
+  local = 'local',
 }
 
 export const LLM_APPLY_MAP = {
@@ -16,12 +16,9 @@ export const LLM_APPLY_MAP = {
     </Typography.Link>
   ),
   [LLMProviderEnum.baidu]: (
-    <Typography.Link
-      href="https://console.bce.baidu.com/iam/#/iam/apikey/list"
-      target="_blank"
-    >
+    <Typography.Link href="https://console.bce.baidu.com/iam/#/iam/apikey/list" target="_blank">
       百度千帆申请 API 地址
     </Typography.Link>
   ),
-  [LLMProviderEnum.local]: null
-}
+  [LLMProviderEnum.local]: null,
+};

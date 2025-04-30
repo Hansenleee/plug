@@ -14,7 +14,7 @@ const Dashboard: React.FC = () => {
   const [records, setRecords] = useState<Array<Record<string, string>>>([]);
   const [filterContent, setFilterContent] = useState('');
   const [activeRecord, setActiveRecord] = useState<Record<string, string> | undefined>();
-  const [tableScroll, setTableScroll] = useState({ x: 1000, y: 600 })
+  const [tableScroll, setTableScroll] = useState({ x: 1000, y: 600 });
   const socketRef = useRef<Socket>();
   const tableRef = useRef<any>(null);
 
@@ -23,7 +23,7 @@ const Dashboard: React.FC = () => {
       return records;
     }
 
-    return records.filter((_) => _.url.split('?')[0].includes(filterContent as string))
+    return records.filter((_) => _.url.split('?')[0].includes(filterContent as string));
   }, [filterContent, records]);
 
   const handleSearch = (searchValue: string) => {
@@ -34,7 +34,7 @@ const Dashboard: React.FC = () => {
     setTableScroll({
       x: tableRef.current?.offsetWidth - 10,
       y: tableRef.current?.offsetHeight - 60,
-    })
+    });
   });
 
   useMount(() => {

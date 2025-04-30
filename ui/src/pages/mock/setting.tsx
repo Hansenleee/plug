@@ -19,13 +19,15 @@ export const Setting: React.FC<Props> = (props) => {
   };
 
   const handleFinish = (values: any) => {
-    return axios.post('/api/mock/common/config', {
-      ...values,
-      mockHost: !values.mockHost ? [] : values.mockHost,
-    }).then(() => {
-      message.success('保存成功');
-      props.onClose();
-    });
+    return axios
+      .post('/api/mock/common/config', {
+        ...values,
+        mockHost: !values.mockHost ? [] : values.mockHost,
+      })
+      .then(() => {
+        message.success('保存成功');
+        props.onClose();
+      });
   };
 
   useEffect(() => {

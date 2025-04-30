@@ -22,10 +22,12 @@ export const AddProject: React.FC<Props> = (props) => {
   };
 
   const postProject = (values: Record<string, any>) => {
-    const request = !!props.project ? axios.post('/api/mock/project/update', {
-      ...values,
-      id: props.project.id,
-    }) : axios.post('/api/mock/project/add', values);
+    const request = props.project
+      ? axios.post('/api/mock/project/update', {
+          ...values,
+          id: props.project.id,
+        })
+      : axios.post('/api/mock/project/add', values);
 
     return request.then(() => {
       message.success('保存成功');
@@ -65,16 +67,8 @@ export const AddProject: React.FC<Props> = (props) => {
         placeholder="请输入"
         rules={[{ required: true }]}
       />
-      <ProFormText
-        name="prefix"
-        label="接口前缀"
-        placeholder="请输入"
-      />
-      <ProFormSwitch
-        name="enable"
-        label="启用状态"
-        initialValue={true}
-      />
+      <ProFormText name="prefix" label="接口前缀" placeholder="请输入" />
+      <ProFormSwitch name="enable" label="启用状态" initialValue={true} />
     </ModalForm>
   );
 };

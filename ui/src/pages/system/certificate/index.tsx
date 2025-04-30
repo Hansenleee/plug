@@ -22,7 +22,7 @@ export const Certificate: React.FC<Props> = (props) => {
       axios.get('/api/system/config').then((initSetting: any) => {
         form.setFieldsValue({
           ...initSetting,
-          certificateUrl: [{url: initSetting.certificateUrl}]
+          certificateUrl: [{ url: initSetting.certificateUrl }],
         });
       });
     }
@@ -47,11 +47,7 @@ export const Certificate: React.FC<Props> = (props) => {
         max={1}
         disabled
       />
-      <ProFormText
-        name="certificateDir"
-        label="本地证书存储文件夹"
-        disabled
-      />
+      <ProFormText name="certificateDir" label="本地证书存储文件夹" disabled />
     </ModalForm>
-  )
-}
+  );
+};

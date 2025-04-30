@@ -15,7 +15,7 @@ export const System: React.FC<Props> = (props) => {
     return axios.post('/api/system/config', values).then(() => {
       message.success('修改成功');
       props.onClose();
-    })
+    });
   };
 
   const handleOpenChange = (open: boolean) => {
@@ -49,21 +49,9 @@ export const System: React.FC<Props> = (props) => {
         placeholder="请输入"
         extra="如果系统设置了科学翻墙，请输入对应的端口"
       />
-      <ProFormText
-        name="proxyPort"
-        label="plug 端口"
-        disabled
-      />
-      <ProFormText
-        name="cacheDir"
-        label="本地数据存储文件夹"
-        disabled
-      />
-      <ProFormText
-        name="logDir"
-        label="系统日志文件夹"
-        disabled
-      />
+      <ProFormText name="proxyPort" label="plug 端口" disabled />
+      <ProFormText name="cacheDir" label="本地数据存储文件夹" disabled />
+      <ProFormText name="logDir" label="系统日志文件夹" disabled />
     </ModalForm>
-  )
-}
+  );
+};

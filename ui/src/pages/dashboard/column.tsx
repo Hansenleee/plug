@@ -29,15 +29,19 @@ export const columns: TableProps['columns'] = [
       return (
         <Space.Compact direction="vertical">
           <Typography.Paragraph
-            ellipsis={{ rows: 2, expandable: true, onExpand: (event) => {
-              event.stopPropagation();
-            } }}
+            ellipsis={{
+              rows: 2,
+              expandable: true,
+              onExpand: (event) => {
+                event.stopPropagation();
+              },
+            }}
           >
             {shortUrl}
           </Typography.Paragraph>
           <Typography.Text type="secondary">{record.origin}</Typography.Text>
         </Space.Compact>
-      )
+      );
     },
   },
   {

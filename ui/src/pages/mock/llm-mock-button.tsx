@@ -12,7 +12,11 @@ export interface Props {
 
 export const LLMMockButton: React.FC<Props> = (props) => {
   if (props.loading) {
-    return <Button type="primary" danger icon={<BorderOutlined />} onClick={props.onStop}>Stop AI Mock</Button>
+    return (
+      <Button type="primary" danger icon={<BorderOutlined />} onClick={props.onStop}>
+        Stop AI Mock
+      </Button>
+    );
   }
 
   return (
@@ -26,5 +30,5 @@ export const LLMMockButton: React.FC<Props> = (props) => {
     >
       AI Mock
     </Dropdown.Button>
-  )
+  );
 };
