@@ -52,7 +52,7 @@ export class OTA {
         logger.info('跳过更新', { force: true });
       }
     } catch (err) {
-      logger.warn(`更新失败: ${err.message}`);
+      logger.warn(`更新失败: ${err.message}，已自动跳过`);
       this.spinner.fail('检查更新失败, 已自动跳过');
     }
   }

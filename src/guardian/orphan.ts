@@ -9,7 +9,7 @@ import { PlugSource } from '../configuration';
 
 interface MessageType {
   type: 'lifeCycle' | 'error';
-  data: any;
+  data: 'afterStart' | 'startFail';
   extra?: any;
 }
 
@@ -19,11 +19,15 @@ export class Permanent {
   private logger = new Logger('Permanent');
 
   async createOrphan(command: string, args: string[]) {
-    this.spinner.start('启动中...');
+    this.spinner.start('启动中...\n\n');
 
     const childProcess = spawn(command, args, {
       detached: true,
       env: {
+        // 这里的 PATH 一定要加，有以下两个原因：
+        // 1、通过 spawn 创建的子进程不会继承父进程的环境变量，
+        // 2、通过 nvm 安装的 node，其 npm 指令不在 PATH 中
+        PATH: process.env.PATH,
         PLUG_SOURCE: PlugSource.ORPHAN,
       },
     });
@@ -38,6 +42,7 @@ export class Permanent {
       }
 
       if (typeof dataParse === 'string') {
+        global.console.log(dataParse);
         return;
       }
 
@@ -45,12 +50,12 @@ export class Permanent {
 
       if (type === 'lifeCycle') {
         if (data === 'afterStart') {
-          const successMessage = `plug 启动成功 [PID: ${childProcess.pid}]`;
+          const successMessage = `plug 启动成功 [PID: ${childProcess.pid}]\n\n`;
 
           this.spinner.succeed(successMessage);
           this.logger.info(successMessage);
 
-          process.exit(0);
+          this.stop();
         }
 
         if (data === 'startFail' && extra === Exception.REPEAT_EXIT_CODE) {
@@ -59,12 +64,16 @@ export class Permanent {
           this.spinner.fail(successMessage);
           this.logger.info(successMessage);
 
-          process.exit(0);
+          this.stop();
         }
       }
     });
 
     childProcess.unref();
+  }
+
+  private stop() {
+    setTimeout(() => process.exit(0), 200);
   }
 }
 

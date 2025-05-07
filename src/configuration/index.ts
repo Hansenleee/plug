@@ -44,6 +44,6 @@ export class Configuration {
     Configuration.ORIGIN_PROXY_PORT = option.originProxyPort;
     Configuration.SKIP_UPGRADE = !!option.skipUpgrade;
 
-    process.env.PLUG_SOURCE = option.source || PlugSource.COMMAND;
+    process.env.PLUG_SOURCE = option.source || process.env.PLUG_SOURCE || PlugSource.COMMAND;
   }
 }
