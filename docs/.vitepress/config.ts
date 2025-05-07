@@ -1,9 +1,10 @@
 import { defineConfig } from 'vitepress';
+import { groupIconMdPlugin, groupIconVitePlugin } from 'vitepress-plugin-group-icons';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: 'Plug proxy',
-  description: 'An https/http proxy tool',
+  title: 'plug proxy',
+  description: 'A free and open source https/http proxy tool',
   base: '/plug/',
   head: [
     [
@@ -43,6 +44,7 @@ export default defineConfig({
         text: '功能',
         items: [
           { text: '监控', link: '/monitoring' },
+          { text: '转发', link: '/forward' },
           { text: 'mock', link: '/mock' },
         ],
       },
@@ -58,4 +60,14 @@ export default defineConfig({
 
     socialLinks: [{ icon: 'github', link: 'https://github.com/Hansenleee/plug' }],
   },
+  markdown: {
+    config(md) {
+      md.use(groupIconMdPlugin)
+    },
+  },
+  vite: {
+    plugins: [
+      groupIconVitePlugin()
+    ],
+  }
 });

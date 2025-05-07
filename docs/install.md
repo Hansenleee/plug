@@ -4,20 +4,20 @@
 
 ## 通过 NPM 或者 YARN
 
-::: warning
-这种方式安装，需要保证你的电脑已经安装了 `Node.js`
-:::
+> 这种方式安装，需要保证你的电脑已经安装了 `Node.js 16.0` 以上版本
 
-```bash
+::: code-group
+
+```bash [npm]
 npm install plug-proxy -g
 ```
 
-或者
-
-```bash
+```bash [Yarn]
 yarn add plug-proxy -g
 ```
 
+:::
+
 ## APP 形式
 
-点击链接下载：[plug APP](https://github.com/Hansenleee/plug/releases)
+点击链接下载：[plug app](https://github.com/Hansenleee/plug/releases)  
