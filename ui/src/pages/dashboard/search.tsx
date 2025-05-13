@@ -1,10 +1,13 @@
 import { PauseOutlined, ClearOutlined, CaretRightOutlined } from '@ant-design/icons';
-import { Input, Space, Button } from 'antd';
+import { Input, Space, Button, Radio } from 'antd';
 import React, { useState } from 'react';
+import { SearchContentType } from './shared';
 
 interface Props {
+  searchContentType: string | SearchContentType;
   onSearch: (value: string) => void;
   onClear: () => void;
+  onSearchContentTypeChange: (value: string | SearchContentType) => void;
 }
 
 export const Search: React.FC<Props> = (props) => {
@@ -38,6 +41,17 @@ export const Search: React.FC<Props> = (props) => {
       <Button icon={<ClearOutlined />} size="middle" onClick={props.onClear}>
         清空
       </Button>
+      <Radio.Group
+        value={props.searchContentType}
+        style={{ paddingLeft: 20 }}
+        onChange={(e) => props.onSearchContentTypeChange(e.target.value)}
+      >
+        <Radio.Button value={SearchContentType.ALL}>全部</Radio.Button>
+        <Radio.Button value="json">application/json</Radio.Button>
+        <Radio.Button value="javascript">js</Radio.Button>
+        <Radio.Button value="css">css</Radio.Button>
+        <Radio.Button value="image">image</Radio.Button>
+      </Radio.Group>
     </Space>
   );
 };

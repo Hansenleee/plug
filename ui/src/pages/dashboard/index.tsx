@@ -7,6 +7,7 @@ import { Search } from './search';
 import { Detail } from './detail';
 import { BASE_API_PORT } from '../../constants';
 import './style.scss';
+import { SearchContentType } from './shared';
 
 export const MAX_RECORDS = 500;
 
@@ -14,17 +15,38 @@ const Dashboard: React.FC = () => {
   const [records, setRecords] = useState<Array<Record<string, string>>>([]);
   const [filterContent, setFilterContent] = useState('');
   const [activeRecord, setActiveRecord] = useState<Record<string, string> | undefined>();
+  const [searchContentType, setSearchContentType] = useState<string | SearchContentType>(
+    SearchContentType.ALL
+  );
   const [tableScroll, setTableScroll] = useState({ x: 1000, y: 600 });
   const socketRef = useRef<Socket>();
   const tableRef = useRef<any>(null);
 
   const filterRecords = useMemo(() => {
-    if (!filterContent) {
+    if (!filterContent && searchContentType === SearchContentType.ALL) {
       return records;
     }
 
-    return records.filter((_) => _.url.split('?')[0].includes(filterContent as string));
-  }, [filterContent, records]);
+    let innerFilterRecords = records.slice(0);
+
+    if (filterContent) {
+      innerFilterRecords = innerFilterRecords.filter((_) =>
+        _.url.split('?')[0].includes(filterContent as string)
+      );
+    }
+
+    if (searchContentType !== SearchContentType.ALL) {
+      innerFilterRecords = innerFilterRecords.filter((_) => {
+        if (!_.type) {
+          return false;
+        }
+
+        return _.type.includes(searchContentType);
+      });
+    }
+
+    return innerFilterRecords;
+  }, [filterContent, records, searchContentType]);
 
   const handleSearch = (searchValue: string) => {
     setFilterContent(searchValue);
@@ -91,7 +113,12 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="dashboard-container">
-      <Search onSearch={handleSearch} onClear={() => setRecords([])} />
+      <Search
+        searchContentType={searchContentType}
+        onSearch={handleSearch}
+        onClear={() => setRecords([])}
+        onSearchContentTypeChange={(val) => setSearchContentType(val)}
+      />
       <Table
         ref={tableRef}
         pagination={false}

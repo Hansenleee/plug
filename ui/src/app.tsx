@@ -43,6 +43,10 @@ export const App: React.FC = () => {
             onClick: () => setLlmOpen(true),
           },
           {
+            label: '系统日志',
+            onClick: () => {},
+          },
+          {
             label: <SystemProxySwitch />,
           },
         ],
@@ -85,6 +89,12 @@ export const App: React.FC = () => {
 
     setActiveMenuKeys(defaultItem?.key ? [defaultItem?.key] : []);
   });
+
+  if (location.pathname === '/') {
+    location.replace('/management');
+
+    return null;
+  }
 
   return (
     <Layout className="app-container" style={{ background: colorBgContainer }}>

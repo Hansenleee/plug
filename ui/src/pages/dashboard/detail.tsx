@@ -1,6 +1,8 @@
-import { Drawer, Tabs, Descriptions, Divider, Image, Space, Button } from 'antd';
+import { Drawer, Tabs, Descriptions, Divider, Space, Button } from 'antd';
 import React, { useMemo, useState } from 'react';
+import { transformQuery2Obj } from '../../utils/helper';
 import { StatusComponent } from './status';
+import { ResponseBody } from './response-body';
 
 interface Props {
   visible: boolean;
@@ -16,6 +18,10 @@ export const Detail: React.FC<Props> = (props) => {
       return props.record?.params;
     }
 
+    if (props.record?.method === 'GET') {
+      return JSON.stringify(transformQuery2Obj(props.record?.params), null, '  ');
+    }
+
     try {
       return JSON.stringify(JSON.parse(props.record?.params), null, '  ');
     } catch (err) {
@@ -23,24 +29,15 @@ export const Detail: React.FC<Props> = (props) => {
     }
   }, [props.record?.params, viewFormatRequestParams]);
 
-  const formatJsonResponse = useMemo(() => {
-    const { responseData = '' } = props.record || {};
-    const contentType = props.record?.responseHeader?.['content-type'];
-
-    if (contentType?.startsWith?.('image')) {
-      // 设置图片的Base64源
-      return `data:${contentType};base64,${props.record?.responseData}`;
-    }
-
-    try {
-      return JSON.stringify(JSON.parse(responseData), null, '  ');
-    } catch (err) {
-      return responseData;
-    }
-  }, [props.record]);
-
   const items = useMemo(() => {
-    const { requestHeaders = {}, responseHeader = {}, url, method, status } = props.record || {};
+    const {
+      requestHeaders = {},
+      responseHeader = {},
+      url,
+      method,
+      status,
+      responseData,
+    } = props.record || {};
     const requestHeaderItems = Object.entries(requestHeaders).map(([key, value]) => ({
       label: key,
       children: value as any,
@@ -100,16 +97,15 @@ export const Detail: React.FC<Props> = (props) => {
           <>
             <Descriptions column={1} labelStyle={{ width: 250 }} items={responseHeaderItems} />
             <Divider>Body</Divider>
-            {responseHeader['content-type']?.startsWith?.('image') ? (
-              <Image src={formatJsonResponse} />
-            ) : (
-              <pre style={{ overflow: 'auto' }}>{formatJsonResponse}</pre>
-            )}
+            <ResponseBody
+              contentType={responseHeader['content-type']}
+              responseData={responseData}
+            />
           </>
         ),
       },
     ];
-  }, [formatJsonRequest, formatJsonResponse, props.record, viewFormatRequestParams]);
+  }, [formatJsonRequest, props.record, viewFormatRequestParams]);
 
   return (
     <Drawer
