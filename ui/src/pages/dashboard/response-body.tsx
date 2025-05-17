@@ -1,30 +1,49 @@
 import React, { useMemo } from 'react';
-import { Image } from 'antd';
+import { Image, Descriptions, Divider } from 'antd';
+import ReactJson from 'react-json-view';
 
 interface Props {
-  contentType: string;
+  responseHeader: Record<string, string>;
   responseData?: string;
 }
 
 export const ResponseBody: React.FC<Props> = (props) => {
-  const formatJsonResponse = useMemo(() => {
-    const { contentType, responseData = '' } = props;
+  const contentType = props.responseHeader?.['content-type'] || '';
 
-    if (contentType?.startsWith?.('image')) {
-      // 设置图片的Base64源
-      return `data:${contentType};base64,${responseData}`;
+  const responseHeaderItems = useMemo(
+    () =>
+      Object.entries(props.responseHeader || {}).map(([key, value]) => ({
+        label: key,
+        children: value,
+      })),
+    [props.responseHeader]
+  );
+
+  const responseNode = useMemo(() => {
+    if (contentType.startsWith('image')) {
+      return <Image src={`data:${contentType};base64,${props.responseData}`} />;
     }
 
-    try {
-      return JSON.stringify(JSON.parse(responseData as string), null, '  ');
-    } catch (err) {
-      return responseData;
-    }
-  }, [props]);
+    if (contentType.includes('json')) {
+      let jsonData = {};
 
-  return props.contentType?.startsWith?.('image') ? (
-    <Image src={formatJsonResponse} />
-  ) : (
-    <pre style={{ overflow: 'auto' }}>{formatJsonResponse}</pre>
+      try {
+        jsonData = JSON.parse(props.responseData as string);
+      } catch (_) {
+        /* empty */
+      }
+
+      return <ReactJson src={jsonData} />;
+    }
+
+    return <pre style={{ overflow: 'auto' }}>{props.responseData}</pre>;
+  }, [contentType]);
+
+  return (
+    <>
+      <Descriptions column={1} labelStyle={{ width: 250 }} items={responseHeaderItems} />
+      <Divider>Body</Divider>
+      {responseNode}
+    </>
   );
 };

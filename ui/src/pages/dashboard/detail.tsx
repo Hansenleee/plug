@@ -1,7 +1,6 @@
-import { Drawer, Tabs, Descriptions, Divider, Space, Button } from 'antd';
-import React, { useMemo, useState } from 'react';
-import { transformQuery2Obj } from '../../utils/helper';
-import { StatusComponent } from './status';
+import { Drawer, Tabs } from 'antd';
+import React, { useMemo } from 'react';
+import { RequestBody } from './request-body';
 import { ResponseBody } from './response-body';
 
 interface Props {
@@ -11,24 +10,6 @@ interface Props {
 }
 
 export const Detail: React.FC<Props> = (props) => {
-  const [viewFormatRequestParams, setViewFormatRequestParams] = useState(false);
-
-  const formatJsonRequest = useMemo(() => {
-    if (!viewFormatRequestParams) {
-      return props.record?.params;
-    }
-
-    if (props.record?.method === 'GET') {
-      return JSON.stringify(transformQuery2Obj(props.record?.params), null, '  ');
-    }
-
-    try {
-      return JSON.stringify(JSON.parse(props.record?.params), null, '  ');
-    } catch (err) {
-      return props.record?.params;
-    }
-  }, [props.record?.params, viewFormatRequestParams]);
-
   const items = useMemo(() => {
     const {
       requestHeaders = {},
@@ -38,81 +19,36 @@ export const Detail: React.FC<Props> = (props) => {
       status,
       responseData,
     } = props.record || {};
-    const requestHeaderItems = Object.entries(requestHeaders).map(([key, value]) => ({
-      label: key,
-      children: value as any,
-    }));
-    const responseHeaderItems = Object.entries(responseHeader).map(([key, value]) => ({
-      label: key,
-      children: value as any,
-    }));
 
     return [
       {
         label: 'Request',
         key: 'Request',
         children: (
-          <>
-            <Descriptions
-              column={1}
-              labelStyle={{ width: 250 }}
-              items={[
-                {
-                  label: 'url',
-                  children: url?.indexOf('?') > -1 ? url.split('?')[0] : url,
-                },
-                {
-                  label: 'method',
-                  children: method,
-                },
-                {
-                  label: 'status',
-                  children: <StatusComponent status={status} />,
-                },
-                {
-                  label: (
-                    <Space>
-                      <span>params</span>
-                      <Button
-                        size="small"
-                        onClick={() => setViewFormatRequestParams((pre) => !pre)}
-                      >
-                        {viewFormatRequestParams ? '查看源码' : '查看格式化'}
-                      </Button>
-                    </Space>
-                  ),
-                  children: <pre style={{ margin: 0 }}>{formatJsonRequest}</pre>,
-                },
-              ]}
-            />
-            <Divider />
-            <Descriptions column={1} labelStyle={{ width: 250 }} items={requestHeaderItems} />
-          </>
+          <RequestBody
+            url={url}
+            method={method}
+            status={status}
+            params={props.record?.params}
+            requestHeaders={requestHeaders}
+          />
         ),
       },
       {
         label: 'Response',
         key: 'Response',
-        children: (
-          <>
-            <Descriptions column={1} labelStyle={{ width: 250 }} items={responseHeaderItems} />
-            <Divider>Body</Divider>
-            <ResponseBody
-              contentType={responseHeader['content-type']}
-              responseData={responseData}
-            />
-          </>
-        ),
+        children: <ResponseBody responseHeader={responseHeader} responseData={responseData} />,
       },
     ];
-  }, [formatJsonRequest, props.record, viewFormatRequestParams]);
+  }, [props.record]);
 
   return (
     <Drawer
       title="详情"
       placement="right"
       closable={false}
-      width="40%"
+      width="50%"
+      style={{ minWidth: 600 }}
       rootClassName="dashboard-detail"
       open={props.visible}
       onClose={props.onClose}

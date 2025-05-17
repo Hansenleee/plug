@@ -9,6 +9,7 @@ import { Certificate } from './pages/system/certificate';
 import { LLMConfig } from './pages/system/llm';
 import { AppContext } from './context';
 import { SystemProxySwitch } from './system-proxy-switch';
+import { SystemLogs } from './pages/system/logs';
 import './style.scss';
 
 const { Header, Content } = Layout;
@@ -18,6 +19,7 @@ export const App: React.FC = () => {
   const [systemOpen, setSystemOpen] = useState(false);
   const [certOpen, setCertOpen] = useState(false);
   const [llmOpen, setLlmOpen] = useState(false);
+  const [logsOpen, setLogsOpen] = useState(false);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -44,7 +46,7 @@ export const App: React.FC = () => {
           },
           {
             label: '系统日志',
-            onClick: () => {},
+            onClick: () => setLogsOpen(true),
           },
           {
             label: <SystemProxySwitch />,
@@ -126,6 +128,7 @@ export const App: React.FC = () => {
       <System open={systemOpen} onClose={() => setSystemOpen(false)} />
       <Certificate open={certOpen} onClose={() => setCertOpen(false)} />
       <LLMConfig open={llmOpen} onClose={() => setLlmOpen(false)} />
+      <SystemLogs open={logsOpen} onClose={() => setLogsOpen(false)} />
     </Layout>
   );
 };
