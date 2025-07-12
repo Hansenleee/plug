@@ -10,11 +10,13 @@ export const columns: TableProps['columns'] = [
     fixed: 'left',
     render: (status, record) => {
       const isMock = record.responseHeader?.['x-plug-mock-id'];
+      const isForward = record.responseHeader?.['x-plug-forward-id'];
 
       return (
         <Space>
           <StatusComponent status={status} />
           {isMock ? <Tag color="blue">Mock</Tag> : null}
+          {isForward ? <Tag color="cyan">Forward</Tag> : null}
         </Space>
       );
     },

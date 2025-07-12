@@ -27,7 +27,8 @@ export const Search: React.FC<Props> = (props) => {
         placeholder="请输接口地址"
         onSearch={props.onSearch}
         size="middle"
-        style={{ width: 300 }}
+        style={{ width: 350 }}
+        allowClear
       />
       {isStart ? (
         <Button type="primary" danger icon={<PauseOutlined />} size="middle" onClick={handlePause}>

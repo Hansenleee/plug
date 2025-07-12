@@ -21,6 +21,7 @@ declare module 'http' {
 export interface ResponseDataInfo {
   statusCode: number;
   headers: http.OutgoingHttpHeaders;
+  requestHeaders?: http.IncomingHttpHeaders;
   data: string;
 }
 
@@ -79,6 +80,7 @@ export interface ForwardItem {
   name: string;
   matchType: 'string' | 'regExp';
   matchValue: RegExp | string;
+  matchMethods?: Array<'POST' | 'GET'>;
   forwardValue?: string;
   enable: boolean;
   rt?: number;

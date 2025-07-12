@@ -20,9 +20,16 @@ export class Forward {
     const storage = Container.get(Storage);
     let regMatch: Record<string, string> = {};
     const forward = storage.forward.getForwardList().find((forwardItem) => {
-      const { enable, matchType, matchValue } = forwardItem;
+      const { enable, matchType, matchValue, matchMethods } = forwardItem;
 
       if (!enable) {
+        return false;
+      }
+
+      if (
+        matchMethods?.length &&
+        !matchMethods.some((method) => method === request.parser.method.toUpperCase())
+      ) {
         return false;
       }
 

@@ -45,6 +45,7 @@ export class RecordController extends BaseController {
       size: response.headers['content-length'],
       type: getContentType(response.headers['content-type'] as string),
       responseHeader: response.headers,
+      requestHeaders: response?.requestHeaders,
       responseData: response.data,
     });
   }

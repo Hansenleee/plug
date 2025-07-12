@@ -12,7 +12,7 @@ import { SearchContentType } from './shared';
 export const MAX_RECORDS = 500;
 
 const Dashboard: React.FC = () => {
-  const [records, setRecords] = useState<Array<Record<string, string>>>([]);
+  const [records, setRecords] = useState<Array<Record<string, any>>>([]);
   const [filterContent, setFilterContent] = useState('');
   const [activeRecord, setActiveRecord] = useState<Record<string, string> | undefined>();
   const [searchContentType, setSearchContentType] = useState<string | SearchContentType>(
@@ -95,6 +95,10 @@ const Dashboard: React.FC = () => {
               return {
                 ...preItem,
                 ...payloadTarget,
+                requestHeaders: {
+                  ...(preItem.requestHeaders || {}),
+                  ...(payloadTarget.requestHeaders || {}),
+                },
               };
             });
           });

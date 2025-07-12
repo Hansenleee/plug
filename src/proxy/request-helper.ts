@@ -127,6 +127,7 @@ export class RequestHelper extends EventEmitter<{ beforeRequest: []; errorReques
       statusCode: formResult.status,
       headers: responseHeader,
       data: formResultText,
+      requestHeaders: this.requestHeaders,
     };
   }
 
@@ -158,6 +159,7 @@ export class RequestHelper extends EventEmitter<{ beforeRequest: []; errorReques
               statusCode: proxyResult.statusCode,
               headers: responseHeaders,
               data: responseMessage.getData(),
+              requestHeaders: this.requestHeaders,
             });
           });
         }

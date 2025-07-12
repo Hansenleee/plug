@@ -129,7 +129,23 @@ export const ForwardingDetail: React.FC<Props> = (props) => {
           rules={[{ required: true }]}
         />
       </ProFormGroup>
-      <ProFormText name="forwardValue" label="转发地址" placeholder="请输入匹配值" />
+      <ProFormSelect
+        initialValue={['POST', 'GET']}
+        name="matchMethods"
+        label="匹配请求方式"
+        mode="multiple"
+        valueEnum={{
+          POST: 'POST',
+          GET: 'GET',
+          OPTIONS: 'OPTIONS',
+        }}
+        placeholder="请选择(不填则代表匹配所有请求方式)"
+      />
+      <ProFormText
+        name="forwardValue"
+        label="转发地址"
+        placeholder="请输入匹配值(不填则代表转发到原地址)"
+      />
       <ProFormDigit
         name="rt"
         extra="0代表不限制"
