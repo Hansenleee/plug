@@ -1,5 +1,6 @@
 import { Container, Service } from 'typedi';
 import http from 'http';
+import net from 'net';
 import { Response } from 'node-fetch';
 import { Controller } from '../controller';
 import { Proxy } from '../proxy';
@@ -13,6 +14,25 @@ export class BaseServer {
 
   constructor(private protocol: Protocol) {
     this.logger = new Logger(this.protocol);
+  }
+
+  protected checkPortIsUsed(port: number) {
+    return new Promise((resolve, reject) => {
+      const server = net
+        .createServer()
+        .once('error', (err: Error & { code?: string }) => {
+          if (err.code === 'EADDRINUSE') {
+            resolve(true);
+          } else {
+            reject(err);
+          }
+        })
+        .once('listening', () => {
+          server.close();
+          resolve(false);
+        })
+        .listen(port);
+    });
   }
 
   protected async requestHandler(request: http.IncomingMessage, response: http.ServerResponse) {

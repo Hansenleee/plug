@@ -13,9 +13,20 @@ export class Https extends BaseServer {
     super('https');
   }
 
-  start() {
+  async start() {
+    await this.checkHttps();
     this.createSecureServer();
     this.serverHandler();
+  }
+
+  private async checkHttps() {
+    const isPortUsed = await this.checkPortIsUsed(Configuration.HTTPS_PROXY_PORT);
+
+    if (isPortUsed) {
+      this.logger.warn(`Https server 端口 ${Configuration.HTTPS_PROXY_PORT} 被占用!`);
+
+      throw Error('Https EADDRINUSE');
+    }
   }
 
   private createSecureServer() {

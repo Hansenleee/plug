@@ -13,7 +13,7 @@ interface Props {
 }
 
 export const RequestBody: React.FC<Props> = (props) => {
-  const { url, method } = props;
+  const { url, method, status } = props;
   const [viewFormatRequestParams, setViewFormatRequestParams] = useState(false);
 
   const requestHeaderItems = useMemo(
@@ -49,7 +49,7 @@ export const RequestBody: React.FC<Props> = (props) => {
     <>
       <Descriptions
         column={1}
-        labelStyle={{ width: 250 }}
+        styles={{ label: { width: 250 } }}
         items={[
           {
             label: 'url',
@@ -77,7 +77,7 @@ export const RequestBody: React.FC<Props> = (props) => {
         ]}
       />
       <Divider />
-      <Descriptions column={1} labelStyle={{ width: 250 }} items={requestHeaderItems} />
+      <Descriptions column={1} styles={{ label: { width: 250 } }} items={requestHeaderItems} />
     </>
   );
 };

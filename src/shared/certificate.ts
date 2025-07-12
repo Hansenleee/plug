@@ -140,6 +140,7 @@ export class Certificate {
   }
 
   private initBaseCert() {
+    // TODO: 优化下目录不存在的报错问题
     const hasCert = fs.existsSync(this.crtPath);
 
     if (hasCert) {

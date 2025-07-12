@@ -41,7 +41,7 @@ export const ResponseBody: React.FC<Props> = (props) => {
 
   return (
     <>
-      <Descriptions column={1} labelStyle={{ width: 250 }} items={responseHeaderItems} />
+      <Descriptions column={1} styles={{ label: { width: 250 } }} items={responseHeaderItems} />
       <Divider>Body</Divider>
       {responseNode}
     </>

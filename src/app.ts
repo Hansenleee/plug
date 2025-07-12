@@ -33,7 +33,7 @@ export class CoreApp {
 
     this.guards.start();
     this.http.start();
-    this.https.start();
+    await this.https.start();
     this.managementServer.start();
 
     rootPlugin.init();
