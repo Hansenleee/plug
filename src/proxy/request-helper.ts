@@ -2,6 +2,8 @@ import Container, { Service } from 'typedi';
 import EventEmitter from 'events';
 import http from 'http';
 import https from 'https';
+import fs from 'fs';
+import mimeTypes from 'mime-types';
 import ProxyAgent from 'proxy-agent';
 import fetch, { Headers } from 'node-fetch';
 import { Configuration } from '../configuration';
@@ -44,7 +46,13 @@ export class RequestHelper extends EventEmitter<{ beforeRequest: []; errorReques
   }
 
   invokeRequest() {
-    return this.options.parser.isHttps ? this.https() : this.http();
+    const { parser } = this.options;
+
+    if (parser.isFile) {
+      return this.file();
+    }
+
+    return parser.isHttps ? this.https() : this.http();
   }
 
   private getProxyAgent(): { agent?: http.Agent } {
@@ -61,6 +69,26 @@ export class RequestHelper extends EventEmitter<{ beforeRequest: []; errorReques
     }
 
     return {};
+  }
+
+  private file(): Promise<ResponseDataInfo> {
+    const fileData = fs.readFileSync(this.options.parser.completeUrl.pathname, 'utf-8');
+    const contentType = mimeTypes.lookup(this.options.parser.completeUrl.pathname);
+
+    this.response.setHeader('Content-Type', contentType);
+    this.response.writeHead(200, {
+      'Content-Type': contentType,
+      'Content-length': Buffer.byteLength(fileData),
+      ...(this.options.extraResHeader || {}),
+    });
+    this.response.end(fileData);
+
+    return Promise.resolve({
+      statusCode: 200,
+      headers: this.response.getHeaders(),
+      requestHeaders: {},
+      data: fileData.toString(),
+    });
   }
 
   private http() {

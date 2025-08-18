@@ -2,7 +2,7 @@ import http from 'http';
 import type { FormData } from 'node-fetch';
 import type { RequestParser } from './shared/request-parser';
 
-export type Protocol = 'http' | 'https';
+export type Protocol = 'http' | 'https' | 'file';
 
 export enum MockDataType {
   URL = 'url',

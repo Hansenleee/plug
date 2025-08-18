@@ -16,7 +16,23 @@ export class RequestParser {
     );
   }
 
+  /**
+   * 根据 href 来创建，href 有两种情况
+   * 1、href 是标准的 http/https
+   * 2、href 是本地的文件 开头 /
+   */
   static createByHref(href: string, options: Pick<http.IncomingMessage, 'method' | 'body'>) {
+    if (href.startsWith('/')) {
+      return new RequestParser(
+        {
+          url: href,
+          ...options,
+          headers: { host: '' },
+        },
+        'file'
+      );
+    }
+
     const url = new URL(href);
 
     return new RequestParser(
@@ -33,6 +49,10 @@ export class RequestParser {
 
   get isHttps() {
     return this.protocol === 'https';
+  }
+
+  get isFile() {
+    return this.protocol === 'file';
   }
 
   get host() {

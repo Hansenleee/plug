@@ -8,8 +8,14 @@ export class UrlParser {
       : Object.entries(search);
 
     const searchQuery = searchList.reduce((str, [key, value]) => `${str}${key}=${value}&`, '');
+    const searchQueryWithoutLastStr = searchQuery.substring(0, searchQuery.length - 1);
+
+    if (!searchQueryWithoutLastStr) {
+      return url;
+    }
+
     const separateString = url.includes('?') ? '&' : '?';
 
-    return url + separateString + searchQuery.substring(0, searchQuery.length - 1);
+    return url + separateString + searchQueryWithoutLastStr;
   }
 }

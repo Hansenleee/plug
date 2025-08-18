@@ -17,21 +17,29 @@ export class BaseServer {
   }
 
   protected checkPortIsUsed(port: number) {
-    return new Promise((resolve, reject) => {
-      const server = net
-        .createServer()
-        .once('error', (err: Error & { code?: string }) => {
-          if (err.code === 'EADDRINUSE') {
-            resolve(true);
-          } else {
-            reject(err);
-          }
-        })
-        .once('listening', () => {
-          server.close();
+    return new Promise((resolve) => {
+      const socket = new net.Socket();
+
+      socket.on('connect', () => {
+        socket.destroy();
+        resolve(true);
+      });
+
+      socket.on('timeout', () => {
+        socket.destroy();
+        resolve(false);
+      });
+
+      socket.on('error', (err) => {
+        if ((err as any).code === 'ECONNREFUSED') {
           resolve(false);
-        })
-        .listen(port);
+        } else {
+          resolve(true);
+        }
+      });
+
+      socket.setTimeout(300);
+      socket.connect(port, '127.0.0.1');
     });
   }
 

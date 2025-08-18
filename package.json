@@ -94,6 +94,7 @@
     "log4js": "^6.9.1",
     "lru-cache": "^10.3.0",
     "medium-zoom": "^1.1.0",
+    "mime-types": "2.1.35",
     "mockjs": "^1.1.0",
     "nanoid": "^5.0.7",
     "node-fetch": "Hansenleee/node-fetch#main",
