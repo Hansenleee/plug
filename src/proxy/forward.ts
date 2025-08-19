@@ -73,10 +73,15 @@ export class Forward {
     const requestParser = this.getForwardParser(request, options);
     const requestHelper = new RequestHelper(request, response, {
       parser: requestParser,
-      extraReqHeader: this.transformHeaders2Object(forwardItem.requestSetting.addedHeaders),
+      extraReqHeader: {
+        ...this.transformHeaders2Object(forwardItem.requestSetting.addedHeaders),
+        // 这里需要把转发后的请求头的 host 改为转发地址对应的 host，否则转发会失效，还是会打到原服务器上
+        host: requestParser.host,
+      },
       extraResHeader: {
         'x-plug-proxy': 'true',
         'x-plug-forward-id': forwardItem.id,
+        'x-plug-forward-url': requestParser.completeUrl.href,
         ...this.transformHeaders2Object(forwardItem.responseSetting.addedHeaders),
       },
       rt: forwardItem.rt,
