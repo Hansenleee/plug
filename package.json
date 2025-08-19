@@ -1,6 +1,6 @@
 {
   "name": "plug-proxy",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "An http proxy tool",
   "type": "module",
   "main": "electron/main.js",
