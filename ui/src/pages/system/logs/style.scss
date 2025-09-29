@@ -1,0 +1,10 @@
+.system-logs-container {
+  display: flex;
+  flex-direction: column;
+  height: 70vh;
+
+  & .system-logs-editor {
+    flex: 1;
+    overflow: auto;
+  }
+}

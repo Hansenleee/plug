@@ -21,7 +21,7 @@ export default {
     // 启用代码分割
     chunkFileNames: (chunk) => {
       if (chunk.name.includes(DEP_CJS_CROSS_PROXY)) {
-        return '[name]-[hash].cjs';
+        return '[name]-[hash].js';
       }
       return '[name]-[hash].js';
     },
@@ -42,7 +42,7 @@ export default {
     commonjs({
       extensions: ['.js', '.mjs', '.cjs'],
       exclude: [
-        'node_modules/cross-os-proxy/**/*.js',
+        // 'node_modules/cross-os-proxy/**/*.js',
       ],
       transformMixedEsModules: true,
     }),

@@ -70,6 +70,7 @@ const initLogger = () => {
         pattern: 'yyyy-MM-dd.log',
         alwaysIncludePattern: true,
         layout: LOG_LAYOUT,
+        encoding: 'utf-8',
       },
       warnFile: {
         type: 'dateFile',
@@ -77,6 +78,7 @@ const initLogger = () => {
         pattern: 'yyyy-MM-dd.log',
         alwaysIncludePattern: true,
         layout: LOG_LAYOUT,
+        encoding: 'utf-8',
       },
     },
     categories: {
