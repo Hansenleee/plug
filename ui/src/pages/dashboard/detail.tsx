@@ -46,7 +46,6 @@ export const Detail: React.FC<Props> = (props) => {
     <Drawer
       title="详情"
       placement="right"
-      closable={false}
       width="50%"
       style={{ minWidth: 600 }}
       rootClassName="dashboard-detail"

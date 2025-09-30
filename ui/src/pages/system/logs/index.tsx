@@ -3,12 +3,12 @@ import { SearchOutlined } from '@ant-design/icons';
 import React, { useEffect, useCallback, useRef, useState } from 'react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import 'monaco-editor/esm/vs/language/json/monaco.contribution';
-
-import './style.scss';
 import { LogsTypeSelector } from './logs-type-selector';
 import { LogsDateSelector } from './logs-date-selector';
 import axios from 'axios';
 import { useUnmount } from 'ahooks';
+
+import './style.scss';
 
 interface Props {
   open: boolean;
@@ -25,7 +25,6 @@ export const SystemLogs: React.FC<Props> = (props) => {
 
     editorRef.current = monaco.editor.create(container, {
       value: '',
-      // language: 'json',
       theme: 'vs-dark',
       contextmenu: true,
       automaticLayout: true,
