@@ -1,5 +1,4 @@
 import { Service } from 'typedi';
-import { LLMBase } from './llm-base';
 import { JsonSchemaParser } from './json-schema-parser';
 import { RequestParser } from '../../shared/request-parser';
 
@@ -10,7 +9,10 @@ interface Meta {
 
 @Service()
 export class Prompt {
+  static DEFAULT_MOCK_PAGE_SIZE = 15;
+  static DEFAULT_MOCK_TOTAL_SIZE = 100;
   static JSON_RESULT_TAG = 'mock_result';
+
   private static BASE_PROMPT =
     '我会发你一份 http 接口返回内容的 json schema 描述，你需要基于此 json schema 进行合理化的 Mock，同时要满足以下要求：';
   private static PROMPT_REQUIRED = [
@@ -26,7 +28,7 @@ export class Prompt {
 
     if (jsonSchema.isPageSchema) {
       promptRequired.push(
-        `data 的长度为 ${requestParams?.page?.pageSize || LLMBase.DEFAULT_MOCK_PAGE_SIZE}`
+        `data 的长度为 ${requestParams?.page?.pageSize || Prompt.DEFAULT_MOCK_PAGE_SIZE}`
       );
     }
 

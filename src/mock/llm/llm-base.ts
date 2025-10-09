@@ -14,8 +14,6 @@ export interface SocketEmitData {
 
 @Service()
 export abstract class LLMBase {
-  static DEFAULT_MOCK_PAGE_SIZE = 15;
-  static DEFAULT_MOCK_TOTAL_SIZE = 100;
   static HELP = {
     Pagination: LLMPaginationHelper,
     Stream: LLMStreamHelper,
